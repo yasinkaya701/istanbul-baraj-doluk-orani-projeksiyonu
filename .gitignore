@@ -1,0 +1,43 @@
+# OS
+.DS_Store
+.git_backup/
+
+# Node
+node_modules/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Tooling outputs
+.playwright-cli/
+
+# Large datasets / generated data
+DATA/
+new\ data/
+hackathon_graph_digitization_final/
+output/
+tmp/
+catboost_info/
+ADVERSARIAL_TEST/
+DESKTOP_PROCESSING/
+
+# Large single outputs
+/tmp_2010_MAYIS-02.png
+
+# Common dataset file types
+*.csv
+*.tsv
+*.parquet
+*.xlsx
+*.xls
+*.jsonl
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.feather
+*.sav
+*.dta

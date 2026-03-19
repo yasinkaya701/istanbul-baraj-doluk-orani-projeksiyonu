@@ -1,0 +1,38 @@
+[
+  {
+    "resource_id": "af0b3902-cfd9-4096-85f7-e2c3017e4f21",
+    "name": "İstanbul Barajları Günlük Doluluk Oranları",
+    "title": null,
+    "format": "XLSX",
+    "url": "https://data.ibb.gov.tr/dataset/86658ecd-f3f7-4ca4-a313-ae6204f21959/resource/af0b3902-cfd9-4096-85f7-e2c3017e4f21/download/istanbul-dams-daily-occupancy-rates.xlsx",
+    "download_path": "/Users/yasinkaya/Hackhaton/external/raw/ibb/İstanbul_Barajları_Günlük_Doluluk_Oranları_af0b3902-cfd9-4096-85f7-e2c3017e4f21.xlsx",
+    "last_modified": "2024-03-01T08:25:26.511282"
+  },
+  {
+    "resource_id": "b68cbdb0-9bf5-474c-91c4-9256c07c4bdf",
+    "name": "Baraj Doluluk Oranı",
+    "title": null,
+    "format": "CSV",
+    "url": "https://data.ibb.gov.tr/dataset/19c14482-14f2-4803-b4df-4cf4c6c42016/resource/b68cbdb0-9bf5-474c-91c4-9256c07c4bdf/download/dam_occupancy.csv",
+    "download_path": "/Users/yasinkaya/Hackhaton/external/raw/ibb/Baraj_Doluluk_Oranı_b68cbdb0-9bf5-474c-91c4-9256c07c4bdf.csv",
+    "last_modified": "2021-05-23T03:30:27.291588"
+  },
+  {
+    "resource_id": "762b802e-c5f9-4175-a5c1-78b892d9764b",
+    "name": "İstanbul Barajlarına Düşen Yağış Ve Günlük Tüketim Verileri",
+    "title": null,
+    "format": "XLSX",
+    "url": "https://data.ibb.gov.tr/dataset/78ef6c0c-3fd0-45bd-812d-7232384a3b6d/resource/762b802e-c5f9-4175-a5c1-78b892d9764b/download/istanbul-barajlarnda-ya-ve-gunluk-tuketim-verileri.xlsx",
+    "download_path": "/Users/yasinkaya/Hackhaton/external/raw/ibb/İstanbul_Barajlarına_Düşen_Yağış_Ve_Günlük_Tüketim_Verileri_762b802e-c5f9-4175-a5c1-78b892d9764b.xlsx",
+    "last_modified": "2024-03-01T13:23:23.163027"
+  },
+  {
+    "resource_id": "27bdb043-0051-49df-bd7c-b68f60f31247",
+    "name": "İstanbul'a Verilen Temiz Su Miktarları",
+    "title": null,
+    "format": "XLSX",
+    "url": "https://data.ibb.gov.tr/dataset/96fde959-3d0b-46d6-8b1d-78a7ba879fc6/resource/27bdb043-0051-49df-bd7c-b68f60f31247/download/istanbula-verilen-temiz-su-miktarlar-tr-en.xlsx",
+    "download_path": "/Users/yasinkaya/Hackhaton/external/raw/ibb/İstanbul_a_Verilen_Temiz_Su_Miktarları_27bdb043-0051-49df-bd7c-b68f60f31247.xlsx",
+    "last_modified": "2024-03-01T08:29:14.094936"
+  }
+]

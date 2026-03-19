@@ -1,0 +1,40 @@
+{
+  "coverage": {
+    "history_rows_daily": 10957,
+    "history_rows_monthly": 360,
+    "history_rows_yearly": 30,
+    "daily_start": "1975-01-01",
+    "daily_end": "2004-12-31",
+    "model_start": "1975-01-01",
+    "model_end": "2004-12-01"
+  },
+  "radiation_input": {
+    "file": "redacted",
+    "real_extracted_days": 0,
+    "synthetic_days": 10957,
+    "days_clipped_to_rso": 0,
+    "note": "Ham veri yolu bu repoda paylaşılmıyor."
+  },
+  "historical_stats": {
+    "et0_mm_year_mean": 945.9405823163912,
+    "et0_mm_year_min": 882.5690805556628,
+    "et0_mm_year_max": 1071.0757934305586,
+    "trend_mm_per_decade": 25.08087789865109
+  },
+  "forecast_stats": {
+    "baseline_year_range": "1995-2004",
+    "baseline_mm_year": 970.5649800256672,
+    "forecast_2031_2035_mm_year": 1030.1575363089069,
+    "delta_2031_2035_vs_baseline_mm_year": 59.592556283239674
+  },
+  "assumptions": {
+    "tmean_method": "Tmean = (Tmax + Tmin) / 2",
+    "delta_method": "Delta from Tmean with FAO-56 slope equation",
+    "soil_heat_flux": "G = 0",
+    "wind_speed": "u2 = 2.0 m/s constant fallback",
+    "pressure": "elevation-derived constant pressure",
+    "radiation": "provided daily radiation file used directly",
+    "monthly_coverage_rule": "only months with coverage_frac >= 0.80 are used for the forecast model",
+    "forecast_method": "quant regime forecast run directly on historical monthly ET0"
+  }
+}
