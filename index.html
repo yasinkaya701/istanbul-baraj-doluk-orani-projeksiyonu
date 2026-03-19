@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>İstanbul Baraj Doluluk Projeksiyonu</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <div class="brand">İstanbul Baraj Projeksiyonu</div>
+      <div class="nav-links">
+        <a href="#kapsam">Kapsam</a>
+        <a href="#et0">ET0</a>
+        <a href="#modeller">Modeller</a>
+        <a href="#simulasyon">Simülasyon</a>
+        <a href="#raporlar">Raporlar</a>
+      </div>
+    </div>
+  </nav>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="kicker">İstanbul • Kandilli Yakını • 2000–2040</p>
+        <h1>Baraj Doluluk Projeksiyonu</h1>
+        <p class="lead">Bu sayfa, baraj doluluk oranlarını iklim değişkenleriyle modelleyen çalışmanın yöntemini, modellerini, değerlendirmelerini ve 2040’a uzanan projeksiyonlarını sunar.</p>
+        <div class="meta">
+          <span>Model yaklaşımı: veri‑odaklı (iklim + gecikmeler)</span>
+          <span>Değerlendirme: 5y / 10y backtest</span>
+          <span>Belirsizlik: ±RMSE bandı</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Özet</h3>
+        <ul>
+          <li>Gözlenen doluluk: 2000–2024</li>
+          <li>İklim projeksiyonu: 2027–2040</li>
+          <li>Değişkenler: yağış, ET0, sıcaklık, nem, basınç, VPD</li>
+          <li>Modeller: Ridge, GBR, HGB, RF, ETR</li>
+        </ul>
+        <div class="hero-stats">
+          <div><small>Toplam ay</small><strong>480+</strong></div>
+          <div><small>Projeksiyon</small><strong>2040</strong></div>
+          <div><small>Model sayısı</small><strong>5</strong></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="kapsam">
+      <h2>Kapsam ve Veri</h2>
+      <div class="section-banner">
+        Bu çalışma, İstanbul barajlarının doluluk oranını iklim değişkenleriyle ilişkilendirerek 2040’a kadar projekte eder. Sunum için tasarlanmış hızlı, anlaşılır ve güven veren bir görünüm hedeflenmiştir.
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Kullanılan Değişkenler</h3>
+          <ul>
+            <li>Yağış (rain_mm), ET0 (et0_mm_month)</li>
+            <li>Sıcaklık (t_mean_c), Nem (rh_mean_pct)</li>
+            <li>Basınç (pressure_kpa), VPD (vpd_kpa_mean)</li>
+            <li>Mevsimsellik (sin/cos), gecikmeler ve hareketli ortalamalar</li>
+          </ul>
+          <div class="chip-row">
+            <span class="chip">Aylık frekans</span>
+            <span class="chip">2000–2024 gözlenen doluluk</span>
+            <span class="chip">2000–2026 iklim sürücü paneli</span>
+            <span class="chip">2027–2040 iklim projeksiyonu</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Modelleme Mantığı</h3>
+          <ul>
+            <li>Yıllık genişleyen eğitim penceresi</li>
+            <li>2027 = 2000–2026 iklim sürücüleri ile eğitim</li>
+            <li>2028+ = 2000–(önceki yıl) ile eğitim</li>
+            <li>Gelecek bandı: ±max(RMSE)</li>
+          </ul>
+          <p class="note">Bu akış <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code> içinde tanımlıdır.</p>
+          <h4>Veri Dosyaları</h4>
+          <ul>
+            <li><code>output/newdata_feature_store/tables/istanbul_dam_driver_panel_2000_2026_extended.csv</code> (gözlenen panel)</li>
+            <li><code>output/scientific_climate_projection_2026_2040/climate_projection_2010_2040_monthly.csv</code> (iklim projeksiyonu)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="et0">
+      <h2>ET0 Nasıl Hesaplanıyor?</h2>
+      <p class="note">ET0 (referans evapotranspirasyon), iklim değişkenlerinden hesaplanır. Bu projede ET0 aylık verisi panelde hazır gelir; eksik aylarda klimatolojik ortalama ile tamamlanır. VPD, sıcaklık ve nemden türetilir.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>FAO‑56 Penman‑Monteith (ET0)</h3>
+          <pre class="formula">
+ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(1 + 0.34·u2)]
+          </pre>
+          <ul>
+            <li>ET0: referans evapotranspirasyon (mm/gün)</li>
+            <li>Rn: net radyasyon, G: toprak ısı akısı</li>
+            <li>T: sıcaklık (°C), u2: 2 m rüzgar hızı</li>
+            <li>es−ea: buhar basıncı açığı (VPD)</li>
+            <li>Δ: doygun buhar basıncı eğimi, γ: psikrometrik sabit</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Bu Projede ET0 Akışı</h3>
+          <div class="flow">
+            <div class="flow-step"><span>1</span> <div>Panel verisi (2000–2026 iklim sürücüleri): <code>rain_mm, et0_mm_month, t_mean_c, rh_mean_pct, pressure_kpa</code></div></div>
+            <div class="flow-step"><span>2</span> <div>Doluluk gözlemi (2000–2024): <code>weighted_total_fill</code></div></div>
+            <div class="flow-step"><span>3</span> <div>2027–2040 iklim projeksiyonu: <code>rain_mm, et0_mm_month, t_mean_c, rh_mean_pct</code></div></div>
+            <div class="flow-step"><span>4</span> <div>Eksik değerler aylık klimatoloji ile doldurulur</div></div>
+            <div class="flow-step"><span>5</span> <div>VPD hesaplanır: <code>VPD = es − ea</code> (T ve RH’den)</div></div>
+            <div class="flow-step"><span>6</span> <div>Model özellikleri: değişim (delta), gecikme (lag), 3–6 aylık ortalama</div></div>
+          </div>
+          <pre class="formula">es = 0.6108 · exp((17.27 · T) / (T + 237.3))   |   ea = es · (RH/100)</pre>
+          <p class="note">ET0, panelde aylık olarak bulunur. Günlük ET0 hesaplaması gerekiyorsa, FAO‑56 formülü kullanılabilir.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>ET0 Paket (Gerçek Radyasyon)</h2>
+      <p class="note">Bu bölüm, daha önce hazırlanan ET0 paketinden gelen açıklayıcı grafik ve yöntem notlarını içerir.</p>
+      <div class="grid three">
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_formula_explained.png" alt="ET0 formül açıklaması" />
+          <figcaption>FAO‑56 Penman‑Monteith Formülü</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_monthly_explained_2004.png" alt="ET0 aylık açıklamalı örnek" />
+          <figcaption>Aylık ET0 (2004 açıklamalı)</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_yearly_trend_robust_explained.png" alt="ET0 yıllık trend" />
+          <figcaption>Yıllık ET0 Trend (Robust)</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_quant_forecast.png" alt="ET0 quant forecast" />
+          <figcaption>ET0 Quant Forecast</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_10year_summary.png" alt="ET0 10 yıllık özet" />
+          <figcaption>10 Yıllık Özet</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/et0/tarim_et0_monthly_5y_mean.png" alt="ET0 aylık 5y ortalama" />
+          <figcaption>Aylık 5y Ortalama</figcaption>
+        </figure>
+      </div>
+      <div class="card">
+        <p><strong>Yöntem Notu:</strong> <code>assets/et0/reports/tarim_et0_method_note_tr.md</code></p>
+        <p><strong>Özet:</strong> <code>assets/et0/reports/tarim_et0_real_radiation_summary.json</code></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Değişkenler Nereden Geliyor?</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Doğrudan Gözlenen / Projeksiyon</h3>
+          <ul>
+            <li><strong>rain_mm:</strong> Panel + iklim projeksiyonu</li>
+            <li><strong>et0_mm_month:</strong> Panel + iklim projeksiyonu</li>
+            <li><strong>t_mean_c:</strong> Panel + iklim projeksiyonu</li>
+            <li><strong>rh_mean_pct:</strong> Panel + iklim projeksiyonu</li>
+          </ul>
+          <p class="note">2027–2040 için iklim projeksiyonu kullanılır; 2000–2026 iklim sürücüleri gözlemden gelir. Doluluk gözlemi 2000–2024 aralığındadır.</p>
+        </div>
+        <div class="card">
+          <h3>Türetilen / Doldurulan</h3>
+          <ul>
+            <li><strong>pressure_kpa:</strong> Panelde var; gelecekte aylık klimatoloji ile tamamlanır</li>
+            <li><strong>vpd_kpa_mean:</strong> T ve RH’den hesaplanır (VPD = es − ea)</li>
+            <li><strong>balance:</strong> rain_mm − et0_mm_month</li>
+            <li><strong>delta/lag/MA:</strong> değişim, gecikme, 3–6 ay ortalamalar</li>
+          </ul>
+          <p class="note">Türetim adımları <code>project_to_2040_rolling.py</code> içinde otomatik çalışır.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="modeller">
+      <h2>Model Kartları (5y / 10y)</h2>
+      <div class="grid three">
+        <figure class="card">
+          <img class="zoomable" src="assets/img/ridge_5y_10y.png" alt="Ridge 5y/10y" />
+          <figcaption>Ridge</figcaption>
+        </figure>
+        <figure class="card">
+          <img class="zoomable" src="assets/img/gbr_5y_10y.png" alt="GBR 5y/10y" />
+          <figcaption>GBR</figcaption>
+        </figure>
+        <figure class="card">
+          <img class="zoomable" src="assets/img/hgb_5y_10y.png" alt="HGB 5y/10y" />
+          <figcaption>HGB</figcaption>
+        </figure>
+        <figure class="card">
+          <img class="zoomable" src="assets/img/rf_5y_10y.png" alt="RF 5y/10y" />
+          <figcaption>RF</figcaption>
+        </figure>
+        <figure class="card">
+          <img class="zoomable" src="assets/img/etr_5y_10y.png" alt="ETR 5y/10y" />
+          <figcaption>ETR</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>Doğruluk Metrikleri (Basit Anlatım)</h2>
+      <div class="metric-help">
+        <div class="metric-pill">
+          <strong>RMSE</strong>
+          Kareli hata ortalaması kökü. Büyük hataları daha fazla cezalandırır. Birimi “doluluk yüzdesi puanı”dır. Düşükse daha iyidir.
+        </div>
+        <div class="metric-pill">
+          <strong>MAE</strong>
+          Ortalama mutlak hata. “Ortalama kaç puan yanıldık?” sorusunun cevabı. Birimi yüzde puandır.
+        </div>
+        <div class="metric-pill">
+          <strong>MAPE</strong>
+          Ortalama yüzde hata. %10 → tahminler gerçeğin ortalama %10’u kadar sapıyor demektir.
+        </div>
+        <div class="metric-pill">
+          <strong>Pearson</strong>
+          Gerçek seri ile tahmin serisinin doğrusal uyumunu ölçer. -1 ile +1 arasındadır. Sitede % olarak yazılıdır: %90 → r=0.90 demektir. 1’e yakınsa trend uyumu güçlüdür, 0’a yakınsa zayıftır.
+        </div>
+      </div>
+      <p class="note">Her model için bu değerler, 5y/10y kartlarının sağ alt köşesindeki bilgi kutusunda yazılıdır.</p>
+    </section>
+
+    <section>
+      <h2>Modellerin Nerede Kullanıldığı</h2>
+      <div class="model-summary">
+        <div class="card">
+          <h3>Ridge</h3>
+          <ul>
+            <li><strong>Ne işe yarar?</strong> İklim değişkenleri ile doluluk arasındaki “doğrusal” ilişkiyi yakalar.</li>
+            <li><strong>Ne zaman iyi?</strong> Trendleri hızlı görmek, basit ve stabil bir referans oluşturmak.</li>
+            <li><strong>Sınırları?</strong> Karmaşık ve ani sıçramaları yakalamada zayıf kalabilir.</li>
+            <li><strong>Kod:</strong> <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>GBR</h3>
+          <ul>
+            <li><strong>Ne işe yarar?</strong> Doğrusal olmayan ilişkileri “katman katman” öğrenir.</li>
+            <li><strong>Ne zaman iyi?</strong> Mevsimsel dalgalanma ve ani değişimlerin olduğu dönemlerde.</li>
+            <li><strong>Sınırları?</strong> Veri gürültüsüne duyarlı olabilir, düzenli izleme gerekir.</li>
+            <li><strong>Kod:</strong> <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>HGB</h3>
+          <ul>
+            <li><strong>Ne işe yarar?</strong> Büyük veride hızlı ve güçlü bir boosting yaklaşımı sağlar.</li>
+            <li><strong>Ne zaman iyi?</strong> Orta/uzun vadede stabil eğilimleri çıkarırken.</li>
+            <li><strong>Sınırları?</strong> Parametre seçimi iyi yapılmazsa aşırı uyum (overfit) olabilir.</li>
+            <li><strong>Kod:</strong> <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>RF</h3>
+          <ul>
+            <li><strong>Ne işe yarar?</strong> Birçok karar ağacının ortalamasıyla “sağlam” tahmin üretir.</li>
+            <li><strong>Ne zaman iyi?</strong> Gürültülü veri ve uç değerlerin olduğu yıllarda.</li>
+            <li><strong>Sınırları?</strong> Çok uzun vadede yumuşatma yapabilir.</li>
+            <li><strong>Kod:</strong> <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ETR</h3>
+          <ul>
+            <li><strong>Ne işe yarar?</strong> Çok sayıda “rastgeleleştirilmiş” ağaçla güçlü genelleme üretir.</li>
+            <li><strong>Ne zaman iyi?</strong> Hem kısa hem uzun vadede dengeli performans istenince.</li>
+            <li><strong>Sınırları?</strong> Yorumlanabilirliği Ridge kadar net değildir.</li>
+            <li><strong>Kod:</strong> <code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Modeller (Sekmeli Görünüm)</h2>
+      <p class="note">Siyah: Gözlenen (Geçmiş). Turuncu: Simülasyon (Gelecek). Kesik çizgi: son gözlenen ay. Turuncu gölgeli alan: ±RMSE bandı.</p>
+      <div class="soft-section">
+      <div class="tabs" data-tabs>
+        <button class="tab active" data-tab="ridge">Ridge</button>
+        <button class="tab" data-tab="gbr">GBR</button>
+        <button class="tab" data-tab="hgb">HGB</button>
+        <button class="tab" data-tab="rf">RF</button>
+        <button class="tab" data-tab="etr">ETR</button>
+      </div>
+
+      <div class="tab-panels">
+        <div class="panel active" id="ridge">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h3>Ridge</h3>
+              <p>Doğrusal, stabil temel model. Ölçekleme ile birlikte hızlı ve yorumlanabilir.</p>
+              <ul>
+                <li>5y/10y kart: Ridge performansı</li>
+                <li>2000–2040 projeksiyonu + belirsizlik bandı</li>
+                <li>2024+ yakınlaştırma</li>
+              </ul>
+              <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+            </div>
+            <div class="panel-media">
+              <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png" alt="Ridge 2000-2040" />
+              <div class="media-row">
+                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png" alt="Ridge 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/ridge_projection_2024-03-01_2040.png" alt="Ridge 2024-2040" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="gbr">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h3>GBR</h3>
+              <p>Boosting tabanlı model; doğrusal olmayan ilişkileri yakalar.</p>
+              <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+            </div>
+            <div class="panel-media">
+              <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png" alt="GBR 2000-2040" />
+              <div class="media-row">
+                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png" alt="GBR 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/gbr_projection_2024-03-01_2040.png" alt="GBR 2024-2040" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="hgb">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h3>HGB</h3>
+              <p>Histogram tabanlı gradient boosting; hızlı ve verimli.</p>
+              <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+            </div>
+            <div class="panel-media">
+              <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png" alt="HGB 2000-2040" />
+              <div class="media-row">
+                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png" alt="HGB 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/hgb_projection_2024-03-01_2040.png" alt="HGB 2024-2040" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="rf">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h3>RF</h3>
+              <p>Random Forest; kararlı ansambllar ile genel performansı yüksek.</p>
+              <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+            </div>
+            <div class="panel-media">
+              <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png" alt="RF 2000-2040" />
+              <div class="media-row">
+                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png" alt="RF 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/rf_projection_2024-03-01_2040.png" alt="RF 2024-2040" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="etr">
+          <div class="panel-grid">
+            <div class="panel-text">
+              <h3>ETR</h3>
+              <p>Extra Trees; rastgeleleştirilmiş ağaçlar ile güçlü genelleme.</p>
+              <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+            </div>
+            <div class="panel-media">
+              <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png" alt="ETR 2000-2040" />
+              <div class="media-row">
+                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png" alt="ETR 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/etr_projection_2024-03-01_2040.png" alt="ETR 2024-2040" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>V3 Modeller (Yeni Mimari)</h2>
+      <p class="note">V3 mimarisi: logit hedef + anomali + fizik katmanı + purged walk‑forward CV + konformal belirsizlik bandı. Eski çıktılara dokunulmadı; bunlar ek katmandır.</p>
+      <div class="grid three">
+        <div class="card">
+          <h3>LGB_DART</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.829</strong></li>
+            <li>CV RMSE: <strong>41.05</strong> puan</li>
+            <li>CV MAPE: <strong>88.7%</strong></li>
+          </ul>
+          <img class="zoomable" src="assets/v3/lgb_dart_v3_projection.png" alt="LGB DART v3 projection"/>
+        </div>
+        <div class="card">
+          <h3>XGBoost</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.854</strong></li>
+            <li>CV RMSE: <strong>40.72</strong> puan</li>
+            <li>CV MAPE: <strong>87.7%</strong></li>
+          </ul>
+          <img class="zoomable" src="assets/v3/xgb_v3_projection.png" alt="XGBoost v3 projection"/>
+        </div>
+        <div class="card">
+          <h3>Extra Trees (ETR)</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.802</strong></li>
+            <li>CV RMSE: <strong>40.55</strong> puan</li>
+            <li>CV MAPE: <strong>87.0%</strong></li>
+          </ul>
+          <img class="zoomable" src="assets/v3/etr_v3_projection.png" alt="ETR v3 projection"/>
+        </div>
+      </div>
+      <div class="grid two" style="margin-top:14px;">
+        <div class="card">
+          <h3>Stacking</h3>
+          <img class="zoomable" src="assets/v3/stack_v3_projection.png" alt="Stacking v3 projection"/>
+        </div>
+        <div class="card">
+          <h3>Ensemble Median</h3>
+          <img class="zoomable" src="assets/v3/ensemble_median_v3_projection.png" alt="Ensemble median v3 projection"/>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <h3>CV Karşılaştırma</h3>
+        <img class="zoomable" src="assets/v3/model_comparison_cv.png" alt="V3 CV comparison"/>
+        <p class="note">Not: V3 sonuçları purged walk‑forward CV üzerinden hesaplandı.</p>
+      </div>
+    </section>
+
+    <section id="simulasyon">
+      <h2>Etkileşimli Simülasyon</h2>
+      <p class="note">Bu bölümde, kullanıcılar yağış/ET0 değişimi ve kullanım‑buharlaşma kayıp oranlarını ayarlayarak projeksiyonun nasıl değiştiğini canlı görebilir. Grafikte bir tarihin üstüne gelince o ayın olası doluluğu görünür.</p>
+      <div class="sim-layout">
+        <div class="card pad-lg">
+          <div class="sim-chart">
+            <div class="tooltip" id="sim-tooltip"></div>
+            <svg class="sim-svg" id="sim-svg" viewBox="0 0 900 360" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="legend">
+            <span class="dot base"></span> Temel projeksiyon
+            <span class="dot adj"></span> Ayarlanmış projeksiyon
+          </div>
+          <p class="note" id="sim-status">Veri hazır</p>
+          <div class="legend" id="model-legend"></div>
+          <div class="loss-bar">
+            <div id="loss-use">Kullanım</div>
+            <div id="loss-evap">Buharlaşma</div>
+          </div>
+          <div class="sim-metrics">
+            <div class="metric">
+              <small>Seçilen Tarih</small>
+              <strong id="metric-date">—</strong>
+            </div>
+            <div class="metric">
+              <small>Temel Doluluk</small>
+              <strong id="metric-base">—</strong>
+            </div>
+            <div class="metric">
+              <small>Ayarlanmış Doluluk</small>
+              <strong id="metric-adj">—</strong>
+            </div>
+          </div>
+          <div class="note" id="sim-range" style="margin-top:8px;">Tarih aralığı: —</div>
+        </div>
+
+        <div class="sim-grid">
+          <div class="card dark">
+            <div class="sim-cta">Hızlı Senaryo Butonları</div>
+            <div class="chip-group" style="margin-top:10px;">
+              <button class="btn primary" id="sim-reset">Gerçek Değerler</button>
+              <button class="btn ghost" id="sim-zero">Sıfırla</button>
+              <button class="chip-btn" data-scenario="dry">Kurak Senaryo</button>
+              <button class="chip-btn" data-scenario="wet">Yağış Artışı</button>
+              <button class="chip-btn" data-scenario="heat">Sıcak/Yüksek ET0</button>
+            </div>
+            <label style="margin-top:12px;">Model</label>
+            <select id="sim-model">
+              <option value="all">Tümü (Karşılaştır)</option>
+              <option value="ridge">Ridge</option>
+              <option value="gbr">GBR</option>
+              <option value="hgb">HGB</option>
+              <option value="rf">RF</option>
+              <option value="etr" selected>ETR</option>
+            </select>
+          </div>
+
+          <div class="card">
+            <h4>İklim Senaryosu</h4>
+            <label>Yağış Değişimi (%)</label>
+            <input type="range" id="sim-rain" min="-30" max="30" value="0" />
+            <div class="value" id="sim-rain-val">0%</div>
+
+            <label>ET0 Değişimi (%)</label>
+            <input type="range" id="sim-et0" min="-30" max="30" value="0" />
+            <div class="value" id="sim-et0-val">0%</div>
+          </div>
+
+          <div class="card">
+            <h4>Kayıp Bileşenleri</h4>
+            <label>Kullanım Miktarı (milyon m³ / yıl)</label>
+            <input type="range" id="sim-use-m3" min="50" max="600" value="0" step="5" />
+            <div class="value" id="sim-use-m3-val">—</div>
+
+            <label>Kullanım Trendini Ayarla (% / yıl)</label>
+            <input type="range" id="sim-use-growth" min="-2" max="4" value="0" step="0.25" />
+            <div class="value" id="sim-use-growth-val">0%</div>
+            <div class="note">2040 tahmini kullanım: <strong id="sim-use-2040">—</strong></div>
+            <div class="note" id="sim-use-range">Trend aralığı: —</div>
+            <div class="note" id="sim-use-season">Mevsimsellik: —</div>
+
+            <label>Buharlaşma (ET0 ile bağlı)</label>
+            <div class="value" id="sim-evap-m3-val">—</div>
+
+            <div class="assumptions">
+              <p><strong>Not:</strong> Buharlaşma etkisi doğrudan ET0 değişimine bağlandı. ET0 artarsa buharlaşma artar.</p>
+              <p><strong>Not:</strong> Senaryo etkileri, regresyon katsayılarının işaretini koruyacak şekilde sunum için ölçeklendirildi.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Gerçek Hesap (2023)</h4>
+          <ul>
+            <li>Buharlaşma payı: <strong id="base-evap-pct">—</strong> (<span id="base-evap-m3">—</span>)</li>
+            <li>Kullanım payı: <strong id="base-use-pct">—</strong> (<span id="base-use-m3">—</span>)</li>
+            <li>Toplam baraj alanı: <strong id="base-area">—</strong> km²</li>
+          </ul>
+          <p class="note" id="base-note"></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Model Kodları (Özet)</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>project_to_2040_rolling.py</h3>
+          <ul>
+            <li>2000–2040 sürücü panelini iklim projeksiyonu ile birleştirir.</li>
+            <li>Özellikler: yağış/ET0, sıcaklık, nem, basınç, VPD, gecikmeler ve hareketli ortalamalar.</li>
+            <li>Yıllık yeniden eğitim: 2027=2000–2026, 2028+=2000–(önceki yıl).</li>
+            <li>Çıktılar: 2040 projeksiyon grafikleri ve ±RMSE belirsizlik bandı.</li>
+          </ul>
+          <p><code>/Users/yasinkaya/Hackhaton/scripts/project_to_2040_rolling.py</code></p>
+        </div>
+        <div class="card">
+          <h3>build_model_cards_5y_10y.py</h3>
+          <ul>
+            <li>5y ve 10y holdout pencerelerinde model doğrulaması yapar.</li>
+            <li>RMSE, MAE, MAPE, Pearson metriklerini hesaplar.</li>
+            <li>Her model için tek görselde 5y/10y kart üretir.</li>
+          </ul>
+          <p><code>/Users/yasinkaya/Hackhaton/scripts/build_model_cards_5y_10y.py</code></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="raporlar">
+      <h2>Raporlar</h2>
+      <div class="card">
+        <ul>
+          <li><a href="assets/docs/istanbul_baraj_guncel_durum_ozet_raporu_2026_03_18.pdf">İstanbul Baraj Güncel Durum Özet Raporu (2026-03-18)</a></li>
+          <li><a href="assets/docs/istanbul_baraj_guncel_durum_detayli_raporu.pdf">İstanbul Baraj Güncel Durum Detaylı Raporu</a></li>
+          <li><a href="assets/docs/Hackhaton_Final_Raporu_2026-03-05.pdf">Hackhaton Final Raporu (2026-03-05)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Kodlar ve Çıktılar</h2>
+      <div class="card">
+        <p><strong>Üretim scriptleri:</strong></p>
+        <ul>
+          <li><code>scripts/build_model_cards_5y_10y.py</code></li>
+          <li><code>scripts/project_to_2040_rolling.py</code></li>
+          <li><code>output/istanbul_projection_2040_rolling/</code></li>
+          <li><code>hackhaton_projection_2040_2026_03_18/</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Kaynakça</h2>
+      <div class="card">
+        <ol>
+          <li>FAO‑56: Allen, R. G., Pereira, L. S., Raes, D., Smith, M. (1998). <em>Crop Evapotranspiration</em>. FAO Irrigation and Drainage Paper 56.</li>
+          <li>Hargreaves, G. H., Samani, Z. A. (1985). Reference crop evapotranspiration from temperature.</li>
+          <li>Priestley, C. H. B., Taylor, R. J. (1972). On the assessment of surface heat flux and evaporation using large‑scale parameters.</li>
+          <li>İBB Yetki Alanı – İstanbul su kaynakları ve göl alanları (km²).</li>
+          <li>AA/İBB açıklaması – 2023 İstanbul su temini ve barajdan sağlanan su miktarı.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>İstanbul baraj doluluk projeksiyonu • Veri‑odaklı iklim destekli modelleme</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" alt="Görsel" />
+  </div>
+
+  <script src="assets/data/projection_all_models.js"></script>
+  <script src="assets/data/evap_usage_baseline.js"></script>
+  <script src="assets/data/sim_coeffs.js"></script>
+  <script src="assets/data/usage_trend_stats.js"></script>
+  <script src="assets/data/usage_monthly_profile.js"></script>
+  <script>
+    const tabs = document.querySelectorAll('[data-tabs] .tab');
+    const panels = document.querySelectorAll('.panel');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Simple simulator
+    let modelData = {};
+    let dates = [];
+    let baseline = null;
+
+    function parseCSV(text) {
+      const lines = text.trim().split('\\n');
+      const headers = lines[0].split(',');
+      const idxDate = headers.indexOf('date');
+      const idxFill = headers.indexOf('fill_sim');
+      const idxModel = headers.indexOf('model');
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        const date = row[idxDate];
+        const model = row[idxModel];
+        const fill = parseFloat(row[idxFill]);
+        if (!modelData[model]) modelData[model] = [];
+        modelData[model].push({ date, fill });
+      }
+    }
+
+    function linePath(data, width, height, pad = 24) {
+      if (!data || data.length < 2) return '';
+      const xs = data.map((d, i) => i);
+      const ys = data.map(d => d.fill);
+      const xMin = 0, xMax = xs.length - 1;
+      const yMin = 0, yMax = 100;
+      const xScale = v => pad + (v - xMin) / (xMax - xMin) * (width - 2 * pad);
+      const yScale = v => height - pad - (v - yMin) / (yMax - yMin) * (height - 2 * pad);
+      let d = '';
+      data.forEach((p, i) => {
+        const x = xScale(i);
+        const y = yScale(p.fill);
+        d += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+      });
+      return d;
+    }
+
+    function nearestIndex(mouseX, width, pad, len) {
+      const usable = width - 2 * pad;
+      const raw = (mouseX - pad) / usable;
+      const idx = Math.round(raw * (len - 1));
+      return Math.max(0, Math.min(len - 1, idx));
+    }
+
+    const MODEL_COLORS = {
+      ridge: '#1f77b4',
+      gbr: '#ff7f0e',
+      hgb: '#2ca02c',
+      rf: '#9467bd',
+      etr: '#d62728'
+    };
+
+    function getSeries(model, rain, et0, useM3, evapM3, useGrowth) {
+      const coeff = window.SIM_COEFFS || { a_rain: 0.0003, b_et0: -0.0009, c_use: -3e-8, mean_rain: 70, mean_et0: 80, mean_use_monthly: 2.7e6 };
+      const sens = { rain: 400, et0: 400, use: 1.8, evap: 1.2 };
+      const base = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
+      const usageProfile = (window.USAGE_PROFILE && window.USAGE_PROFILE.profile) ? window.USAGE_PROFILE.profile : null;
+      const startDate = base[0] ? new Date(base[0].date) : null;
+      const adjusted = base.map(d => {
+        const rainEff = coeff.a_rain * (coeff.mean_rain * (rain / 100)) * sens.rain;
+        const et0Eff = coeff.b_et0 * (coeff.mean_et0 * (et0 / 100)) * sens.et0;
+        const baseUseMonthly = (window.BASELINE ? window.BASELINE.usage_baraj_m3 : 275104161) / 12.0;
+        const baseEvapMonthly = (window.BASELINE ? window.BASELINE.evap_total_m3 : 98840094) / 12.0;
+        let years = 0;
+        if (startDate) {
+          const cur = new Date(d.date);
+          years = (cur - startDate) / (1000 * 60 * 60 * 24 * 365.25);
+        }
+        const useScale = Math.pow(1 + useGrowth, years);
+        const m = new Date(d.date).getMonth(); // 0-11
+        const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
+        const useMonthly = (useM3 * useScale * 1e6) / 12.0 * seasonal;
+        const evapMonthly = (evapM3 * 1e6) / 12.0;
+        const useEff = coeff.c_use * (useMonthly - baseUseMonthly) * sens.use;
+        const evapEff = coeff.c_use * 0.6 * (evapMonthly - baseEvapMonthly) * sens.evap;
+        return { date: d.date, fill: Math.max(0, Math.min(100, d.fill + rainEff + et0Eff + useEff + evapEff)) };
+      });
+      return { base, adjusted };
+    }
+
+    function renderSim() {
+      const model = document.getElementById('sim-model').value;
+      const rain = parseFloat(document.getElementById('sim-rain').value);
+      const et0 = parseFloat(document.getElementById('sim-et0').value);
+      const useM3 = parseFloat(document.getElementById('sim-use-m3').value);
+      const useGrowth = parseFloat(document.getElementById('sim-use-growth').value) / 100;
+      const baseEvapYear = (window.BASELINE ? window.BASELINE.evap_total_m3 : 98840094) / 1e6;
+      const evapM3 = Math.max(1, baseEvapYear * (1 + et0 / 100));
+      const totalM3 = Math.max(1, useM3 + evapM3);
+      const use = useM3 / totalM3;
+      const evap = evapM3 / totalM3;
+      // use & evap already normalized by totalM3
+
+      document.getElementById('sim-rain-val').textContent = `${rain}%`;
+      document.getElementById('sim-et0-val').textContent = `${et0}%`;
+      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³ (${Math.round(use*100)}%)`;
+      document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
+      document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (${Math.round(evap*100)}%)`;
+
+      const allModels = Object.keys(modelData || {});
+      const rawModels = model === 'all' ? allModels : [model];
+      const models = rawModels.filter(m => (modelData[m] || []).length > 0);
+      const status = document.getElementById('sim-status');
+      if (status) {
+        if (allModels.length) {
+          const m0 = allModels[0];
+          const s = modelData[m0] || [];
+          const first = s[0]?.date || '-';
+          const last = s[s.length - 1]?.date || '-';
+          if (first !== '-' && last !== '-') {
+            const y0 = new Date(first);
+            const y1 = new Date(last);
+            const years = (y1 - y0) / (1000 * 60 * 60 * 24 * 365.25);
+            const use2040 = useM3 * Math.pow(1 + useGrowth, years);
+            const use2040El = document.getElementById('sim-use-2040');
+            if (use2040El) use2040El.textContent = `${Math.round(use2040)} milyon m³`;
+          }
+          status.textContent = `Veri: ${allModels.length} model • Aralık: ${first} → ${last} • Seçili: ${model === 'all' ? 'Tümü' : model.toUpperCase()}`;
+          const range = document.getElementById('sim-range');
+          if (range) range.textContent = `Tarih aralığı: ${first} → ${last}`;
+        } else {
+          status.textContent = 'Model verisi bulunamadı';
+        }
+      }
+      const baseSeries = {};
+      const adjSeries = {};
+      models.forEach(m => {
+        const { base, adjusted } = getSeries(m, rain, et0, useM3, evapM3, useGrowth);
+        baseSeries[m] = base;
+        adjSeries[m] = adjusted;
+      });
+
+      if (models.length) {
+        const m = models[0];
+        window.__lastSeries = {
+          model: m,
+          sample: {
+            base: baseSeries[m][0]?.fill,
+            adjusted: adjSeries[m][0]?.fill,
+          }
+        };
+      }
+
+      const svg = document.getElementById('sim-svg');
+      const width = 900, height = 360, pad = 24;
+      let paths = '';
+      if (model !== 'all') {
+        models.forEach(m => {
+          const basePath = linePath(baseSeries[m], width, height);
+          const adjPath = linePath(adjSeries[m], width, height);
+          if (!basePath || !adjPath) return;
+          paths += `<path d=\"${basePath}\" fill=\"none\" stroke=\"#333\" stroke-width=\"2\" opacity=\"0.4\"/>`;
+          paths += `<path d=\"${adjPath}\" fill=\"none\" stroke=\"#d55e00\" stroke-width=\"2\" opacity=\"0.95\"/>`;
+        });
+      } else {
+        // Ensemble mean + min/max band for clarity
+        const key = models[0];
+        const series = adjSeries[key] || [];
+        const meanSeries = [];
+        const minSeries = [];
+        const maxSeries = [];
+        for (let i = 0; i < series.length; i++) {
+          const vals = models.map(m => (adjSeries[m][i] ? adjSeries[m][i].fill : null)).filter(v => v !== null);
+          if (!vals.length) continue;
+          const mean = vals.reduce((a,b) => a+b, 0) / vals.length;
+          const min = Math.min(...vals);
+          const max = Math.max(...vals);
+          meanSeries.push({ date: series[i].date, fill: mean });
+          minSeries.push({ date: series[i].date, fill: min });
+          maxSeries.push({ date: series[i].date, fill: max });
+        }
+        const meanPath = linePath(meanSeries, width, height);
+        const minPath = linePath(minSeries, width, height);
+        const maxPath = linePath(maxSeries, width, height);
+        if (minPath && maxPath) {
+          paths += `<path d=\"${minPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
+          paths += `<path d=\"${maxPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
+          paths += `<path d=\"${meanPath}\" fill=\"none\" stroke=\"#0b2a3c\" stroke-width=\"2.6\" opacity=\"0.9\"/>`;
+        }
+      }
+      if (!paths) {
+        svg.innerHTML = `<text x=\"50\" y=\"180\" fill=\"#666\">Grafik üretilemedi (veri eksik)</text>`;
+        return;
+      }
+      const axis = `
+        <g stroke=\"#dcd7ce\" stroke-width=\"1\">
+          <line x1=\"${pad}\" y1=\"${height-pad}\" x2=\"${width-pad}\" y2=\"${height-pad}\" />
+          <line x1=\"${pad}\" y1=\"${pad}\" x2=\"${pad}\" y2=\"${height-pad}\" />
+        </g>
+        <g fill=\"#8a8680\" font-size=\"11\">
+          <text x=\"${pad-6}\" y=\"${height-pad+14}\" text-anchor=\"end\">0</text>
+          <text x=\"${pad-6}\" y=\"${height-pad-(height-2*pad)*0.25+4}\" text-anchor=\"end\">25</text>
+          <text x=\"${pad-6}\" y=\"${height-pad-(height-2*pad)*0.5+4}\" text-anchor=\"end\">50</text>
+          <text x=\"${pad-6}\" y=\"${height-pad-(height-2*pad)*0.75+4}\" text-anchor=\"end\">75</text>
+          <text x=\"${pad-6}\" y=\"${pad+4}\" text-anchor=\"end\">100</text>
+        </g>
+      `;
+      svg.innerHTML = `
+        <rect x=\"${pad}\" y=\"${pad}\" width=\"${width-2*pad}\" height=\"${height-2*pad}\" fill=\"transparent\" />
+        <g stroke=\"#e6e1d8\" stroke-width=\"1\">
+          <line x1=\"${pad}\" y1=\"${pad + (height-2*pad)/4}\" x2=\"${width-pad}\" y2=\"${pad + (height-2*pad)/4}\" />
+          <line x1=\"${pad}\" y1=\"${pad + (height-2*pad)/2}\" x2=\"${width-pad}\" y2=\"${pad + (height-2*pad)/2}\" />
+          <line x1=\"${pad}\" y1=\"${pad + 3*(height-2*pad)/4}\" x2=\"${width-pad}\" y2=\"${pad + 3*(height-2*pad)/4}\" />
+        </g>
+        ${axis}
+        ${paths}
+        <line id=\"hover-line\" x1=\"0\" y1=\"${pad}\" x2=\"0\" y2=\"${height-pad}\" stroke=\"#0b2a3c\" stroke-width=\"1\" opacity=\"0\" />
+        <circle id=\"hover-dot\" cx=\"0\" cy=\"0\" r=\"5\" fill=\"#d55e00\" opacity=\"0\" />
+      `;
+
+      document.getElementById('loss-use').style.width = `${use*100}%`;
+      document.getElementById('loss-evap').style.width = `${evap*100}%`;
+
+      const tooltip = document.getElementById('sim-tooltip');
+      const metricDate = document.getElementById('metric-date');
+      const metricBase = document.getElementById('metric-base');
+      const metricAdj = document.getElementById('metric-adj');
+      const hoverDot = document.getElementById('hover-dot');
+      const hoverLine = document.getElementById('hover-line');
+      const legend = document.getElementById('model-legend');
+
+      if (model === 'all') {
+        legend.innerHTML = `<span class=\"dot\" style=\"background:#0b2a3c\"></span>Model Ortalaması <span class=\"dot\" style=\"background:#999\"></span>Model Aralığı`;
+      } else {
+        legend.innerHTML = '';
+      }
+
+      const onMove = (evt) => {
+        const rect = svg.getBoundingClientRect();
+        const widthPx = rect.width;
+        const heightPx = rect.height;
+        const padPx = (pad / width) * widthPx;
+        const x = evt.clientX - rect.left;
+        if (!models.length) return;
+        const anySeries = baseSeries[models[0]] || [];
+        const idx = nearestIndex(x, widthPx, padPx, anySeries.length);
+        const b = (baseSeries[models[0]] || [])[idx];
+        const a = (adjSeries[models[0]] || [])[idx];
+        const denom = Math.max(1, (anySeries.length - 1));
+        const xPos = pad + (idx / denom) * (width - 2 * pad);
+        const yPos = height - pad - ((a ? a.fill : 0) / 100) * (height - 2 * pad);
+        const xPx = (xPos / width) * widthPx;
+        const yPx = (yPos / height) * heightPx;
+
+        hoverDot.setAttribute('cx', xPos);
+        hoverDot.setAttribute('cy', yPos);
+        hoverDot.setAttribute('opacity', '1');
+        hoverLine.setAttribute('x1', xPos);
+        hoverLine.setAttribute('x2', xPos);
+        hoverLine.setAttribute('opacity', '0.7');
+
+        tooltip.style.opacity = '1';
+        tooltip.style.left = `${xPx}px`;
+        tooltip.style.top = `${yPx}px`;
+        if (b && a) {
+          metricDate.textContent = b.date;
+          metricBase.textContent = `${b.fill.toFixed(1)}%`;
+          metricAdj.textContent = `${a.fill.toFixed(1)}%`;
+
+          if (model === 'all') {
+            const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => v !== undefined);
+            const mean = vals.reduce((x,y)=>x+y,0)/vals.length;
+            const min = Math.min(...vals);
+            const max = Math.max(...vals);
+            tooltip.textContent = `${b.date} • Ortalama ${mean.toFixed(1)}% (Aralık ${min.toFixed(1)}–${max.toFixed(1)})`;
+          } else {
+            tooltip.textContent = `${b.date} • ${a.fill.toFixed(1)}%`;
+          }
+        }
+      };
+
+      const onLeave = () => {
+        tooltip.style.opacity = '0';
+        hoverDot.setAttribute('opacity', '0');
+        hoverLine.setAttribute('opacity', '0');
+      };
+
+      svg.onmousemove = onMove;
+      svg.onmouseleave = onLeave;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      modelData = window.MODEL_DATA || {};
+      baseline = window.BASELINE || null;
+      const usageTrend = window.USAGE_TREND || null;
+      const usageProfile = window.USAGE_PROFILE || null;
+      if (usageTrend) {
+        const minPct = Math.round((usageTrend.yoy_p10 ?? -0.01) * 100 * 4) / 4;
+        const maxPct = Math.round((usageTrend.yoy_p90 ?? 0.04) * 100 * 4) / 4;
+        const defaultPct = Math.round(((usageTrend.cagr_2019_2023 ?? usageTrend.yoy_median ?? 0.02) * 100) * 4) / 4;
+        const slider = document.getElementById('sim-use-growth');
+        slider.min = String(Math.min(-1, minPct));
+        slider.max = String(Math.max(4, maxPct));
+        slider.step = '0.25';
+        slider.value = String(defaultPct);
+        const rangeEl = document.getElementById('sim-use-range');
+        if (rangeEl) {
+          rangeEl.textContent = `Trend aralığı: ${usageTrend.year_min}–${usageTrend.year_max} (tam yıl), önerilen ${defaultPct.toFixed(2)}%/yıl`;
+        }
+      }
+      if (usageProfile) {
+        const seasonEl = document.getElementById('sim-use-season');
+        if (seasonEl) {
+          seasonEl.textContent = `Mevsimsellik: ${usageProfile.year_min}–${usageProfile.year_max} aylık dağılım`;
+        }
+      }
+      if (baseline) {
+        const usePct = Math.round(baseline.usage_share * 100);
+        const evapPct = Math.round(baseline.evap_share * 100);
+        document.getElementById('sim-use-m3').value = Math.round(baseline.usage_baraj_m3 / 1e6);
+        document.getElementById('base-evap-pct').textContent = `${evapPct}%`;
+        document.getElementById('base-use-pct').textContent = `${usePct}%`;
+        document.getElementById('base-evap-m3').textContent = `${Math.round(baseline.evap_total_m3/1e6)} milyon m³`;
+        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³`;
+        document.getElementById('base-area').textContent = `${baseline.area_km2_total.toFixed(2)}`;
+        document.getElementById('base-note').textContent = baseline.notes || '';
+      } else {
+        document.getElementById('sim-use-m3').value = 250;
+      }
+      renderSim();
+    });
+
+    document.getElementById('sim-reset').addEventListener('click', () => {
+      if (baseline) {
+        document.getElementById('sim-use-m3').value = Math.round(baseline.usage_baraj_m3 / 1e6);
+      }
+      document.getElementById('sim-rain').value = 0;
+      document.getElementById('sim-et0').value = 0;
+      document.getElementById('sim-use-growth').value = 0;
+      renderSim();
+    });
+
+    document.getElementById('sim-zero').addEventListener('click', () => {
+      document.getElementById('sim-rain').value = 0;
+      document.getElementById('sim-et0').value = 0;
+      document.getElementById('sim-use-growth').value = 0;
+      renderSim();
+    });
+
+    document.querySelectorAll('[data-scenario]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sc = btn.dataset.scenario;
+        if (sc === 'dry') {
+          document.getElementById('sim-rain').value = -15;
+          document.getElementById('sim-et0').value = 10;
+        } else if (sc === 'wet') {
+          document.getElementById('sim-rain').value = 15;
+          document.getElementById('sim-et0').value = -5;
+        } else if (sc === 'heat') {
+          document.getElementById('sim-rain').value = -5;
+          document.getElementById('sim-et0').value = 15;
+        }
+        renderSim();
+      });
+    });
+
+    ['sim-model','sim-rain','sim-et0','sim-use-m3','sim-use-growth'].forEach(id => {
+      document.getElementById(id).addEventListener('input', renderSim);
+    });
+
+    // Lightbox for images
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('img.zoomable').forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('open');
+      });
+    });
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    });
+  </script>
+</body>
+</html>

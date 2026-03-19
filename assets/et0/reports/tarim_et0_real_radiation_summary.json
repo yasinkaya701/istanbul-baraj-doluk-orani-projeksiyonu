@@ -1,0 +1,39 @@
+{
+  "coverage": {
+    "history_rows_daily": 3747,
+    "history_rows_monthly": 120,
+    "history_rows_yearly": 10,
+    "daily_start": "1990-01-01",
+    "daily_end": "2004-12-31",
+    "model_start": "1995-01-01",
+    "model_end": "2004-12-01"
+  },
+  "radiation_input": {
+    "file": "/Users/yasinkaya/Hackhaton/output/universal_datasets/daily_solar_radiation_complete.csv",
+    "real_extracted_days": 906,
+    "synthetic_days": 2841,
+    "days_clipped_to_rso": 254
+  },
+  "historical_stats": {
+    "et0_mm_year_mean": 919.0578706456101,
+    "et0_mm_year_min": 857.5337995603168,
+    "et0_mm_year_max": 1029.7394622372203,
+    "trend_mm_per_decade": 59.22547583207562
+  },
+  "forecast_stats": {
+    "baseline_year_range": "1995-2004",
+    "baseline_mm_year": 919.0578706456101,
+    "forecast_2031_2035_mm_year": 923.371179854398,
+    "delta_2031_2035_vs_baseline_mm_year": 4.313309208787814
+  },
+  "assumptions": {
+    "tmean_method": "Tmean = (Tmax + Tmin) / 2",
+    "delta_method": "Delta from Tmean with FAO-56 slope equation",
+    "soil_heat_flux": "G = 0",
+    "wind_speed": "u2 = 2.0 m/s constant fallback",
+    "pressure": "elevation-derived constant pressure",
+    "radiation": "provided daily radiation file used directly",
+    "monthly_coverage_rule": "only months with coverage_frac >= 0.80 are used for the forecast model",
+    "forecast_method": "quant regime forecast run directly on historical monthly ET0"
+  }
+}
