@@ -3,10 +3,10 @@
 ## Kullandigim Radyasyon Dosyasi
 
 - Dosya: `/Users/yasinkaya/Hackhaton/output/universal_datasets/daily_solar_radiation_complete.csv`
-- Gunluk veri kapsami: `1990-01-01` -> `2004-12-31`
-- Model kapsami: `1995-01-01` -> `2004-12-01`
-- `real_extracted` gun: `906`
-- `synthetic` gun: `2841`
+- Gunluk veri kapsami: `1975-01-01` -> `2004-12-31`
+- Model kapsami: `1975-01-01` -> `2004-12-01`
+- `real_extracted` gun: `0`
+- `synthetic` gun: `10957`
 
 Bu dosya kullanicinin verdigi radyasyon girdisi olarak dogrudan ET0 hesabina sokuldu.
 Not: dosya icindeki `data_source` kolonu korunmustur; yani hangi gunun gercek cikarim, hangisinin sentetik doldurma oldugu tabloda goruluyor.
@@ -24,13 +24,13 @@ Not: dosya icindeki `data_source` kolonu korunmustur; yani hangi gunun gercek ci
 
 ## Temel Bulgular
 
-- Ortalama yillik ET0: `919.1 mm/yil`
-- Yillik ET0 trendi: `+59.2 mm/10y`
-- Min yillik ET0: `857.5 mm/yil`
-- Max yillik ET0: `1029.7 mm/yil`
-- Baz donem (1995-2004) ortalama yillik ET0: `919.1 mm/yil`
-- 2031-2035 quant oengoru ortalama yillik ET0: `923.4 mm/yil`
-- Beklenen fark: `+4.3 mm/yil`
+- Ortalama yillik ET0: `945.9 mm/yil`
+- Yillik ET0 trendi: `+25.1 mm/10y`
+- Min yillik ET0: `882.6 mm/yil`
+- Max yillik ET0: `1071.1 mm/yil`
+- Baz donem (1995-2004) ortalama yillik ET0: `970.6 mm/yil`
+- 2031-2035 quant oengoru ortalama yillik ET0: `1030.2 mm/yil`
+- Beklenen fark: `+59.6 mm/yil`
 
 ## Uretilen Dosyalar
 
