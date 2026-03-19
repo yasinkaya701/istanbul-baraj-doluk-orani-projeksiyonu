@@ -4,7 +4,7 @@ Bu repo, İstanbul baraj doluluk projeksiyonu çalışmasının **statik web sun
 
 ## İçerik
 - `index.html`, `styles.css`: Tek sayfalık sunum
-- `assets/docs/`: PDF raporlar
+- `assets/docs/`: PDF raporlar (çalışma özeti + model sonuçları)
 - `assets/et0/`: ET0 açıklama görselleri ve raporları
 - `assets/img/`: Model kartları ve projeksiyon görselleri
 
@@ -58,7 +58,6 @@ python scripts/build_et0_multiscale_charts.py
 ## Notlar
 - Bu repo “sunum” amaçlıdır; model kodu ve veri işleme hatları ana projededir.
 - Veri dosyaları bu repoda tutulmaz; site, veri yoluna bağlı içerik içermez.
-- Hackathon final raporu, **extreme event pipeline** verilerine bağlıdır. Bu veri üretilmezse rapor yeniden oluşturulamaz.
 
 ## Lisans
 İçerikler proje içi kullanım içindir.

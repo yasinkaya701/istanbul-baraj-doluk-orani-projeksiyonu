@@ -9,10 +9,11 @@
     "model_end": "2004-12-01"
   },
   "radiation_input": {
-    "file": "/Users/yasinkaya/Hackhaton/output/universal_datasets/daily_solar_radiation_complete.csv",
+    "file": "redacted",
     "real_extracted_days": 0,
     "synthetic_days": 10957,
-    "days_clipped_to_rso": 0
+    "days_clipped_to_rso": 0,
+    "note": "Ham veri yolu bu repoda paylaşılmıyor."
   },
   "historical_stats": {
     "et0_mm_year_mean": 945.9405823163912,

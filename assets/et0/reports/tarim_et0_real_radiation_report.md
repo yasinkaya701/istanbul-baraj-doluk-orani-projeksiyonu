@@ -2,7 +2,7 @@
 
 ## Kullandigim Radyasyon Dosyasi
 
-- Dosya: `/Users/yasinkaya/Hackhaton/output/universal_datasets/daily_solar_radiation_complete.csv`
+- Dosya: `daily_solar_radiation_complete.csv` (ham veri yolu repoda paylasilmiyor)
 - Gunluk veri kapsami: `1975-01-01` -> `2004-12-31`
 - Model kapsami: `1975-01-01` -> `2004-12-01`
 - `real_extracted` gun: `0`
@@ -34,8 +34,8 @@ Not: dosya icindeki `data_source` kolonu korunmustur; yani hangi gunun gercek ci
 
 ## Uretilen Dosyalar
 
-- Gunluk ET0: `/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/tables/tarim_et0_daily_radiation_complete.csv`
-- Aylik ET0: `/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/tables/tarim_et0_monthly_radiation_complete.csv`
-- Yillik ET0: `/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/tables/tarim_et0_yearly_radiation_complete.csv`
-- Quant forecast: `/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/tables/tarim_et0_quant_forecast_to_2035.csv`
-- Grafikler: `/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/charts`
+- Gunluk ET0: `tarim_et0_daily_radiation_complete.csv`
+- Aylik ET0: `tarim_et0_monthly_radiation_complete.csv`
+- Yillik ET0: `tarim_et0_yearly_radiation_complete.csv`
+- Quant forecast: `tarim_et0_quant_forecast_to_2035.csv`
+- Grafikler: ET0 paket grafikleri

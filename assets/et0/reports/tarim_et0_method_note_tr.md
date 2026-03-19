@@ -150,7 +150,7 @@ Nedeni:
 
 Senin verdigin dosya:
 
-`/Users/yasinkaya/Hackhaton/output/universal_datasets/daily_solar_radiation_complete.csv`
+`gunluk_gunes_radyasyonu_veri_seti.csv` (dosya yolu bu repoda paylasilmiyor)
 
 Bu dosyayi ET0 hesabinda dogrudan kullandik.
 
