@@ -13,6 +13,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build ET0 formula explainer image.")
     parser.add_argument("--summary-json", type=Path, default=Path("/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/reports/tarim_et0_real_radiation_summary.json"))
     parser.add_argument("--out-png", type=Path, default=Path("/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/charts/tarim_et0_formula_explained.png"))
+    parser.add_argument("--label", type=str, default="Tarimsal", help="Context label (e.g., Baraj / Tarimsal).")
     return parser.parse_args()
 
 def add_text(fig: plt.Figure, x: float, y: float, text: str, size: float, weight: str = "normal") -> None:
@@ -23,6 +24,8 @@ def add_bullet(fig: plt.Figure, x: float, y: float, text: str, size: float = 15.
 
 def main() -> None:
     args = parse_args()
+    label = args.label.strip()
+    lower_label = label.lower()
     summary = json.loads(args.summary_json.read_text(encoding="utf-8"))
     cov = summary["coverage"]
     hist = summary["historical_stats"]
@@ -32,7 +35,7 @@ def main() -> None:
     ax.axis("off")
 
     y = 0.95
-    add_text(fig, 0.06, y, "Tarimsal ET0 Modeli", 27, "bold")
+    add_text(fig, 0.06, y, f"{label} ET0 Modeli", 27, "bold")
     y -= 0.055
     add_text(fig, 0.06, y, "Bu calismada FAO-56 Penman-Monteith yaklasimini kullandik. Amac, sicaklik, nem, radyasyon ve buhar basinci acigi bilgisini birlestirerek gunluk referans evapotranspirasyonu hesaplamakti.", 17)
 
@@ -68,7 +71,7 @@ def main() -> None:
     add_text(fig, 0.28, y, "Delta dogrudan sicaklik degildir; sicakliktan fiziksel denklemle turetilir.", 15.5)
     y -= 0.058
     fig.text(0.11, y, r"$G = 0$", ha="left", va="top", fontsize=21, color="#111111", family="DejaVu Serif")
-    add_text(fig, 0.28, y, "Gunluk tarimsal ET0 hesabinda standart ve savunulabilir kabul oldugu icin.", 15.5)
+    add_text(fig, 0.28, y, "Gunluk ET0 hesabinda standart ve savunulabilir kabul oldugu icin.", 15.5)
     y -= 0.058
     fig.text(0.11, y, r"$u_2 = 2.0\ \mathrm{m\,s^{-1}}$", ha="left", va="top", fontsize=21, color="#111111", family="DejaVu Serif")
     add_text(fig, 0.28, y, "Uzun donem kesintisiz ruzgar serisi olmadigi icin sabit fallback kullandik.", 15.5)
@@ -115,7 +118,15 @@ def main() -> None:
     add_bullet(fig, 0.09, y, f"Radyasyon gunleri: real_extracted={rad['real_extracted_days']} | synthetic={rad['synthetic_days']}")
 
     y -= 0.075
-    add_text(fig, 0.06, y, "Model penceresi: {} - {}    |    Sonraki katman: ETc = Kc x ET0".format(cov["model_start"], cov["model_end"]), 17, "bold")
+    if "baraj" in lower_label:
+        footer = "Model penceresi: {} - {}    |    Sonraki katman: Acik su buharlasma katsayisi (K)".format(
+            cov["model_start"], cov["model_end"]
+        )
+    else:
+        footer = "Model penceresi: {} - {}    |    Sonraki katman: ETc = Kc x ET0".format(
+            cov["model_start"], cov["model_end"]
+        )
+    add_text(fig, 0.06, y, footer, 17, "bold")
 
     args.out_png.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out_png, dpi=180, bbox_inches="tight", facecolor="white")

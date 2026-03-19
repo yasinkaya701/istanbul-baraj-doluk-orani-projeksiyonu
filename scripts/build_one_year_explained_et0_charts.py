@@ -37,6 +37,8 @@ def parse_args() -> argparse.Namespace:
         default=Path("/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/charts"),
         help="Output chart directory.",
     )
+    parser.add_argument("--label", type=str, default="Tarimsal", help="Context label (e.g., Baraj / Tarimsal).")
+    parser.add_argument("--prefix", type=str, default="tarim_et0", help="Filename prefix for outputs.")
     parser.add_argument("--year", type=int, default=2004, help="Target year.")
     return parser.parse_args()
 
@@ -56,7 +58,7 @@ def add_season_bands(ax: plt.Axes, year: int, colors: dict[str, str]) -> None:
         ax.text(center, 0.985, label, transform=ax.get_xaxis_transform(), ha="center", va="top", fontsize=9, color=colors["muted"])
 
 
-def make_daily_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
+def make_daily_chart(df: pd.DataFrame, year: int, out_path: Path, label: str) -> None:
     colors = theme()
     year_df = df[df["date"].dt.year == year].copy()
     if year_df.empty:
@@ -81,7 +83,7 @@ def make_daily_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
 
     render_et0_panel(
         ax_text,
-        context_title=f"Gunluk Tarimsal ET0 | {year}",
+        context_title=f"Gunluk {label} ET0 | {year}",
         context_lines=[
             "Zaman adimi: gunluk seri",
             "Amac: mevsim ici ET0 ritmini gormek",
@@ -127,7 +129,7 @@ def make_daily_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
             alpha=0.7,
             label="Gercek radiation gunleri",
         )
-    ax_plot.set_title(f"Gunluk Tarimsal ET0 - {year}", fontsize=16, color=colors["text"], pad=14)
+    ax_plot.set_title(f"Gunluk {label} ET0 - {year}", fontsize=16, color=colors["text"], pad=14)
     ax_plot.set_xlabel("Tarih", fontsize=11, color=colors["text"])
     ax_plot.set_ylabel("ET0 (mm/gun)", fontsize=11, color=colors["text"])
     ax_plot.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
@@ -155,7 +157,7 @@ def make_daily_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
     plt.close(fig)
 
 
-def make_monthly_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
+def make_monthly_chart(df: pd.DataFrame, year: int, out_path: Path, label: str) -> None:
     colors = theme()
     year_df = df[df["date"].dt.year == year].copy().reset_index(drop=True)
     if year_df.empty:
@@ -179,7 +181,7 @@ def make_monthly_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
 
     render_et0_panel(
         ax_text,
-        context_title=f"Aylik Tarimsal ET0 | {year}",
+        context_title=f"Aylik {label} ET0 | {year}",
         context_lines=[
             "Zaman adimi: aylik toplamlama",
             "Amac: tepe ay ve dusuk ay desenini gormek",
@@ -223,7 +225,7 @@ def make_monthly_chart(df: pd.DataFrame, year: int, out_path: Path) -> None:
     ax_aux.spines["left"].set_visible(False)
     ax_aux.spines["right"].set_color(colors["spine"])
     ax_plot.set_xticks(x, month_labels)
-    ax_plot.set_title(f"Aylik Tarimsal ET0 - {year}", fontsize=16, color=colors["text"], pad=14)
+    ax_plot.set_title(f"Aylik {label} ET0 - {year}", fontsize=16, color=colors["text"], pad=14)
     ax_plot.set_xlabel("Ay", fontsize=11, color=colors["text"])
     ax_plot.set_ylabel("ET0 (mm/ay)", fontsize=11, color=colors["text"])
     ax_plot.text(
@@ -252,11 +254,11 @@ def main() -> None:
     daily = pd.read_csv(args.daily_csv, parse_dates=["date"])
     monthly = pd.read_csv(args.monthly_csv, parse_dates=["date"])
 
-    daily_chart = args.out_dir / f"tarim_et0_daily_explained_{args.year}.png"
-    monthly_chart = args.out_dir / f"tarim_et0_monthly_explained_{args.year}.png"
+    daily_chart = args.out_dir / f"{args.prefix}_daily_explained_{args.year}.png"
+    monthly_chart = args.out_dir / f"{args.prefix}_monthly_explained_{args.year}.png"
 
-    make_daily_chart(daily, args.year, daily_chart)
-    make_monthly_chart(monthly, args.year, monthly_chart)
+    make_daily_chart(daily, args.year, daily_chart, args.label)
+    make_monthly_chart(monthly, args.year, monthly_chart, args.label)
 
     print(f"Wrote: {daily_chart}")
     print(f"Wrote: {monthly_chart}")

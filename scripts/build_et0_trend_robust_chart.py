@@ -32,10 +32,12 @@ def parse_args() -> argparse.Namespace:
         default=Path("/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation/charts/tarim_et0_yearly_trend_robust_explained.png"),
         help="Output chart path.",
     )
+    parser.add_argument("--label", type=str, default="Tarimsal", help="Context label (e.g., Baraj / Tarimsal).")
     return parser.parse_args()
 
 def main() -> None:
     args = parse_args()
+    label = args.label.strip()
     colors = theme()
 
     df = pd.read_csv(args.yearly_csv, parse_dates=["date"]).sort_values("year").reset_index(drop=True)
@@ -146,7 +148,7 @@ def main() -> None:
         color=colors["muted"],
         bbox=dict(boxstyle="round,pad=0.25", facecolor="#fff9f0", edgecolor=colors["panel_edge"]),
     )
-    ax_plot.set_title("Tarimsal ET0 Genel Trend", fontsize=16.5, color=colors["text"], pad=14)
+    ax_plot.set_title(f"{label} ET0 Genel Trend", fontsize=16.5, color=colors["text"], pad=14)
     ax_plot.set_xlabel("Yil", fontsize=11, color=colors["text"])
     ax_plot.set_ylabel("ET0 (mm/yil)", fontsize=11, color=colors["text"])
     ax_aux = ax_plot.twinx()

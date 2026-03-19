@@ -2,6 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C6FF,50:3F51B5,100:F7971E&height=180&section=header&text=Hackhaton&fontSize=54&fontColor=FFFFFF&animation=twinkling" />
   <h3>Su, iklim ve baraj analitigi calisma alani</h3>
   <p>Arastirma, modelleme ve karar destek panelleri bir arada.</p>
+  <p><strong>Not:</strong> Bu calisma Kandilli Rasathanesi ve Bogazici Universitesi Bilgisayar Hackhatonu icin yapilmistir.</p>
   <p>
     <img src="https://img.shields.io/badge/Odak-Climate%20%26%20Water-00BCD4" />
     <img src="https://img.shields.io/badge/Stack-Python%20%2B%20JS-1E88E5" />

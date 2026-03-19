@@ -45,6 +45,18 @@ def parse_args() -> argparse.Namespace:
         default=Path("/Users/yasinkaya/Hackhaton/output/tarim_et0_real_radiation"),
         help="Output directory.",
     )
+    parser.add_argument(
+        "--label",
+        type=str,
+        default="Tarimsal",
+        help="Context label used in titles (e.g., 'Baraj' or 'Tarimsal').",
+    )
+    parser.add_argument(
+        "--prefix",
+        type=str,
+        default="tarim_et0",
+        help="Filename prefix for generated artifacts.",
+    )
     parser.add_argument("--latitude", type=float, default=41.01, help="Latitude in degrees.")
     parser.add_argument("--elevation-m", type=float, default=39.0, help="Elevation in meters.")
     parser.add_argument("--u2", type=float, default=2.0, help="Constant 2 m wind speed in m/s.")
@@ -219,7 +231,14 @@ def build_yearly_history(monthly: pd.DataFrame) -> pd.DataFrame:
     return out[cols]
 
 
-def plot_history(daily: pd.DataFrame, monthly: pd.DataFrame, yearly: pd.DataFrame, charts_dir: Path) -> None:
+def plot_history(
+    daily: pd.DataFrame,
+    monthly: pd.DataFrame,
+    yearly: pd.DataFrame,
+    charts_dir: Path,
+    label: str,
+    prefix: str,
+) -> None:
     charts_dir.mkdir(parents=True, exist_ok=True)
     plt.style.use("seaborn-v0_8-whitegrid")
 
@@ -230,11 +249,11 @@ def plot_history(daily: pd.DataFrame, monthly: pd.DataFrame, yearly: pd.DataFram
     fig, ax = plt.subplots(figsize=(12.5, 5.8))
     ax.plot(d.index, d["et0_mm_day"], color="#d97b29", linewidth=0.55, alpha=0.25, label="Gunluk ET0")
     ax.plot(d.index, d["et0_mm_day"].rolling(30, min_periods=10).mean(), color="#8d3b0d", linewidth=1.8, label="30 gun ort.")
-    ax.set_title("Gunluk Tarimsal ET0")
+    ax.set_title(f"Gunluk {label} ET0")
     ax.set_ylabel("ET0 (mm/gun)")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(charts_dir / "tarim_et0_daily_history.png", dpi=130, bbox_inches="tight")
+    fig.savefig(charts_dir / f"{prefix}_daily_history.png", dpi=130, bbox_inches="tight")
     plt.close(fig)
 
     m = monthly.copy()
@@ -242,11 +261,11 @@ def plot_history(daily: pd.DataFrame, monthly: pd.DataFrame, yearly: pd.DataFram
     fig, ax = plt.subplots(figsize=(12.5, 5.8))
     ax.plot(m["date"], m["et0_mm_month"], color="#a44a3f", linewidth=0.9, alpha=0.45, label="Aylik ET0")
     ax.plot(m["date"], m["et0_mm_month"].rolling(12, min_periods=6).mean(), color="#5d1f1f", linewidth=2.0, label="12 ay ort.")
-    ax.set_title("Aylik Tarimsal ET0")
+    ax.set_title(f"Aylik {label} ET0")
     ax.set_ylabel("ET0 (mm/ay)")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(charts_dir / "tarim_et0_monthly_history.png", dpi=130, bbox_inches="tight")
+    fig.savefig(charts_dir / f"{prefix}_monthly_history.png", dpi=130, bbox_inches="tight")
     plt.close(fig)
 
     y = yearly.copy()
@@ -255,11 +274,11 @@ def plot_history(daily: pd.DataFrame, monthly: pd.DataFrame, yearly: pd.DataFram
     fig, ax = plt.subplots(figsize=(12.5, 5.8))
     ax.bar(y["year"], y["et0_mm_year"], color="#5b8e7d", width=0.9, alpha=0.85)
     ax.plot(y["year"], trend, color="#1d3557", linewidth=2.0, label=f"Trend: {coef[0] * 10.0:+.1f} mm/10y")
-    ax.set_title("Yillik Tarimsal ET0")
+    ax.set_title(f"Yillik {label} ET0")
     ax.set_ylabel("ET0 (mm/yil)")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(charts_dir / "tarim_et0_yearly_trend.png", dpi=130, bbox_inches="tight")
+    fig.savefig(charts_dir / f"{prefix}_yearly_trend.png", dpi=130, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -327,7 +346,7 @@ def clean_forecast_csv(raw_forecast_csv: Path, out_csv: Path) -> pd.DataFrame:
     return fc
 
 
-def plot_forecast(forecast_df: pd.DataFrame, charts_dir: Path) -> None:
+def plot_forecast(forecast_df: pd.DataFrame, charts_dir: Path, label: str, prefix: str) -> None:
     charts_dir.mkdir(parents=True, exist_ok=True)
     df = forecast_df.copy()
     df["date"] = pd.to_datetime(df["date"])
@@ -341,11 +360,11 @@ def plot_forecast(forecast_df: pd.DataFrame, charts_dir: Path) -> None:
         ax.plot(fc["date"], fc["yhat"], color="#d1495b", linewidth=2.0, label="Quant oengoru")
         if {"yhat_lower", "yhat_upper"}.issubset(fc.columns):
             ax.fill_between(fc["date"], fc["yhat_lower"], fc["yhat_upper"], color="#d1495b", alpha=0.18, label="Guven bandi")
-    ax.set_title("Tarimsal ET0 Quant Oengoru")
+    ax.set_title(f"{label} ET0 Quant Oengoru")
     ax.set_ylabel("ET0 (mm/ay)")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(charts_dir / "tarim_et0_quant_forecast.png", dpi=130, bbox_inches="tight")
+    fig.savefig(charts_dir / f"{prefix}_quant_forecast.png", dpi=130, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -406,13 +425,22 @@ def build_summary(daily: pd.DataFrame, monthly: pd.DataFrame, yearly: pd.DataFra
     }
 
 
-def write_report(report_path: Path, daily_csv: Path, monthly_csv: Path, yearly_csv: Path, forecast_csv: Path, charts_dir: Path, summary: dict) -> None:
+def write_report(
+    report_path: Path,
+    daily_csv: Path,
+    monthly_csv: Path,
+    yearly_csv: Path,
+    forecast_csv: Path,
+    charts_dir: Path,
+    summary: dict,
+    label: str,
+) -> None:
     hist = summary["historical_stats"]
     fc = summary["forecast_stats"]
     rad = summary["radiation_input"]
 
     lines = [
-        "# Tarimsal ET0 - Gercek Radyasyon Girdili Paket",
+        f"# {label} ET0 - Gercek Radyasyon Girdili Paket",
         "",
         "## Kullandigim Radyasyon Dosyasi",
         "",
@@ -478,28 +506,28 @@ def main() -> None:
         pd.to_datetime(monthly_all["date"]).dt.year.isin(valid_years) & monthly_all["is_reliable"]
     ].copy()
 
-    daily_csv = tables_dir / "tarim_et0_daily_radiation_complete.csv"
-    monthly_csv = tables_dir / "tarim_et0_monthly_radiation_complete.csv"
-    yearly_csv = tables_dir / "tarim_et0_yearly_radiation_complete.csv"
+    daily_csv = tables_dir / f"{args.prefix}_daily_radiation_complete.csv"
+    monthly_csv = tables_dir / f"{args.prefix}_monthly_radiation_complete.csv"
+    yearly_csv = tables_dir / f"{args.prefix}_yearly_radiation_complete.csv"
     daily.to_csv(daily_csv, index=False)
     monthly.to_csv(monthly_csv, index=False)
     yearly.to_csv(yearly_csv, index=False)
 
-    plot_history(daily, monthly, yearly, charts_dir)
+    plot_history(daily, monthly, yearly, charts_dir, args.label, args.prefix)
 
-    quant_source_csv = tables_dir / "tarim_et0_quant_source.csv"
+    quant_source_csv = tables_dir / f"{args.prefix}_quant_source.csv"
     monthly[["date", "et0_mm_month"]].to_csv(quant_source_csv, index=False)
     raw_forecast_csv = run_quant_forecast(quant_source_csv, args.quant_script, quant_dir, args.target_year)
-    forecast_csv = tables_dir / f"tarim_et0_quant_forecast_to_{args.target_year}.csv"
+    forecast_csv = tables_dir / f"{args.prefix}_quant_forecast_to_{args.target_year}.csv"
     forecast_df = clean_forecast_csv(raw_forecast_csv, forecast_csv)
-    plot_forecast(forecast_df, charts_dir)
+    plot_forecast(forecast_df, charts_dir, args.label, args.prefix)
 
     summary = build_summary(daily, monthly, yearly, forecast_df, args.solar_input)
-    summary_path = reports_dir / "tarim_et0_real_radiation_summary.json"
+    summary_path = reports_dir / f"{args.prefix}_real_radiation_summary.json"
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    report_path = reports_dir / "tarim_et0_real_radiation_report.md"
-    write_report(report_path, daily_csv, monthly_csv, yearly_csv, forecast_csv, charts_dir, summary)
+    report_path = reports_dir / f"{args.prefix}_real_radiation_report.md"
+    write_report(report_path, daily_csv, monthly_csv, yearly_csv, forecast_csv, charts_dir, summary, args.label)
 
     print(f"Wrote: {daily_csv}")
     print(f"Wrote: {monthly_csv}")
