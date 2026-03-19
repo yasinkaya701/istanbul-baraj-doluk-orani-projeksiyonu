@@ -554,7 +554,7 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
 
             <div class="assumptions">
               <p><strong>Not:</strong> Buharlaşma etkisi doğrudan ET0 değişimine bağlandı. ET0 artarsa buharlaşma artar.</p>
-              <p><strong>Not:</strong> Senaryo etkileri, regresyon katsayılarının işaretini koruyacak şekilde sunum için ölçeklendirildi.</p>
+              <p><strong>Not:</strong> Yağış ve ET0 etkileri havza/göl alanı üzerinden hacme çevrilir; senaryo farkı baz projeksiyona eklenir.</p>
             </div>
           </div>
         </div>
@@ -571,15 +571,17 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
 
         <div class="card">
           <h4>Akademik Yöntem Notu</h4>
-          <p class="note">Simülasyon, baz projeksiyonun aylık doluluk değişimini (<em>ΔS</em>) iklim su dengesi ve kullanım etkileriyle lineer olarak günceller. İklim etkisi, 2010–2040 aylık iklim su dengesi verisi ile doluluk değişimi arasındaki kalibrasyon katsayısı (<em>k</em>) üzerinden hesaplanır.</p>
-          <p class="note">Buharlaşma etkisi ET0 bileşeni içinde modellenir; ayrıca ayrı bir terim olarak eklenmez.</p>
-          <p class="note">Kapasite etkisi için iklim terimi doluluk başlığı (headroom) ile sönümlenir; yağışın tamamının depolanmadığı varsayımıyla akış/yakalanım katsayısı uygulanır. Aylık düzeltme, tarihsel aylık değişimlerin %90 persentiline göre üst sınırlandırılır.</p>
-          <pre class="formula">ΔS′ = ΔS + cap( k_m·(ΔP − ΔET0)·f(headroom) + c_use·ΔU )</pre>
+          <p class="note">Simülasyon, baz projeksiyonun aylık doluluk değişimini (<em>ΔS</em>) hacim tabanlı su dengesiyle günceller. Yağış havza alanı üzerinden akış katsayısı ile içeri alınır; göl yüzeyine düşen yağış doğrudan eklenir. ET0, açık su katsayısı (<em>Kc</em>) ile buharlaşmaya çevrilir; kullanım yıllık talep ve mevsimsellik profiline göre aylık hacme dönüştürülür.</p>
+          <p class="note">Akış katsayısı (<em>R_m</em>), 2010–2024 doluluk değişimi ile yağış–buharlaşma–kullanım dengesini en küçük kareler ile uyumlayarak (0–1 aralığında) kalibre edilir.</p>
+          <p class="note">Senaryo etkisi, baz projeksiyondaki aylık değişime eklenen hacim farkı olarak uygulanır.</p>
+          <pre class="formula">ΔS_mcm = R_m·P_m·A_catch·0.001 + P_m·A_lake·0.001 − Kc·ET0_m·A_lake·0.001 − U_m
+Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           <div class="sim-params">
-            <div>k_m (mm → doluluk puanı, aylık): <strong id="param-k">—</strong></div>
-            <div>c_use (1 m³ → doluluk puanı): <strong id="param-cuse">—</strong></div>
-            <div>Akış/yakalanım katsayısı: <strong id="param-runoff">—</strong></div>
-            <div>Aylık senaryo sınırı (p90): <strong id="param-cap">—</strong></div>
+            <div>Toplam havza alanı: <strong id="param-catchment">—</strong> km²</div>
+            <div>Toplam aktif kapasite: <strong id="param-capacity">—</strong> hm³</div>
+            <div>Açık su alanı: <strong id="param-lake-area">—</strong> km²</div>
+            <div>Kc (açık su): <strong id="param-kc">—</strong></div>
+            <div>Akış katsayısı (aylık): <strong id="param-runoff">—</strong></div>
             <div>Ortalama yağış (mm/ay): <strong id="param-mean-rain">—</strong></div>
             <div>Ortalama ET0 (mm/ay): <strong id="param-mean-et0">—</strong></div>
           </div>
@@ -661,6 +663,7 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
 
   <script src="assets/data/projection_all_models.js"></script>
   <script src="assets/data/evap_usage_baseline.js"></script>
+  <script src="assets/data/reservoir_reference.js"></script>
   <script src="assets/data/sim_coeffs.js"></script>
   <script src="assets/data/usage_trend_stats.js"></script>
   <script src="assets/data/usage_monthly_profile.js"></script>
@@ -684,6 +687,8 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
     let baseline = null;
     let climateBaseline = {};
     let climateClim = null;
+    let reservoirRef = null;
+    let runoffCalibration = null;
 
     function parseCSV(text) {
       const lines = text.trim().split('\n');
@@ -729,31 +734,6 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       return Math.max(min, Math.min(max, value));
     }
 
-    function quantile(values, q) {
-      if (!values.length) return 0;
-      const sorted = values.slice().sort((a, b) => a - b);
-      const pos = (sorted.length - 1) * q;
-      const base = Math.floor(pos);
-      const rest = pos - base;
-      if (sorted[base + 1] !== undefined) {
-        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
-      }
-      return sorted[base];
-    }
-
-    function adjustmentCap(series) {
-      const deltas = [];
-      for (let i = 1; i < series.length; i += 1) {
-        const cur = series[i] ? series[i].fill : undefined;
-        const prev = series[i - 1] ? series[i - 1].fill : undefined;
-        if (cur === null || cur === undefined || prev === null || prev === undefined) continue;
-        deltas.push(Math.abs(cur - prev));
-      }
-      if (!deltas.length) return 3;
-      const p90 = quantile(deltas, 0.9);
-      return Math.max(2.5, p90);
-    }
-
     function buildClimateClimatology() {
       const byMonth = Array.from({ length: 12 }, () => ({ p: 0, e: 0, n: 0 }));
       Object.entries(climateBaseline || {}).forEach(([dateStr, row]) => {
@@ -783,6 +763,56 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       };
     }
 
+    function computeRunoffCalibration(series, usageProfile, baseUseMonthlyMcm, lakeAreaKm2, catchmentKm2, kc, capacityMcm) {
+      if (!series || !series.length || !catchmentKm2 || !capacityMcm) {
+        return { global: null, byMonth: null };
+      }
+      const stats = Array.from({ length: 12 }, () => ({ num: 0, den: 0 }));
+      let globalNum = 0;
+      let globalDen = 0;
+      for (let i = 1; i < series.length; i += 1) {
+        const cur = series[i];
+        const prev = series[i - 1];
+        if (!cur || !prev) continue;
+        if (cur.fill === null || cur.fill === undefined || prev.fill === null || prev.fill === undefined) continue;
+        const climate = getClimateRow(cur.date);
+        if (!climate) continue;
+        const precip = climate.precip_mm_month;
+        const et0 = climate.et0_mm_month;
+        if (precip === undefined || et0 === undefined) continue;
+        const m = new Date(cur.date).getMonth();
+        const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
+        const useMcm = baseUseMonthlyMcm * seasonal;
+        const lakeRainMcm = precip * lakeAreaKm2 * 0.001;
+        const evapMcm = et0 * kc * lakeAreaKm2 * 0.001;
+        const deltaMcm = (cur.fill - prev.fill) / 100 * capacityMcm;
+        const target = deltaMcm + evapMcm + useMcm - lakeRainMcm;
+        const precipMcm = precip * catchmentKm2 * 0.001;
+        if (!Number.isFinite(precipMcm) || precipMcm <= 0) continue;
+        stats[m].num += precipMcm * target;
+        stats[m].den += precipMcm * precipMcm;
+        globalNum += precipMcm * target;
+        globalDen += precipMcm * precipMcm;
+      }
+      const clampCoeff = (value) => {
+        if (value === null || value === undefined || Number.isNaN(value)) return null;
+        return Math.max(0, Math.min(1, value));
+      };
+      const global = clampCoeff(globalDen ? globalNum / globalDen : null);
+      const byMonth = stats.map(s => clampCoeff(s.den ? s.num / s.den : null));
+      return { global, byMonth };
+    }
+
+    function getRunoffCoeff(monthIdx, fallback) {
+      if (runoffCalibration && runoffCalibration.byMonth && runoffCalibration.byMonth[monthIdx] !== null && runoffCalibration.byMonth[monthIdx] !== undefined) {
+        return runoffCalibration.byMonth[monthIdx];
+      }
+      if (runoffCalibration && runoffCalibration.global !== null && runoffCalibration.global !== undefined) {
+        return runoffCalibration.global;
+      }
+      return fallback;
+    }
+
     const MODEL_COLORS = {
       ridge: '#1f77b4',
       gbr: '#ff7f0e',
@@ -792,23 +822,21 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
     };
 
     function getSeries(model, rain, et0, useM3, evapM3, useGrowth) {
-      const coeff = window.SIM_COEFFS || { a_rain: 0.0003, b_et0: -0.0009, c_use: -3e-8, mean_rain: 70, mean_et0: 80, mean_use_monthly: 2.7e6 };
-      const kDefault = coeff.k_balance_mm_to_fill ?? coeff.k_global ?? 0.03;
-      const kGlobal = coeff.k_global ?? kDefault;
-      const kMax = coeff.k_max ?? 0.08;
-      const kShrink = coeff.k_shrink ?? 0.5;
-      const runoffCoeff = coeff.runoff_coeff ?? 0.6;
+      const coeff = window.SIM_COEFFS || {};
       const base = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
-      const adjCap = Math.max(1.5, adjustmentCap(base) * (coeff.adjustment_cap_scale ?? 0.7));
       const usageProfile = (window.USAGE_PROFILE && window.USAGE_PROFILE.profile) ? window.USAGE_PROFILE.profile : null;
       const startDate = base[0] ? new Date(base[0].date) : null;
-      const baseUseMonthly = (window.BASELINE ? window.BASELINE.usage_baraj_m3 : 275104161) / 12.0;
-      const baseEvapMonthly = (window.BASELINE ? window.BASELINE.evap_total_m3 : 98840094) / 12.0;
+      const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
+      const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
+      const catchmentKm2 = reservoirRef && reservoirRef.total_catchment_km2 ? reservoirRef.total_catchment_km2 : 2688;
+      const capacityMcm = reservoirRef && reservoirRef.total_active_capacity_mcm ? reservoirRef.total_active_capacity_mcm : 868.683;
+      const runoffFallback = coeff.runoff_coeff ?? 0.35;
+      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
       let prevAdj = base[0] && base[0].fill !== null && base[0].fill !== undefined ? base[0].fill : 0;
       const adjusted = base.map((d, i) => {
         const curFill = d.fill !== null && d.fill !== undefined ? d.fill : prevAdj;
         if (i === 0) {
-          return { date: d.date, fill: Math.max(0, Math.min(100, prevAdj)) };
+          return { date: d.date, fill: clamp(prevAdj, 0, 100) };
         }
         const prevBase = base[i - 1];
         const prevFill = prevBase && prevBase.fill !== null && prevBase.fill !== undefined ? prevBase.fill : prevAdj;
@@ -821,23 +849,28 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
         const useScale = Math.pow(1 + useGrowth, years);
         const m = new Date(d.date).getMonth(); // 0-11
         const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
-        const useMonthly = (useM3 * useScale * 1e6) / 12.0 * seasonal;
-        const evapMonthly = (evapM3 * 1e6) / 12.0;
+        const useMonthlyMcm = (useM3 * useScale) / 12.0 * seasonal;
+        const baseUseMonthlySeasonal = baseUseMonthlyMcm * seasonal;
 
         const climate = getClimateRow(d.date);
-        const precip = climate ? climate.precip_mm_month : (coeff.mean_rain ?? 0);
-        const et0Base = climate ? climate.et0_mm_month : (coeff.mean_et0 ?? 0);
-        const deltaWaterBalance = (precip * (rain / 100) * runoffCoeff) - (et0Base * (et0 / 100));
-        const kRaw = coeff.k_by_month && coeff.k_by_month[String(m + 1)] !== undefined
-          ? coeff.k_by_month[String(m + 1)]
-          : kDefault;
-        const kMonth = Math.max(0, Math.min(kMax, (kRaw * (1 - kShrink)) + (kGlobal * kShrink)));
-        const headroom = Math.max(0.05, (100 - prevAdj) / 100);
-        const capture = 0.2 + 0.8 * headroom;
-        const climateEff = kMonth * deltaWaterBalance * capture;
-        const useEff = coeff.c_use * (useMonthly - baseUseMonthly);
-        const adjDelta = clamp(climateEff + useEff, -adjCap, adjCap);
-        const next = clamp(prevAdj + baseDelta + adjDelta, 0, 100);
+        const precipBase = climate ? climate.precip_mm_month : 0;
+        const et0Base = climate ? climate.et0_mm_month : 0;
+        const precipScen = precipBase * (1 + rain / 100);
+        const et0Scen = et0Base * (1 + et0 / 100);
+
+        const runoffCoeff = getRunoffCoeff(m, runoffFallback);
+        const inflowBase = runoffCoeff * precipBase * catchmentKm2 * 0.001;
+        const inflowScen = runoffCoeff * precipScen * catchmentKm2 * 0.001;
+        const lakeRainBase = precipBase * lakeAreaKm2 * 0.001;
+        const lakeRainScen = precipScen * lakeAreaKm2 * 0.001;
+        const evapBase = et0Base * kc * lakeAreaKm2 * 0.001;
+        const evapScen = et0Scen * kc * lakeAreaKm2 * 0.001;
+
+        const deltaMcm = (inflowScen + lakeRainScen - evapScen - useMonthlyMcm)
+          - (inflowBase + lakeRainBase - evapBase - baseUseMonthlySeasonal);
+        const deltaPct = capacityMcm ? (deltaMcm / capacityMcm) * 100 : 0;
+
+        const next = clamp(prevAdj + baseDelta + deltaPct, 0, 100);
         prevAdj = next;
         return { date: d.date, fill: next };
       });
@@ -850,8 +883,12 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       const et0 = parseFloat(document.getElementById('sim-et0').value);
       const useM3 = parseFloat(document.getElementById('sim-use-m3').value);
       const useGrowth = parseFloat(document.getElementById('sim-use-growth').value) / 100;
-      const baseEvapYear = (window.BASELINE ? window.BASELINE.evap_total_m3 : 98840094) / 1e6;
-      const evapM3 = Math.max(1, baseEvapYear * (1 + et0 / 100));
+      const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
+      const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
+      const meanEt0 = climateClim && climateClim.length
+        ? (climateClim.reduce((sum, row) => sum + row.et0, 0) / climateClim.length)
+        : ((window.SIM_COEFFS && window.SIM_COEFFS.mean_et0) ? window.SIM_COEFFS.mean_et0 : 0);
+      const evapM3 = Math.max(1, meanEt0 * (1 + et0 / 100) * kc * lakeAreaKm2 * 0.001 * 12);
       const totalM3 = Math.max(1, useM3 + evapM3);
       const use = useM3 / totalM3;
       const evap = evapM3 / totalM3;
@@ -1048,56 +1085,83 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
     document.addEventListener('DOMContentLoaded', () => {
       modelData = window.MODEL_DATA || {};
       baseline = window.BASELINE || null;
+      reservoirRef = window.RESERVOIR_REFERENCE || null;
       climateBaseline = window.CLIMATE_BASELINE || {};
       climateClim = buildClimateClimatology();
       const coeff = window.SIM_COEFFS || {};
       const usageTrend = window.USAGE_TREND || null;
       const usageProfile = window.USAGE_PROFILE || null;
-      const kEl = document.getElementById('param-k');
-      const cUseEl = document.getElementById('param-cuse');
+      const catchEl = document.getElementById('param-catchment');
+      const capEl = document.getElementById('param-capacity');
+      const lakeEl = document.getElementById('param-lake-area');
+      const kcEl = document.getElementById('param-kc');
       const runoffEl = document.getElementById('param-runoff');
-      const capEl = document.getElementById('param-cap');
       const meanRainEl = document.getElementById('param-mean-rain');
       const meanEt0El = document.getElementById('param-mean-et0');
-      if (kEl) {
-        if (coeff.k_by_month) {
-          const vals = Object.values(coeff.k_by_month);
-          if (vals.length) {
-            const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-            const min = Math.min(...vals);
-            const max = Math.max(...vals);
-            const kMax = coeff.k_max ?? null;
-            const kMaxText = kMax !== null ? `, k_max ${kMax.toFixed(3)}` : '';
-            kEl.textContent = `${avg.toFixed(4)} (min ${min.toFixed(4)}, max ${max.toFixed(4)}${kMaxText})`;
-          }
-        } else if (coeff.k_balance_mm_to_fill !== undefined) {
-          kEl.textContent = `${coeff.k_balance_mm_to_fill.toFixed(4)} puan/mm`;
-        }
+      const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
+      const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
+      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
+      const modelKeys = Object.keys(modelData || {});
+      const refModelKey = modelData.etr ? 'etr' : (modelKeys.length ? modelKeys[0] : null);
+      const refSeries = refModelKey ? (modelData[refModelKey] || []) : [];
+      const refSeriesFiltered = refSeries.filter(d => d.fill !== null && d.fill !== undefined && d.date >= '2010-01-01');
+      if (reservoirRef && refSeriesFiltered.length) {
+        runoffCalibration = computeRunoffCalibration(
+          refSeriesFiltered,
+          usageProfile ? usageProfile.profile : null,
+          baseUseMonthlyMcm,
+          lakeAreaKm2,
+          reservoirRef.total_catchment_km2,
+          kc,
+          reservoirRef.total_active_capacity_mcm
+        );
       }
-      if (cUseEl && coeff.c_use !== undefined) {
-        cUseEl.textContent = `${(coeff.c_use * 1e6).toFixed(4)} puan / (10^6 m3)`;
+      if (catchEl && reservoirRef) {
+        catchEl.textContent = reservoirRef.total_catchment_km2.toFixed(0);
+      }
+      if (capEl && reservoirRef) {
+        capEl.textContent = reservoirRef.total_active_capacity_mcm.toFixed(1);
+      }
+      if (lakeEl) {
+        lakeEl.textContent = lakeAreaKm2.toFixed(2);
+      }
+      if (kcEl) {
+        kcEl.textContent = kc.toFixed(2);
       }
       if (runoffEl) {
-        const runoff = coeff.runoff_coeff ?? 0.6;
-        runoffEl.textContent = runoff.toFixed(2);
+        let text = '—';
+        if (runoffCalibration) {
+          const vals = (runoffCalibration.byMonth || []).filter(v => v !== null && v !== undefined);
+          if (vals.length) {
+            const avg = runoffCalibration.global !== null && runoffCalibration.global !== undefined
+              ? runoffCalibration.global
+              : (vals.reduce((a, b) => a + b, 0) / vals.length);
+            const min = Math.min(...vals);
+            const max = Math.max(...vals);
+            text = `${avg.toFixed(2)} (min ${min.toFixed(2)}, max ${max.toFixed(2)})`;
+          } else if (runoffCalibration.global !== null && runoffCalibration.global !== undefined) {
+            text = runoffCalibration.global.toFixed(2);
+          }
+        } else if (coeff.runoff_coeff !== undefined) {
+          text = coeff.runoff_coeff.toFixed(2);
+        }
+        runoffEl.textContent = text;
       }
-      if (capEl) {
-        const models = Object.keys(modelData || {});
-        const baseModel = models.length ? models[0] : null;
-        const baseSeries = baseModel ? (modelData[baseModel] || []).filter(d => d.date >= '2024-03-01') : [];
-        const cap = Math.max(1.5, adjustmentCap(baseSeries) * (coeff.adjustment_cap_scale ?? 0.7));
-        capEl.textContent = `${cap.toFixed(2)} puan/ay`;
+      if (meanRainEl && climateClim && climateClim.length) {
+        const meanRain = climateClim.reduce((sum, row) => sum + row.precip, 0) / climateClim.length;
+        meanRainEl.textContent = `${meanRain.toFixed(1)}`;
       }
-      if (meanRainEl && coeff.mean_rain !== undefined) {
-        meanRainEl.textContent = `${coeff.mean_rain.toFixed(1)}`;
-      }
-      if (meanEt0El && coeff.mean_et0 !== undefined) {
-        meanEt0El.textContent = `${coeff.mean_et0.toFixed(1)}`;
+      if (meanEt0El && climateClim && climateClim.length) {
+        const meanEt0 = climateClim.reduce((sum, row) => sum + row.et0, 0) / climateClim.length;
+        meanEt0El.textContent = `${meanEt0.toFixed(1)}`;
       }
       const sourcesEl = document.getElementById('sim-sources');
       if (sourcesEl && baseline && baseline.sources) {
         const src = baseline.sources;
-        sourcesEl.innerHTML = `Kaynaklar: <a href=\"${src.surface_area}\" target=\"_blank\" rel=\"noreferrer\">İBB yüzey alanı</a>, <a href=\"${src.kc_open_water}\" target=\"_blank\" rel=\"noreferrer\">FAO‑56</a>, <a href=\"${src.usage_2023}\" target=\"_blank\" rel=\"noreferrer\">2023 kullanım</a>, iklim projeksiyonu (2010–2040).`;
+        const reservoirSrc = reservoirRef && reservoirRef.source_page
+          ? `, <a href=\"${reservoirRef.source_page}\" target=\"_blank\" rel=\"noreferrer\">İSKİ havza/kapasite</a>`
+          : '';
+        sourcesEl.innerHTML = `Kaynaklar: <a href=\"${src.surface_area}\" target=\"_blank\" rel=\"noreferrer\">İBB yüzey alanı</a>, <a href=\"${src.kc_open_water}\" target=\"_blank\" rel=\"noreferrer\">FAO‑56</a>, <a href=\"${src.usage_2023}\" target=\"_blank\" rel=\"noreferrer\">2023 kullanım</a>${reservoirSrc}, iklim projeksiyonu (2010–2040).`;
       } else if (sourcesEl) {
         sourcesEl.textContent = 'Kaynaklar: iklim projeksiyonu (2010–2040) ve proje içi kullanım/alan verileri.';
       }
