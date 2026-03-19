@@ -1,3 +1,4 @@
 # Local Netlify folder
 .netlify
-assets/data/
+assets/data/*
+!assets/data/*.js
