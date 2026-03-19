@@ -573,10 +573,13 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
           <h4>Akademik Yöntem Notu</h4>
           <p class="note">Simülasyon, baz projeksiyonun aylık doluluk değişimini (<em>ΔS</em>) iklim su dengesi ve kullanım etkileriyle lineer olarak günceller. İklim etkisi, 2010–2040 aylık iklim su dengesi verisi ile doluluk değişimi arasındaki kalibrasyon katsayısı (<em>k</em>) üzerinden hesaplanır.</p>
           <p class="note">Buharlaşma etkisi ET0 bileşeni içinde modellenir; ayrıca ayrı bir terim olarak eklenmez.</p>
-          <pre class="formula">ΔS′ = ΔS + k_m·(ΔP − ΔET0) + c_use·ΔU</pre>
+          <p class="note">Kapasite etkisi için iklim terimi doluluk başlığı (headroom) ile sönümlenir; yağışın tamamının depolanmadığı varsayımıyla akış/yakalanım katsayısı uygulanır. Aylık düzeltme, tarihsel aylık değişimlerin %90 persentiline göre üst sınırlandırılır.</p>
+          <pre class="formula">ΔS′ = ΔS + cap( k_m·(ΔP − ΔET0)·f(headroom) + c_use·ΔU )</pre>
           <div class="sim-params">
             <div>k_m (mm → doluluk puanı, aylık): <strong id="param-k">—</strong></div>
             <div>c_use (1 m³ → doluluk puanı): <strong id="param-cuse">—</strong></div>
+            <div>Akış/yakalanım katsayısı: <strong id="param-runoff">—</strong></div>
+            <div>Aylık senaryo sınırı (p90): <strong id="param-cap">—</strong></div>
             <div>Ortalama yağış (mm/ay): <strong id="param-mean-rain">—</strong></div>
             <div>Ortalama ET0 (mm/ay): <strong id="param-mean-et0">—</strong></div>
           </div>
@@ -1052,6 +1055,8 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       const usageProfile = window.USAGE_PROFILE || null;
       const kEl = document.getElementById('param-k');
       const cUseEl = document.getElementById('param-cuse');
+      const runoffEl = document.getElementById('param-runoff');
+      const capEl = document.getElementById('param-cap');
       const meanRainEl = document.getElementById('param-mean-rain');
       const meanEt0El = document.getElementById('param-mean-et0');
       if (kEl) {
@@ -1061,7 +1066,9 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
             const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
             const min = Math.min(...vals);
             const max = Math.max(...vals);
-            kEl.textContent = `${avg.toFixed(4)} (min ${min.toFixed(4)}, max ${max.toFixed(4)})`;
+            const kMax = coeff.k_max ?? null;
+            const kMaxText = kMax !== null ? `, k_max ${kMax.toFixed(3)}` : '';
+            kEl.textContent = `${avg.toFixed(4)} (min ${min.toFixed(4)}, max ${max.toFixed(4)}${kMaxText})`;
           }
         } else if (coeff.k_balance_mm_to_fill !== undefined) {
           kEl.textContent = `${coeff.k_balance_mm_to_fill.toFixed(4)} puan/mm`;
@@ -1069,6 +1076,17 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       }
       if (cUseEl && coeff.c_use !== undefined) {
         cUseEl.textContent = `${(coeff.c_use * 1e6).toFixed(4)} puan / (10^6 m3)`;
+      }
+      if (runoffEl) {
+        const runoff = coeff.runoff_coeff ?? 0.6;
+        runoffEl.textContent = runoff.toFixed(2);
+      }
+      if (capEl) {
+        const models = Object.keys(modelData || {});
+        const baseModel = models.length ? models[0] : null;
+        const baseSeries = baseModel ? (modelData[baseModel] || []).filter(d => d.date >= '2024-03-01') : [];
+        const cap = Math.max(1.5, adjustmentCap(baseSeries) * (coeff.adjustment_cap_scale ?? 0.7));
+        capEl.textContent = `${cap.toFixed(2)} puan/ay`;
       }
       if (meanRainEl && coeff.mean_rain !== undefined) {
         meanRainEl.textContent = `${coeff.mean_rain.toFixed(1)}`;
