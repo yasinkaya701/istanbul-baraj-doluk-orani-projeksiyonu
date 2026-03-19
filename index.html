@@ -534,6 +534,20 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
           </ul>
           <p class="note" id="base-note"></p>
         </div>
+
+        <div class="card">
+          <h4>Akademik Yöntem Notu</h4>
+          <p class="note">Simülasyon, baz projeksiyonun aylık doluluk değişimini (<em>ΔS</em>) iklim su dengesi ve kullanım etkileriyle lineer olarak günceller. İklim etkisi, 2010–2040 aylık iklim su dengesi verisi ile doluluk değişimi arasındaki kalibrasyon katsayısı (<em>k</em>) üzerinden hesaplanır.</p>
+          <pre class="formula">ΔS′ = ΔS + k·(ΔP − ΔET0) + c_use·ΔU + c_use·φ·ΔE</pre>
+          <div class="sim-params">
+            <div>k (mm → doluluk puanı): <strong id="param-k">—</strong></div>
+            <div>c_use (1 m³ → doluluk puanı): <strong id="param-cuse">—</strong></div>
+            <div>Ortalama yağış (mm/ay): <strong id="param-mean-rain">—</strong></div>
+            <div>Ortalama ET0 (mm/ay): <strong id="param-mean-et0">—</strong></div>
+            <div>φ (buharlaşma katsayısı): <strong id="param-phi">0.60</strong></div>
+          </div>
+          <p class="note" id="sim-sources"></p>
+        </div>
       </div>
     </section>
 
@@ -613,6 +627,7 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
   <script src="assets/data/sim_coeffs.js"></script>
   <script src="assets/data/usage_trend_stats.js"></script>
   <script src="assets/data/usage_monthly_profile.js"></script>
+  <script src="assets/data/climate_baseline.js"></script>
 
   <script>
     const tabs = document.querySelectorAll('[data-tabs] .tab');
@@ -630,6 +645,8 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
     let modelData = {};
     let dates = [];
     let baseline = null;
+    let climateBaseline = {};
+    let climateClim = null;
 
     function parseCSV(text) {
       const lines = text.trim().split('\n');
@@ -671,6 +688,35 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       return Math.max(0, Math.min(len - 1, idx));
     }
 
+    function buildClimateClimatology() {
+      const byMonth = Array.from({ length: 12 }, () => ({ p: 0, e: 0, n: 0 }));
+      Object.entries(climateBaseline || {}).forEach(([dateStr, row]) => {
+        if (!row || row.precip_mm_month === undefined || row.et0_mm_month === undefined) return;
+        const m = new Date(dateStr).getMonth();
+        if (Number.isNaN(m)) return;
+        byMonth[m].p += row.precip_mm_month;
+        byMonth[m].e += row.et0_mm_month;
+        byMonth[m].n += 1;
+      });
+      return byMonth.map((m) => ({
+        precip: m.n ? m.p / m.n : 0,
+        et0: m.n ? m.e / m.n : 0
+      }));
+    }
+
+    function getClimateRow(dateStr) {
+      const row = climateBaseline[dateStr];
+      if (row) return row;
+      const m = new Date(dateStr).getMonth();
+      if (!climateClim || Number.isNaN(m)) return null;
+      return {
+        precip_mm_month: climateClim[m].precip,
+        et0_mm_month: climateClim[m].et0,
+        climate_water_balance_mm: climateClim[m].precip - climateClim[m].et0,
+        scenario: 'climatology'
+      };
+    }
+
     const MODEL_COLORS = {
       ridge: '#1f77b4',
       gbr: '#ff7f0e',
@@ -679,31 +725,10 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
       etr: '#d62728'
     };
 
-    function buildSeasonWeights(base) {
-      const sum = new Array(12).fill(0);
-      const count = new Array(12).fill(0);
-      for (let i = 1; i < base.length; i++) {
-        const prev = base[i - 1].fill;
-        const cur = base[i].fill;
-        if (prev === null || prev === undefined || cur === null || cur === undefined) continue;
-        const m = new Date(base[i].date).getMonth();
-        sum[m] += (cur - prev);
-        count[m] += 1;
-      }
-      const avg = sum.map((s, i) => (count[i] ? s / count[i] : 0));
-      const maxPos = Math.max(...avg.map(v => Math.max(0, v)), 0.0001);
-      const maxNeg = Math.max(...avg.map(v => Math.max(0, -v)), 0.0001);
-      const rainW = avg.map(v => Math.max(0, v) / maxPos);
-      const et0W = avg.map(v => Math.max(0, -v) / maxNeg);
-      return { rainW, et0W };
-    }
-
     function getSeries(model, rain, et0, useM3, evapM3, useGrowth) {
       const coeff = window.SIM_COEFFS || { a_rain: 0.0003, b_et0: -0.0009, c_use: -3e-8, mean_rain: 70, mean_et0: 80, mean_use_monthly: 2.7e6 };
-      const sens = { rain: 400, et0: 400, use: 1.8, evap: 1.2 };
+      const kBalance = coeff.k_balance_mm_to_fill ?? 0.06;
       const base = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
-      const season = buildSeasonWeights(base);
-      const driftScale = 0.12;
       const usageProfile = (window.USAGE_PROFILE && window.USAGE_PROFILE.profile) ? window.USAGE_PROFILE.profile : null;
       const startDate = base[0] ? new Date(base[0].date) : null;
       const baseUseMonthly = (window.BASELINE ? window.BASELINE.usage_baraj_m3 : 275104161) / 12.0;
@@ -727,11 +752,17 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
         const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
         const useMonthly = (useM3 * useScale * 1e6) / 12.0 * seasonal;
         const evapMonthly = (evapM3 * 1e6) / 12.0;
-        const rainEff = coeff.a_rain * (coeff.mean_rain * (rain / 100)) * sens.rain * (season.rainW[m] || 0) * driftScale;
-        const et0Eff = coeff.b_et0 * (coeff.mean_et0 * (et0 / 100)) * sens.et0 * (season.et0W[m] || 0) * driftScale;
-        const useEff = coeff.c_use * (useMonthly - baseUseMonthly) * sens.use;
-        const evapEff = coeff.c_use * 0.6 * (evapMonthly - baseEvapMonthly) * sens.evap;
-        const next = Math.max(0, Math.min(100, prevAdj + baseDelta + rainEff + et0Eff + useEff + evapEff));
+
+        const climate = getClimateRow(d.date);
+        const precip = climate ? climate.precip_mm_month : (coeff.mean_rain ?? 0);
+        const et0Base = climate ? climate.et0_mm_month : (coeff.mean_et0 ?? 0);
+        const deltaWaterBalance = (precip * (rain / 100)) - (et0Base * (et0 / 100));
+        const climateEff = kBalance * deltaWaterBalance;
+
+        const useEff = coeff.c_use * (useMonthly - baseUseMonthly);
+        const evapEff = coeff.c_use * 0.6 * (evapMonthly - baseEvapMonthly);
+
+        const next = Math.max(0, Math.min(100, prevAdj + baseDelta + climateEff + useEff + evapEff));
         prevAdj = next;
         return { date: d.date, fill: next };
       });
@@ -942,8 +973,34 @@ ET0 = [0.408·Δ·(Rn − G) + γ·(900/(T+273))·u2·(es − ea)] / [Δ + γ·(
     document.addEventListener('DOMContentLoaded', () => {
       modelData = window.MODEL_DATA || {};
       baseline = window.BASELINE || null;
+      climateBaseline = window.CLIMATE_BASELINE || {};
+      climateClim = buildClimateClimatology();
+      const coeff = window.SIM_COEFFS || {};
       const usageTrend = window.USAGE_TREND || null;
       const usageProfile = window.USAGE_PROFILE || null;
+      const kEl = document.getElementById('param-k');
+      const cUseEl = document.getElementById('param-cuse');
+      const meanRainEl = document.getElementById('param-mean-rain');
+      const meanEt0El = document.getElementById('param-mean-et0');
+      if (kEl && coeff.k_balance_mm_to_fill !== undefined) {
+        kEl.textContent = `${coeff.k_balance_mm_to_fill.toFixed(4)} puan/mm`;
+      }
+      if (cUseEl && coeff.c_use !== undefined) {
+        cUseEl.textContent = `${(coeff.c_use * 1e6).toFixed(4)} puan / (10^6 m3)`;
+      }
+      if (meanRainEl && coeff.mean_rain !== undefined) {
+        meanRainEl.textContent = `${coeff.mean_rain.toFixed(1)}`;
+      }
+      if (meanEt0El && coeff.mean_et0 !== undefined) {
+        meanEt0El.textContent = `${coeff.mean_et0.toFixed(1)}`;
+      }
+      const sourcesEl = document.getElementById('sim-sources');
+      if (sourcesEl && baseline && baseline.sources) {
+        const src = baseline.sources;
+        sourcesEl.innerHTML = `Kaynaklar: <a href=\"${src.surface_area}\" target=\"_blank\" rel=\"noreferrer\">İBB yüzey alanı</a>, <a href=\"${src.kc_open_water}\" target=\"_blank\" rel=\"noreferrer\">FAO‑56</a>, <a href=\"${src.usage_2023}\" target=\"_blank\" rel=\"noreferrer\">2023 kullanım</a>, iklim projeksiyonu (2010–2040).`;
+      } else if (sourcesEl) {
+        sourcesEl.textContent = 'Kaynaklar: iklim projeksiyonu (2010–2040) ve proje içi kullanım/alan verileri.';
+      }
       if (usageTrend) {
         const minPct = Math.round((usageTrend.yoy_p10 ?? -0.01) * 100 * 4) / 4;
         const maxPct = Math.round((usageTrend.yoy_p90 ?? 0.04) * 100 * 4) / 4;
