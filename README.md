@@ -93,11 +93,22 @@ Veri setleri bilerek git dışında tutulur. Yerel verileri şu dizinlere koy:
 
 Yaygın veri formatları (ör. `*.csv`, `*.parquet`, `*.xlsx`, `*.pkl`) `.gitignore` ile dışarıda tutulur.
 
-## Veri kaynakları (özet)
-- İBB/İSKİ baraj doluluk ve havza yağışı
-- İBB tüketim verileri
-- Kandilli uzun dönem iklim serileri
-- İklim projeksiyonları (2026-2040)
+## Kaynakça (özet)
+- İBB Açık Veri API (CKAN): [data.ibb.gov.tr](https://data.ibb.gov.tr/api/3/action/datastore_search)
+- İBB yetki alanı (havza alanı hesabı): [ibb.istanbul](https://www.ibb.istanbul/ibb/belediye-hakkinda/yetki-alani/)
+- İSKİ baraj doluluk: [iski.istanbul/baraj-doluluk](https://iski.istanbul/baraj-doluluk)
+- İSKİ su kaynakları: [iski.istanbul/su-kaynaklari](https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari)
+- İSKİ su birim fiyatları: [iski.istanbul/su-birim-fiyatlari](https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/)
+- İSKİ su kayıpları raporları: [iski.istanbul/su-kayiplari](https://iski.istanbul/kurumsal/stratejik-yonetim/su-kayiplari-yillik-raporlari/)
+- FAO-56 Penman-Monteith (PDF): [fao56.pdf](https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf)
+- FAO Penman-Monteith notu: [fao.org](https://www.fao.org/4/X0490E/x0490e06.htm)
+- WMO Guide (WMO-No.8): [wmo.int](https://wmo.int/guide-instruments-and-methods-of-observation-wmo-no-8-0)
+- Open-Meteo Historical Weather API: [open-meteo.com](https://open-meteo.com/en/docs/historical-weather-api)
+- NOAA NAO indeks serisi: [cpc.ncep.noaa.gov](https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii)
+- HEC USACE Penman-Monteith yöntemi: [hec.usace.army.mil](https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/evaporation-and-transpiration/penman-monteith-method)
+- 2023 su kullanımı haber kaynağı: [aa.com.tr](https://www.aa.com.tr/tr/gundem/istanbulda-gecen-yil-1-milyar-117-milyon-64-bin-116-metrekup-su-kullanildi/3104905)
+- Forecasting: Principles and Practice (FPP3): [otexts.com/fpp3](https://otexts.com/fpp3/)
+- Detaylı ve tam bağlantı listesi: `REFERENCES.md`
 
 ## Repo notu
 - Önceki alt repolar birleştirildi. Eski git metadata yedekleri yerel olarak `.git_backup/` altında saklanır ve git dışındadır.
