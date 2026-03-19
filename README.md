@@ -2,7 +2,7 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C6FF,50:3F51B5,100:F7971E&height=180&section=header&text=Hackhaton&fontSize=54&fontColor=FFFFFF&animation=twinkling" />
   <h3>Su, iklim ve baraj analitiği çalışma alanı</h3>
   <p>Araştırma, modelleme ve karar destek panelleri bir arada.</p>
-  <p><strong>Not:</strong> Bu çalışma Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Hackhatonu için yapılmıştır.</p>
+  <p><strong>Not:</strong> Bu çalışma Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü Hackhatonu için yapılmıştır.</p>
   <p>
     <img src="https://img.shields.io/badge/Odak-Climate%20%26%20Water-00BCD4" />
     <img src="https://img.shields.io/badge/Stack-Python%20%2B%20JS-1E88E5" />
@@ -38,7 +38,7 @@ Hackhaton/
 
 ## İçerik özeti
 - Baraj doluluk, ET0 ve iklim sinyalleri için uçtan uca modelleme scriptleri
-- Karar destek dashboard'ları ve anomaly news görünümleri
+- Karar destek dashboard'ları
 - Log, template ve sentez notları ile araştırma hub yapısı
 - Model kartları ve projeksiyon görselleri
 
