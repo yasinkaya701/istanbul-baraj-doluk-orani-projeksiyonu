@@ -99,9 +99,11 @@
           <div class="formula formula-fraction" role="img" aria-label="FAO-56 Penman-Monteith ET0 denklemi">
             <div class="eq-left">ET<sub>0</sub> =</div>
             <div class="eq-right">
-              <div class="eq-num">0.408·Δ·(R<sub>n</sub> − G) + γ·(900/(T+273))·u<sub>2</sub>·(e<sub>s</sub> − e<sub>a</sub>)</div>
-              <div class="eq-bar"></div>
-              <div class="eq-den">Δ + γ·(1 + 0.34·u<sub>2</sub>)</div>
+              <div class="eq-frac">
+                <div class="eq-num">0.408·Δ·(R<sub>n</sub> − G) + γ·(900/(T+273))·u<sub>2</sub>·(e<sub>s</sub> − e<sub>a</sub>)</div>
+                <div class="eq-bar"></div>
+                <div class="eq-den">Δ + γ·(1 + 0.34·u<sub>2</sub>)</div>
+              </div>
             </div>
           </div>
           <ul>
@@ -117,27 +119,27 @@
           <div class="stat-grid">
             <div class="stat">
               <small>Ortalama (2010–2024)</small>
-              <strong id="et0-stat-mean">—</strong>
+              <strong>1097.6 mm/yıl</strong>
             </div>
             <div class="stat">
               <small>Min / Maks</small>
-              <strong id="et0-stat-minmax">—</strong>
+              <strong>1044.1 – 1160.9 mm/yıl</strong>
             </div>
             <div class="stat">
               <small>Trend</small>
-              <strong id="et0-stat-trend">—</strong>
+              <strong>+24.5 mm / 10 yıl</strong>
             </div>
             <div class="stat">
               <small>Baz (2015–2024)</small>
-              <strong id="et0-stat-baseline">—</strong>
+              <strong>1099.6 mm/yıl</strong>
             </div>
             <div class="stat">
               <small>2031–2035 Tahmin</small>
-              <strong id="et0-stat-forecast">—</strong>
+              <strong>1155.7 mm/yıl</strong>
             </div>
             <div class="stat">
               <small>Fark (2031–2035)</small>
-              <strong id="et0-stat-delta">—</strong>
+              <strong>+56.1 mm/yıl</strong>
             </div>
           </div>
           <ul class="link-list">
@@ -145,15 +147,17 @@
             <li><a href="assets/et0/baraj_et0_10year_summary.png?v=20260321-6" target="_blank" rel="noopener">10 yıllık özet grafiği</a></li>
           </ul>
           <p class="note">Kaynaklar: <a href="assets/et0/reports/baraj_et0_real_radiation_summary.json" target="_blank" rel="noopener">ET0 özet JSON</a> · <a href="assets/et0/reports/baraj_et0_method_note_tr.md" target="_blank" rel="noopener">Yöntem notu</a></p>
+          <p class="note">Not: Bu özet değerler 21 Mart 2026 tarihli güncel panel serisinden hesaplanmıştır.</p>
         </div>
       </div>
       <div class="card" style="margin-top:16px;">
         <h3>Bu Projede Değişkenleri Neden Böyle Aldık?</h3>
         <ul>
           <li><strong>ET0 serisini panelden doğrudan alıyoruz:</strong> simülasyonda tek ET0 kaynağı kullanıp çelişkiyi önlemek için.</li>
-          <li><strong>Rn, G, u2 gibi ham girdileri bu sayfada yeniden türetmiyoruz:</strong> repoda sürekli/günlük ham radyasyon-rüzgâr seti tutulmuyor.</li>
+          <li><strong>Rn, G, u2 gibi ham girdileri bu sayfada yeniden türetmiyoruz:</strong> repoda sürekli/günlük ham radyasyon-rüzgar seti tutulmuyor, o nedenle panelde tutarlı ET0 serisini baz alıyoruz.</li>
           <li><strong>Açık su buharlaşması için Kc kullanıyoruz:</strong> ET0 formülden gelir, baraj buharlaşmasına dönüşümde <code>E = Kc × ET0</code> uygulanır.</li>
           <li><strong>Yıllık ET0 özetini iklim panelinden hesaplıyoruz:</strong> 2010–2024 gözlem, 2031–2035 ileri dönem beklentisi aynı seri üzerinden çıkarılır.</li>
+          <li><strong>Formülde VPD (e<sub>s</sub>−e<sub>a</sub>) kullanıyoruz:</strong> buharlaşma talebini fiziksel olarak en iyi taşıyan terim olduğu için sıcaklık ve nem etkisini birlikte yansıtır.</li>
         </ul>
       </div>
     </section>
@@ -1354,9 +1358,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         hoverLine.setAttribute('x2', xPos);
         hoverLine.setAttribute('opacity', '0.7');
 
-        tooltip.style.opacity = '1';
-        tooltip.style.left = `${xPx}px`;
-        tooltip.style.top = `${yPx}px`;
+        let tooltipText = '';
         if (b && a) {
           metricDate.textContent = b.date;
           metricBase.textContent = `${b.fill.toFixed(1)}%`;
@@ -1367,11 +1369,20 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
             const mean = vals.reduce((x,y)=>x+y,0)/vals.length;
             const min = Math.min(...vals);
             const max = Math.max(...vals);
-            tooltip.textContent = `${b.date} • Ortalama ${mean.toFixed(1)}% (Aralık ${min.toFixed(1)}–${max.toFixed(1)})`;
+            tooltipText = `${b.date} • Ortalama ${mean.toFixed(1)}% (Aralık ${min.toFixed(1)}–${max.toFixed(1)})`;
           } else {
-            tooltip.textContent = `${b.date} • ${a.fill.toFixed(1)}%`;
+            tooltipText = `${b.date} • ${a.fill.toFixed(1)}%`;
           }
         }
+        if (tooltipText) {
+          tooltip.textContent = tooltipText;
+        }
+        const tooltipHalf = Math.min(160, Math.max(60, (tooltip.offsetWidth || 120) / 2));
+        const safeX = clamp(xPx, tooltipHalf + 6, widthPx - tooltipHalf - 6);
+        const safeY = clamp(yPx, 36, heightPx - 10);
+        tooltip.style.opacity = '1';
+        tooltip.style.left = `${safeX}px`;
+        tooltip.style.top = `${safeY}px`;
       };
 
       const onLeave = () => {

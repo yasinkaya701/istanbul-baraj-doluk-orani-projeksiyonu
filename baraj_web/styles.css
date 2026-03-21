@@ -220,6 +220,7 @@ a:hover { text-decoration: underline; }
   border-radius: 14px;
   padding: 16px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  min-width: 0;
 }
 
 .card-link {
@@ -303,7 +304,11 @@ a:hover { text-decoration: underline; }
 
 figcaption { margin-top: 8px; color: var(--muted); }
 
-.note { color: var(--muted); font-size: 0.95rem; }
+.note {
+  color: var(--muted);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
 
 .footer {
   border-top: 1px solid var(--line);
@@ -321,10 +326,13 @@ figcaption { margin-top: 8px; color: var(--muted); }
   .nav-inner {
     padding: 10px 14px;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
   .brand {
     font-size: 1rem;
+    line-height: 1.25;
+    max-width: calc(100% - 90px);
   }
 
   .nav-links {
@@ -338,15 +346,22 @@ figcaption { margin-top: 8px; color: var(--muted); }
 
   .nav-links.open {
     display: flex;
+    order: 3;
+    flex-basis: 100%;
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+    padding-top: 10px;
   }
 
   .nav-links a {
     font-size: 0.9rem;
     padding: 6px 8px;
+    width: 100%;
   }
 
   .nav-toggle {
     display: inline-flex;
+    margin-left: auto;
   }
 
   .hero-inner {
@@ -409,6 +424,14 @@ figcaption { margin-top: 8px; color: var(--muted); }
     margin-bottom: 2px;
   }
 
+  .formula-fraction .eq-right {
+    width: 100%;
+  }
+
+  .formula-fraction .eq-frac {
+    min-width: 680px;
+  }
+
   .tab {
     padding: 6px 10px;
     font-size: 0.9rem;
@@ -434,6 +457,40 @@ figcaption { margin-top: 8px; color: var(--muted); }
   .sim-controls .btn {
     width: 100%;
   }
+
+  .chip-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .chip-group .btn,
+  .chip-group .chip-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .legend {
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+
+  .loss-bar {
+    height: 32px;
+  }
+
+  #loss-use,
+  #loss-evap {
+    font-size: 0.72rem;
+    padding: 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .metric strong {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -447,6 +504,10 @@ figcaption { margin-top: 8px; color: var(--muted); }
 
   .sim-svg {
     height: 260px;
+  }
+
+  .chip-group {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -494,17 +555,25 @@ figcaption { margin-top: 8px; color: var(--muted); }
 .formula-fraction .eq-right {
   min-width: 0;
   flex: 1;
+  display: flex;
+}
+
+.formula-fraction .eq-frac {
+  width: 100%;
+  min-width: 760px;
 }
 
 .formula-fraction .eq-num,
 .formula-fraction .eq-den {
-  white-space: normal;
+  white-space: nowrap;
+  text-align: center;
   line-height: 1.35;
 }
 
 .formula-fraction .eq-bar {
   border-top: 2px solid rgba(244, 244, 244, 0.9);
   margin: 6px 0;
+  width: 100%;
 }
 
 .formula-fraction sub {
@@ -746,6 +815,7 @@ select {
   font-size: 0.9rem;
   color: var(--muted);
   margin-bottom: 4px;
+  overflow-wrap: anywhere;
 }
 
 .sim-layout {
@@ -841,6 +911,7 @@ select {
   background: #fff;
   font-size: 0.8rem;
   color: var(--muted);
+  overflow-wrap: anywhere;
 }
 
 .model-focus-grid {
@@ -1029,7 +1100,9 @@ select {
   border-radius: 8px;
   opacity: 0;
   transform: translate(-50%, -110%);
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(78vw, 300px);
+  text-align: center;
   line-height: 1.35;
 }
 
