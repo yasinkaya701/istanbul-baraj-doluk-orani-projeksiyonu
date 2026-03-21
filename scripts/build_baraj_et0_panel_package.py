@@ -172,7 +172,7 @@ def build_charts(df: pd.DataFrame, summary: dict, trend_stats: dict) -> None:
     fig, ax = plt.subplots(figsize=(16, 9), dpi=150)
     ax.plot(years, yvals, marker="o", lw=2, color="#1f77b4", label="Yillik ET0")
     ax.plot(years, fit, lw=2, color="#d62728", linestyle="--", label="Dogrusal trend")
-    ax.set_title("Yillik ET0 (2010-2024) ve trend", fontsize=18)
+    ax.set_title("Yillik ET0 (2010-2024) ve lineer trend egimi", fontsize=18)
     ax.set_xlabel("Yil")
     ax.set_ylabel("ET0 (mm/yil)")
     ax.grid(True, alpha=0.25)
@@ -181,7 +181,8 @@ def build_charts(df: pd.DataFrame, summary: dict, trend_stats: dict) -> None:
     info_lines = [
         f"Ortalama: {mean_et0:.1f} mm/yil",
         f"Min/Max: {min_et0:.1f} / {max_et0:.1f} mm/yil",
-        f"Trend: {trend_decade:+.1f} mm/10 yil",
+        f"Trend egimi: {trend_decade:+.1f} mm/10 yil (2010-2024)",
+        "Not: Trend egimi, baz-tahmin seviye farki degildir.",
     ]
     if r2 is not None and pval is not None:
         info_lines.append(f"R^2: {r2:.2f} | p: {pval:.3f}")
@@ -233,12 +234,12 @@ def build_charts(df: pd.DataFrame, summary: dict, trend_stats: dict) -> None:
     colors = ["#4c78a8", "#f58518"]
     ax.bar(labels, values, color=colors)
     ax.set_ylabel("ET0 (mm/yil)")
-    ax.set_title("10 Yillik Ortalama ET0 Karsilastirmasi", fontsize=17)
+    ax.set_title("Baz (2015-2024) vs Tahmin (2031-2035) ET0 Seviye Farki", fontsize=17)
     ax.grid(True, axis="y", alpha=0.25)
     ax.text(
         0.5,
         0.9,
-        f"Fark: {delta:+.1f} mm/yil",
+        f"Seviye farki (tahmin - baz): {delta:+.1f} mm/yil\n(Not: bu deger trend egimi degildir)",
         transform=ax.transAxes,
         va="top",
         ha="center",
