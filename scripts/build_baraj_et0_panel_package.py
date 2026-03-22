@@ -118,6 +118,8 @@ def build_summary(df: pd.DataFrame) -> tuple[dict, dict]:
             "baseline_mm_year": baseline_mean,
             "forecast_2031_2035_mm_year": future_mean,
             "delta_2031_2035_vs_baseline_mm_year": float(future_mean - baseline_mean),
+            "delta_definition": "2031-2035 ortalama yillik ET0 - 2015-2024 ortalama yillik ET0",
+            "delta_interpretation": "Seviye farki (trend egimi degil)",
         },
         "assumptions": {
             "et0_source": "Iklim paneli aylik ET0 (2010-2024 gozlem, 2026-2040 projeksiyon)",
@@ -234,12 +236,15 @@ def build_charts(df: pd.DataFrame, summary: dict, trend_stats: dict) -> None:
     colors = ["#4c78a8", "#f58518"]
     ax.bar(labels, values, color=colors)
     ax.set_ylabel("ET0 (mm/yil)")
-    ax.set_title("Baz (2015-2024) vs Tahmin (2031-2035) ET0 Seviye Farki", fontsize=17)
+    ax.set_title("ET0 Donem Ortalamasi Karsilastirmasi (Seviye Farki)", fontsize=17)
     ax.grid(True, axis="y", alpha=0.25)
     ax.text(
         0.5,
         0.9,
-        f"Seviye farki (tahmin - baz): {delta:+.1f} mm/yil\n(Not: bu deger trend egimi degildir)",
+        (
+            f"Seviye farki (2031-2035 ort. - 2015-2024 ort.): {delta:+.1f} mm/yil\n"
+            "(Not: bu deger yillik artis hizi/trend egimi degildir)"
+        ),
         transform=ax.transAxes,
         va="top",
         ha="center",
@@ -275,47 +280,125 @@ def build_charts(df: pd.DataFrame, summary: dict, trend_stats: dict) -> None:
     fig.savefig(OUT_DIR / "baraj_et0_monthly_5y_mean.png")
     plt.close(fig)
 
-    # Formula / summary card
-    fig = plt.figure(figsize=(11, 12), dpi=300)
-    fig.patch.set_facecolor("white")
+    # Formula / summary card (detailed, baraj context)
+    def add_text(fig_obj, x, y, text, size, weight="normal"):
+        fig_obj.text(
+            x,
+            y,
+            text,
+            ha="left",
+            va="top",
+            fontsize=size,
+            fontweight=weight,
+            color="#111111",
+            family="DejaVu Sans",
+        )
 
-    fig.text(0.06, 0.94, "ET0 Ozet ve Veri Kaynagi", fontsize=20, fontweight="bold")
+    def add_bullet(fig_obj, x, y, text, size=15.0):
+        fig_obj.text(
+            x,
+            y,
+            f"•  {text}",
+            ha="left",
+            va="top",
+            fontsize=size,
+            color="#111111",
+            family="DejaVu Sans",
+        )
 
-    summary_lines = [
-        "Veri kaynagi: assets/data/climate_baseline.js",
-        "Gozlem: 2010-2024 | Projeksiyon: 2026-2040",
-        f"Ortalama yillik ET0 (2010-2024): {mean_et0:.1f} mm/yil",
-        f"Trend: {trend_decade:+.1f} mm/10 yil",
-        f"Baz (2015-2024): {baseline:.1f} mm/yil",
-        f"2031-2035 ortalama: {forecast:.1f} mm/yil",
-        f"Beklenen fark: {delta:+.1f} mm/yil",
-    ]
+    future_df = df[df["scenario"] == "future_projection"].copy()
+    obs_start = hist["date"].min().strftime("%Y-%m")
+    obs_end = hist["date"].max().strftime("%Y-%m")
+    proj_start = future_df["date"].min().strftime("%Y-%m") if not future_df.empty else "—"
+    proj_end = future_df["date"].max().strftime("%Y-%m") if not future_df.empty else "—"
 
-    fig.text(0.06, 0.86, "\n".join(summary_lines), fontsize=12, va="top")
+    fig = plt.figure(figsize=(16, 14.0), facecolor="white")
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis("off")
 
-    note_lines = [
-        "Notlar:",
-        "- ET0 degerleri iklim panelinden aylik olarak alinmistir.",
-        "- Bu rapor ET0 degerlerini yeniden hesaplamaz.",
-        "- ET0 referans evapotranspirasyondur; acik su buharlasmasi degildir.",
-    ]
-    fig.text(0.06, 0.64, "\n".join(note_lines), fontsize=12, va="top")
-
-    formula_title = "FAO-56 Penman-Monteith (referans)"
-    formula = "ET0 = [0.408*Delta*(Rn-G) + gamma*(900/(T+273))*u2*(es-ea)] / [Delta + gamma*(1 + 0.34*u2)]"
-
-    fig.text(0.06, 0.48, formula_title, fontsize=13, fontweight="bold", va="top")
-    fig.text(0.06, 0.44, formula, fontsize=11, va="top")
-
-    fig.text(
+    y = 0.95
+    add_text(fig, 0.06, y, "Baraj ET0 Modeli", 27, "bold")
+    y -= 0.055
+    add_text(
+        fig,
         0.06,
-        0.36,
-        "Formul, ET0 kavraminin fiziksel temelini gosterir; burada hesaplama yapilmamistir.",
-        fontsize=11,
-        va="top",
+        y,
+        (
+            "Bu çalışma ET0 değerlerini yeniden üretmez; iklim panelindeki aylık ET0 serisini "
+            "tek kaynak olarak kullanır. Aşağıdaki FAO-56 formülü, ET0 tanımının fiziksel "
+            "referansı olarak verilmiştir."
+        ),
+        16.5,
     )
 
-    fig.savefig(OUT_DIR / "baraj_et0_formula_explained.png")
+    y -= 0.09
+    add_text(fig, 0.06, y, "1. Referans formül (FAO-56 Penman-Monteith)", 21, "bold")
+    y -= 0.045
+    add_text(fig, 0.09, y, "FAO-56 Penman-Monteith:", 17, "bold")
+    formula = r"$ET_0 = \frac{0.408\,\Delta\,(R_n-G) + \gamma\,\frac{900}{T+273}\,u_2\,(e_s-e_a)}{\Delta + \gamma\,(1+0.34u_2)}$"
+    fig.text(0.50, y - 0.045, formula, ha="center", va="top", fontsize=31, color="#111111", family="DejaVu Serif")
+
+    y -= 0.16
+    add_bullet(fig, 0.11, y, r"$R_n$: net radyasyon")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$G$: toprak ısı akısı")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$T$: ortalama sıcaklık")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$u_2$: 2 m rüzgar hızı")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$e_s-e_a$: buhar basıncı açığı")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$\Delta$: doygun buhar basıncı eğrisinin eğimi")
+    y -= 0.034
+    add_bullet(fig, 0.11, y, r"$\gamma$: psikrometrik sabit")
+
+    y -= 0.07
+    add_text(fig, 0.06, y, "2. Bu projede hangi sadeleştirmeleri yaptık?", 21, "bold")
+    y -= 0.048
+    fig.text(0.11, y, r"$ET0_{seri}$: panelden dogrudan", ha="left", va="top", fontsize=19, color="#111111", family="DejaVu Serif")
+    add_text(fig, 0.33, y, "Simülasyonda tek ET0 kaynağı kullanıp çelişkiyi önlemek için.", 15.0)
+    y -= 0.056
+    fig.text(0.11, y, r"$E_{acik\ su} = K_c \times ET0,\ K_c = 1.05$", ha="left", va="top", fontsize=19, color="#111111", family="DejaVu Serif")
+    add_text(fig, 0.40, y, "Baraj yüzey buharlaşmasını ET0'dan üretmek için.", 15.0)
+    y -= 0.056
+    fig.text(0.11, y, r"$2025$: panelde yok $\rightarrow$ klimatoloji dolgu", ha="left", va="top", fontsize=18, color="#111111", family="DejaVu Serif")
+    add_text(fig, 0.44, y, "Aylık seri sürekliliğini korumak için.", 15.0)
+    y -= 0.056
+    fig.text(0.11, y, r"$\Delta_{seviye}\ \neq\ \Delta_{trend}$", ha="left", va="top", fontsize=20, color="#111111", family="DejaVu Serif")
+    add_text(fig, 0.33, y, "Dönem farkı ile trend eğimini ayrı raporlamak için.", 15.0)
+
+    y -= 0.08
+    add_text(fig, 0.06, y, "3. Neden +24.5 ve +56.1 aynı şey değil?", 21, "bold")
+    y -= 0.045
+    add_bullet(fig, 0.09, y, f"+24.5 mm / 10 yıl: 2010-2024 yıllık ET0 serisinin doğrusal trend eğimi.")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, f"+56.1 mm/yıl: 2031-2035 ortalaması ile 2015-2024 ortalaması arasındaki seviye farkı.")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, "Seviye farkı 'yıllık artış hızı' değildir; iki dönem ortalamasının karşılaştırmasıdır.")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, "Bu ayrım tüm grafik ve raporlarda aynı şekilde korunur.")
+
+    y -= 0.075
+    add_text(fig, 0.06, y, "4. Grafik ölçekleri ve güncel sayısal bağlam", 21, "bold")
+    y -= 0.045
+    add_bullet(fig, 0.09, y, f"Gözlem dönemi: {obs_start} - {obs_end} | Projeksiyon dönemi: {proj_start} - {proj_end}")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, "Yıllık trend grafiği: yıllık ET0 + doğrusal trend eğimi")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, "10 yıllık özet grafiği: 2015-2024 ort. ile 2031-2035 ort. seviye karşılaştırması")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, f"Ortalama yıllık ET0: {mean_et0:.1f} mm/yıl | trend eğimi: {trend_decade:+.1f} mm/10 yıl")
+    y -= 0.038
+    add_bullet(fig, 0.09, y, f"Baz: {baseline:.1f} mm/yıl | 2031-2035: {forecast:.1f} mm/yıl | seviye farkı: {delta:+.1f} mm/yıl")
+
+    y -= 0.07
+    footer = "Model penceresi: {} - {}    |    Sonraki katman: Acik su buharlasma katsayisi (Kc x ET0)".format(
+        summary["coverage"]["model_start"], summary["coverage"]["model_end"]
+    )
+    add_text(fig, 0.06, y, footer, 16.5, "bold")
+
+    fig.savefig(OUT_DIR / "baraj_et0_formula_explained.png", dpi=180, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 

@@ -41,7 +41,9 @@ ET0, iyi sulanmış referans bir yüzey için atmosferik buharlaşma talebini te
 - Trend: `+24.5 mm / 10 yıl`
 - Baz dönem (2015-2024) ortalaması: `1099.6 mm/yıl`
 - 2031-2035 ortalaması: `1155.7 mm/yıl`
-- Beklenen fark: `+56.1 mm/yıl`
+- Seviye farkı (2031-2035 ort. - 2015-2024 ort.): `+56.1 mm/yıl`
+
+Not: `+24.5 mm / 10 yıl` ve `+56.1 mm/yıl` farklı metriklerdir. İlki trend eğimidir, ikincisi dönem ortalaması farkıdır.
 
 ## 8. Bir sonraki mantıklı adımlar
 

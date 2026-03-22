@@ -25,7 +25,9 @@
     "baseline_year_range": "2015-2024",
     "baseline_mm_year": 1099.5790000000002,
     "forecast_2031_2035_mm_year": 1155.7220443086321,
-    "delta_2031_2035_vs_baseline_mm_year": 56.14304430863194
+    "delta_2031_2035_vs_baseline_mm_year": 56.14304430863194,
+    "delta_definition": "2031-2035 ortalama yillik ET0 - 2015-2024 ortalama yillik ET0",
+    "delta_interpretation": "Seviye farki (trend egimi degil)"
   },
   "assumptions": {
     "et0_source": "Iklim paneli aylik ET0 (2010-2024 gozlem, 2026-2040 projeksiyon)",

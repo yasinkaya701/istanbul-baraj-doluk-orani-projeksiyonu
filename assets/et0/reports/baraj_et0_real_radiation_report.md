@@ -1,30 +1,32 @@
-# Baraj ET0 - Iklim Paneli Aylik Seri Paketi
+# Baraj ET0 - İklim Paneli Aylık Seri Paketi
 
-## Veri Kaynagi
+## Veri Kaynağı
 
 - Dosya: `assets/data/climate_baseline.js`
-- Seri: `et0_mm_month` (aylik)
-- Gozlem kapsami: `2010-01` -> `2024-12`
-- Projeksiyon kapsami: `2026-01` -> `2040-12`
-- Not: 2025 yili panelde yok; projeksiyon 2026'dan baslar.
+- Seri: `et0_mm_month` (aylık)
+- Gözlem kapsamı: `2010-01` -> `2024-12`
+- Projeksiyon kapsamı: `2026-01` -> `2040-12`
+- Not: 2025 yılı panelde yok; projeksiyon 2026’dan başlar.
 
 ## Kabuller
 
-1. ET0 degerleri iklim panelinden hazir alindi; bu rapor ET0'yu yeniden hesaplamaz.
-2. Yillik ET0, ilgili yildaki 12 ayin toplami olarak hesaplandi.
-3. Trend, 2010-2024 yillik toplamlar uzerinde basit dogrusal regresyonla hesaplandi.
+1. ET0 değerleri iklim panelinden hazır alındı; bu rapor ET0’yu yeniden hesaplamaz.
+2. Yıllık ET0, ilgili yıldaki 12 ayın toplamı olarak hesaplandı.
+3. Trend, 2010-2024 yıllık toplamlar üzerinde basit doğrusal regresyonla hesaplandı.
 
 ## Temel Bulgular
 
-- Ortalama yillik ET0 (2010-2024): `1097.6 mm/yil`
-- Yillik ET0 trendi (2010-2024): `+24.5 mm/10y`
-- Min/Max yillik ET0 (2010-2024): `1044.1` - `1160.9 mm/yil`
-- Baz donem (2015-2024) ortalama yillik ET0: `1099.6 mm/yil`
-- 2031-2035 tahmin ortalamasi: `1155.7 mm/yil`
-- Beklenen fark (2031-2035 - baz): `+56.1 mm/yil`
+- Ortalama yıllık ET0 (2010-2024): `1097.6 mm/yıl`
+- Yıllık ET0 trend eğimi (2010-2024): `+24.5 mm / 10 yıl`
+- Min/Max yıllık ET0 (2010-2024): `1044.1` - `1160.9 mm/yıl`
+- Baz dönem (2015-2024) ortalama yıllık ET0: `1099.6 mm/yıl`
+- 2031-2035 tahmin ortalaması: `1155.7 mm/yıl`
+- Seviye farkı (2031-2035 ort. - 2015-2024 ort.): `+56.1 mm/yıl`
 
-## Uretilen Ciktilar
+Not: `+56.1 mm/yıl` değeri yıllık artış hızı değildir; iki dönem ortalaması arasındaki seviye farkıdır.
 
-- Ozet: `assets/et0/reports/baraj_et0_real_radiation_summary.json`
+## Üretilen Çıktılar
+
+- Özet: `assets/et0/reports/baraj_et0_real_radiation_summary.json`
 - Trend istatistikleri: `assets/et0/reports/baraj_et0_yearly_trend_stats.json`
 - Grafikler: `assets/et0/*.png`
