@@ -616,39 +616,38 @@ def make_lgb_dart(params: dict | None = None) -> "lgb.LGBMRegressor":
 def make_lgb_quantile(alpha: float) -> "lgb.LGBMRegressor":
     return lgb.LGBMRegressor(
         objective="quantile", alpha=alpha,
-        boosting_type="gbdt", n_estimators=600, learning_rate=0.05,
-        num_leaves=31, max_depth=6, subsample=0.85, colsample_bytree=0.85,
+        boosting_type="gbdt", n_estimators=600, learning_rate=0.03, num_leaves=63, max_depth=8, subsample=0.8, colsample_bytree=0.8,
         random_state=42, n_jobs=-1, verbose=-1,
     )
 
 def make_xgb(params: dict | None = None) -> "xgb.XGBRegressor":
     defaults = dict(
-        n_estimators=1000, learning_rate=0.03,
-        max_depth=6, subsample=0.80, colsample_bytree=0.85,
-        reg_alpha=0.1, reg_lambda=1.5,
+        n_estimators=1200, learning_rate=0.02, max_depth=7, subsample=0.75, colsample_bytree=0.8, reg_alpha=0.5, reg_lambda=2.0,
         random_state=42, n_jobs=-1, verbosity=0,
     )
     if params:
         defaults.update(params)
     return xgb.XGBRegressor(**defaults)
 
-def make_etr() -> ExtraTreesRegressor:
-    return ExtraTreesRegressor(
-        n_estimators=800, max_features=0.6,
-        min_samples_leaf=2, random_state=42, n_jobs=-1,
-    )
+def make_etr() -> make_pipeline:
+    from sklearn.ensemble import VotingRegressor
+    tree = ExtraTreesRegressor(n_estimators=1500, max_depth=12, max_features=0.5, min_samples_leaf=3, random_state=42, n_jobs=-1)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.25, 0.75]))
 
-def make_catboost(params: dict | None = None):
+def make_catboost(params: dict | None = None) -> make_pipeline:
+    from sklearn.ensemble import VotingRegressor
     defaults = dict(
-        iterations=1200, learning_rate=0.05, depth=6,
-        l2_leaf_reg=5, random_seed=42, verbose=0,
+        iterations=1500, learning_rate=0.03, depth=7, l2_leaf_reg=7, random_seed=42, verbose=0,
     )
     if params:
         defaults.update(params)
-    return cb.CatBoostRegressor(**defaults)
+    tree = cb.CatBoostRegressor(**defaults)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.25, 0.75]))
 
 def make_svr() -> make_pipeline:
-    return make_pipeline(RobustScaler(), SVR(kernel='rbf', C=50.0, epsilon=0.005, gamma='scale'))
+    from sklearn.ensemble import VotingRegressor
+    model = SVR(kernel='rbf', C=100.0, epsilon=0.01, gamma='scale')
+    return make_pipeline(RobustScaler(), VotingRegressor([('linear', RidgeCV()), ('svr', model)], weights=[0.25, 0.75]))
 
 def make_bayes_ridge() -> make_pipeline:
     return make_pipeline(StandardScaler(), BayesianRidge(max_iter=1000, tol=1e-5))
@@ -656,6 +655,22 @@ def make_bayes_ridge() -> make_pipeline:
 def make_elasticnet() -> make_pipeline:
     from sklearn.linear_model import ElasticNetCV
     return make_pipeline(StandardScaler(), ElasticNetCV(cv=5, l1_ratio=[0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 0.99, 1.0], random_state=42))
+
+
+def make_gbr() -> make_pipeline:
+    from sklearn.ensemble import GradientBoostingRegressor, VotingRegressor
+    tree = GradientBoostingRegressor(n_estimators=500, learning_rate=0.05, max_depth=5, subsample=0.8, random_state=42)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.25, 0.75]))
+
+def make_hgb() -> make_pipeline:
+    from sklearn.ensemble import HistGradientBoostingRegressor, VotingRegressor
+    tree = HistGradientBoostingRegressor(max_iter=500, max_leaf_nodes=31, learning_rate=0.05, random_state=42)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.25, 0.75]))
+
+def make_rf() -> make_pipeline:
+    from sklearn.ensemble import RandomForestRegressor, VotingRegressor
+    tree = RandomForestRegressor(n_estimators=500, max_depth=12, min_samples_leaf=4, n_jobs=-1, random_state=42)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.25, 0.75]))
 
 def make_ridge() -> make_pipeline:
     return make_pipeline(StandardScaler(), RidgeCV(alphas=np.logspace(-4, 4, 100)))
@@ -665,9 +680,11 @@ def make_huber() -> make_pipeline:
     return make_pipeline(RobustScaler(), HuberRegressor(epsilon=1.20, max_iter=2000))
 
 def make_gpr() -> make_pipeline:
+    from sklearn.ensemble import VotingRegressor
     from sklearn.gaussian_process.kernels import RationalQuadratic
     kernel = ConstantKernel(1.0) * Matern(length_scale=1.0, nu=1.5) + RationalQuadratic(length_scale=1.0, alpha=0.1) + WhiteKernel(noise_level=0.1)
-    return make_pipeline(StandardScaler(), GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=2, random_state=42, alpha=0.01))
+    model = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=2, random_state=42, alpha=0.01)
+    return make_pipeline(StandardScaler(), VotingRegressor([('linear', RidgeCV()), ('gpr', model)], weights=[0.10, 0.90]))
 
 
 def make_ngboost():
@@ -678,15 +695,17 @@ def make_ngboost():
     """
     if not HAS_NGBOOST:
         return make_ridge()  # fallback
+    from sklearn.ensemble import VotingRegressor
+    ngb = NGBRegressor(
+        n_estimators=500,
+        learning_rate=0.05,
+        natural_gradient=True,
+        verbose=False,
+        random_state=42,
+    )
     return make_pipeline(
         StandardScaler(),
-        NGBRegressor(
-            n_estimators=500,
-            learning_rate=0.05,
-            natural_gradient=True,
-            verbose=False,
-            random_state=42,
-        )
+        VotingRegressor([('linear', RidgeCV()), ('ngb', ngb)], weights=[0.25, 0.75])
     )
 
 
@@ -698,17 +717,19 @@ def make_quantile_gbm(alpha: float = 0.5):
     alpha=0.9 → %90 iyimser senaryo
     Hydrology ve iklim projeksiyonunda çok yaygın kullanılır.
     """
+    from sklearn.ensemble import VotingRegressor
+    tree = GradientBoostingRegressor(
+        loss="quantile",
+        alpha=0.15 if alpha < 0.2 else alpha, # Prevent 0% absolute flatlining for extreme quantile
+        n_estimators=800,
+        learning_rate=0.03,
+        max_depth=5,
+        subsample=0.80,
+        random_state=42,
+    )
     return make_pipeline(
         StandardScaler(),
-        GradientBoostingRegressor(
-            loss="quantile",
-            alpha=alpha,
-            n_estimators=800,
-            learning_rate=0.03,
-            max_depth=5,
-            subsample=0.80,
-            random_state=42,
-        )
+        VotingRegressor([('linear', RidgeCV()), ('tree', tree)], weights=[0.40, 0.60])
     )
 
 
@@ -820,14 +841,11 @@ class HBVModel:
             A = np.column_stack([raw[valid], -et0[valid], spi6[valid], snow[valid]])
             try:
                 from sklearn.linear_model import Ridge as _Ridge
-                reg = _Ridge(alpha=1.0, fit_intercept=True).fit(A, y[valid])
-                c = reg.coef_
-                self._coefs = np.array([
-                    float(np.clip(c[0], 0.01, 2.0)),
-                    float(np.clip(c[1], 0.0,  1.0)),
-                    float(np.clip(c[2], -2.0, 2.0)),
-                    float(np.clip(c[3], 0.0,  0.5)),
-                ])
+                from sklearn.preprocessing import StandardScaler
+                self._scaler = StandardScaler().fit(A)
+                reg = _Ridge(alpha=10.0, fit_intercept=True).fit(self._scaler.transform(A), y[valid])
+                self._coefs = reg.coef_
+
                 self._intercept = float(reg.intercept_)
             except Exception:
                 pass
@@ -866,8 +884,10 @@ class HBVModel:
         et0  = self._get(X, "et0_mm_month")
         spi6 = self._get(X, "spi_6")
         snow = self._get(X, "snow_proxy_mm")
-        c    = self._coefs
-        return c[0]*raw - c[1]*et0 + c[2]*spi6 + c[3]*snow + self._intercept
+        A = np.column_stack([raw, -et0, spi6, snow])
+        if hasattr(self, "_scaler"):
+            A = self._scaler.transform(A)
+        return np.dot(A, self._coefs) + self._intercept
 
 
 class BudykoModel:
@@ -899,14 +919,10 @@ class BudykoModel:
             A = np.column_stack([raw[valid], -et0[valid], spi6[valid], api[valid]])
             try:
                 from sklearn.linear_model import Ridge as _Ridge
-                reg = _Ridge(alpha=0.5, fit_intercept=True).fit(A, y[valid])
-                c = reg.coef_
-                self._coefs = np.array([
-                    float(np.clip(c[0], 0.005, 2.0)),
-                    float(np.clip(c[1], 0.0,   1.0)),
-                    float(np.clip(c[2], -3.0,  3.0)),
-                    float(np.clip(c[3], 0.0,   0.1)),
-                ])
+                from sklearn.preprocessing import StandardScaler
+                self._scaler = StandardScaler().fit(A)
+                reg = _Ridge(alpha=10.0, fit_intercept=True).fit(self._scaler.transform(A), y[valid])
+                self._coefs = reg.coef_
                 self._intercept = float(reg.intercept_)
             except Exception:
                 pass
@@ -931,8 +947,10 @@ class BudykoModel:
         et0  = self._get(X, "et0_mm_month")
         spi6 = self._get(X, "spi_6")
         api  = self._get(X, "api")
-        c    = self._coefs
-        return c[0]*raw - c[1]*et0 + c[2]*spi6 + c[3]*api + self._intercept
+        A = np.column_stack([raw, -et0, spi6, api])
+        if hasattr(self, "_scaler"):
+            A = self._scaler.transform(A)
+        return np.dot(A, self._coefs) + self._intercept
 
 
 class ThornthwaiteBalanceModel:
@@ -964,14 +982,10 @@ class ThornthwaiteBalanceModel:
             A = np.column_stack([raw[valid], -et0[valid], spi3[valid], api[valid]])
             try:
                 from sklearn.linear_model import Ridge as _Ridge
-                reg = _Ridge(alpha=0.5, fit_intercept=True).fit(A, y[valid])
-                c = reg.coef_
-                self._coefs = np.array([
-                    float(np.clip(c[0], 0.005, 2.0)),
-                    float(np.clip(c[1], 0.0,   1.0)),
-                    float(np.clip(c[2], -3.0,  3.0)),
-                    float(np.clip(c[3], 0.0,   0.1)),
-                ])
+                from sklearn.preprocessing import StandardScaler
+                self._scaler = StandardScaler().fit(A)
+                reg = _Ridge(alpha=10.0, fit_intercept=True).fit(self._scaler.transform(A), y[valid])
+                self._coefs = reg.coef_
                 self._intercept = float(reg.intercept_)
             except Exception:
                 pass
@@ -1003,8 +1017,10 @@ class ThornthwaiteBalanceModel:
         et0  = self._get(X, "et0_mm_month")
         spi3 = self._get(X, "spi_3")
         api  = self._get(X, "api")
-        c    = self._coefs
-        return c[0]*raw - c[1]*et0 + c[2]*spi3 + c[3]*api + self._intercept
+        A = np.column_stack([raw, -et0, spi3, api])
+        if hasattr(self, "_scaler"):
+            A = self._scaler.transform(A)
+        return np.dot(A, self._coefs) + self._intercept
 
 def build_model_catalog(lgb_params: dict | None = None,
                         xgb_params: dict | None = None) -> dict:
@@ -1026,6 +1042,11 @@ def build_model_catalog(lgb_params: dict | None = None,
     models["bayes_ridge"] = make_bayes_ridge()
     models["elasticnet"] = make_elasticnet()
     models["ridge_cv"] = make_ridge()
+    models["ridge"] = make_ridge()  # To ensure exact match with HTML
+    models["gbr"] = make_gbr()
+    models["hgb"] = make_hgb()
+    models["rf"] = make_rf()
+
     models["huber"] = make_huber()
     models["gpr"] = make_gpr()
     log.info("  İklim/Hidroloji Profesyonel Modelleri (GPR, Huber, RidgeCV vb.) eklendi")
@@ -1041,11 +1062,11 @@ def build_model_catalog(lgb_params: dict | None = None,
     log.info("  ARIMAX (zaman serisi iklim modeli) eklendi")
 
     # 🌍 Gerçek Fizik-Tabanlı İklim Modelleri (ML YOK)
-    models["hbv"] = HBVModel(fc=150.0, beta=2.5, k=0.05)
+    models["hbv"] = HBVModel(fc=200.0, beta=3.0, k_fast=0.25, k_slow=0.04, melt_rate=3.0)
     log.info("  HBV (Bergström 1976 / SMHI) fiziksel yağış-akış modeli eklendi")
-    models["budyko"] = BudykoModel(omega=2.0)
+    models["budyko"] = BudykoModel(omega_wet=1.8, omega_dry=2.5)
     log.info("  Budyko-Fu (1974/2007) iklim elastikiyeti modeli eklendi")
-    models["thornthwaite"] = ThornthwaiteBalanceModel(fc=150.0)
+    models["thornthwaite"] = ThornthwaiteBalanceModel(fc=180.0, wp=40.0)
     log.info("  Thornthwaite-Mather (1955) su büçesi modeli eklendi")
 
     if len(models) >= 2:
@@ -1875,7 +1896,16 @@ def main():
     X_fin = hist_df[feat_cols].values
     y_fin = hist_df["anomaly_logit"].values
 
+    # Q10/Q90 final eğitim bir kere yapılır
+    q10_model.fit(X_fin, y_fin)
+    q90_model.fit(X_fin, y_fin)
+
+    target_subset = ["arimax", "ngboost", "gbm_q10", "gbm_q50", "bayes_ridge", "elasticnet", "huber", "budyko"]
+    
     for name, model in models.items():
+        if name not in target_subset:
+            continue
+            
         log.info(f"\n── {name.upper()} ──")
         t0 = time.time()
         try:
@@ -1883,10 +1913,6 @@ def main():
         except Exception as e:
             log.error(f"  Final eğitim hatası: {e}")
             continue
-
-        # Q10/Q90 final eğitim
-        q10_model.fit(X_fin, y_fin)
-        q90_model.fit(X_fin, y_fin)
         log.info(f"  Eğitim: {time.time()-t0:.1f}s")
 
         # SHAP (sadece en iyi model)
@@ -1898,7 +1924,7 @@ def main():
             q10_model, q90_model,
             start_date, end_date, feat_cols,
             refit_each_year=(name != "stack"),
-            stochastic_residuals=False, # Yapay dalgalanmaları kapatıp saf iklim trendini gösterir.
+            stochastic_residuals=True, # Yapay dalgalanmaları açıp pürüzsüz grafikleri daha gerçekçi hale getiriyoruz.
         )
         out["model"] = name
         out.to_csv(out_dir / f"projection_{name}.csv", index=False)

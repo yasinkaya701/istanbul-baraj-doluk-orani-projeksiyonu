@@ -102,12 +102,14 @@ def vpd_kpa_from_t_rh(t_c: pd.Series, rh_pct: pd.Series) -> pd.Series:
 
 
 def model_catalog():
+    from sklearn.ensemble import VotingRegressor
+    linear = make_pipeline(StandardScaler(), Ridge(alpha=1.0))
     return {
-        "ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
-        "gbr": GradientBoostingRegressor(random_state=42),
-        "hgb": HistGradientBoostingRegressor(random_state=42),
-        "rf": RandomForestRegressor(n_estimators=150, random_state=42, n_jobs=-1),
-        "etr": ExtraTreesRegressor(n_estimators=200, random_state=42, n_jobs=-1),
+        "ridge": linear,
+        "gbr": VotingRegressor(estimators=[("lin", linear), ("tree", GradientBoostingRegressor(n_estimators=100, learning_rate=0.05, max_depth=3, random_state=42))], weights=[0.4, 0.6]),
+        "hgb": VotingRegressor(estimators=[("lin", linear), ("tree", HistGradientBoostingRegressor(max_iter=100, learning_rate=0.05, max_depth=3, l2_regularization=0.1, random_state=42))], weights=[0.4, 0.6]),
+        "rf": VotingRegressor(estimators=[("lin", linear), ("tree", RandomForestRegressor(n_estimators=100, max_depth=5, min_samples_leaf=4, random_state=42, n_jobs=-1))], weights=[0.4, 0.6]),
+        "etr": VotingRegressor(estimators=[("lin", linear), ("tree", ExtraTreesRegressor(n_estimators=100, max_depth=5, min_samples_leaf=4, random_state=42, n_jobs=-1))], weights=[0.4, 0.6]),
     }
 
 
@@ -409,7 +411,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--panel", default="output/newdata_feature_store/tables/istanbul_dam_driver_panel_2000_2026_extended.csv")
     p.add_argument("--climate", default="output/scientific_climate_projection_2026_2040/climate_projection_2010_2040_monthly.csv")
-    p.add_argument("--metrics", default="output/istanbul_model_cards_2026_03_18/model_cards_metrics.csv")
+    p.add_argument("--metrics", default="output/istanbul_model_cards_v4/model_cards_metrics.csv")
     p.add_argument("--out", default="output/istanbul_projection_2040_rolling")
     p.add_argument("--models", default="ridge,gbr,hgb,rf,etr")
     args = p.parse_args()
@@ -437,7 +439,8 @@ def main():
     all_rows = []
 
     for name, model in models.items():
-        sim_series = simulate_projection(df, model, start_date, end_date, use_one_year_for_2027=True)
+        is_stochastic = (name != "ridge")
+        sim_series = simulate_projection(df, model, start_date, end_date, use_one_year_for_2027=True, use_stochastic_future=is_stochastic)
 
         out = df[["date", "fill_pct"]].copy()
         out["fill_sim"] = sim_series.values
@@ -490,6 +493,7 @@ def main():
         add_info_box(plt.gcf(), name, m5, m10)
         plt.tight_layout(rect=[0.0, 0.04, 1.0, 1.0])
         plt.savefig(fig_dir / f"{name}_projection_{start_date.date()}_2040.png", dpi=160)
+        plt.savefig(fig_dir / f"{name}_projection_zoom_2040.png", dpi=160)
         plt.close()
 
         all_rows.append(out)

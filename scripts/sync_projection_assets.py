@@ -35,7 +35,7 @@ def copy_figures() -> None:
     for target in img_targets:
         target.mkdir(parents=True, exist_ok=True)
 
-    proj_fig_dir = ROOT / "output/istanbul_projection_2040_rolling/figures"
+    proj_fig_dir = ROOT / "output/istanbul_v3/figures"
     if proj_fig_dir.exists():
         for src in proj_fig_dir.glob("*_projection_*.png"):
             for target in img_targets:
@@ -49,7 +49,9 @@ def copy_figures() -> None:
 
 
 def main() -> None:
-    csv_path = ROOT / "output/istanbul_projection_2040_rolling/projection_all_models.csv"
+    csv_path = ROOT / "output/istanbul_gemini/data/projection_all.csv"
+    if not csv_path.exists():
+        csv_path = ROOT / "output/istanbul_gemini/projection_all.csv"
     if not csv_path.exists():
         raise SystemExit(f"Missing {csv_path}")
     js_text = build_model_js(csv_path)
