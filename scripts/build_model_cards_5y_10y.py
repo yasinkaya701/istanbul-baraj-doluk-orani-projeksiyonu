@@ -11,6 +11,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from sklearn.linear_model import Ridge
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, GradientBoostingRegressor, HistGradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
@@ -175,11 +177,11 @@ def split_window(df, train_end, test_start, test_end):
 
 def model_catalog():
     return {
-        "ridge": Ridge(alpha=1.0),
-        "gbr": GradientBoostingRegressor(random_state=42),
-        "hgb": HistGradientBoostingRegressor(random_state=42),
-        "rf": RandomForestRegressor(n_estimators=300, random_state=42, n_jobs=-1),
-        "etr": ExtraTreesRegressor(n_estimators=400, random_state=42, n_jobs=-1),
+        "ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+        "gbr": GradientBoostingRegressor(n_estimators=100, learning_rate=0.05, max_depth=3, random_state=42),
+        "hgb": HistGradientBoostingRegressor(max_iter=100, learning_rate=0.05, max_depth=3, l2_regularization=0.1, random_state=42),
+        "rf": RandomForestRegressor(n_estimators=100, max_depth=5, min_samples_leaf=4, random_state=42, n_jobs=-1),
+        "etr": ExtraTreesRegressor(n_estimators=100, max_depth=5, min_samples_leaf=4, random_state=42, n_jobs=-1),
     }
 
 
@@ -237,7 +239,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--panel", default="output/newdata_feature_store/tables/istanbul_dam_driver_panel_2000_2026_extended.csv")
     p.add_argument("--drop-cols", default="")
-    p.add_argument("--out", default="output/istanbul_model_cards_2026_03_18")
+    p.add_argument("--out", default="output/istanbul_model_cards_v4")
     args = p.parse_args()
 
     out_dir = ROOT / args.out
