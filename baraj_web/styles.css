@@ -715,6 +715,31 @@ figcaption { margin-top: 8px; color: var(--muted); }
   margin-top: 0;
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
+.model-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+  font-size: 0.92rem;
+}
+
+.model-guide-table th,
+.model-guide-table td {
+  border: 1px solid var(--line);
+  padding: 9px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.model-guide-table th {
+  background: #f7f5f0;
+  color: var(--deep);
+  font-weight: 700;
+}
+
 .metric-help {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
