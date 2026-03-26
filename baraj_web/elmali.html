@@ -70,9 +70,9 @@
     .card h3{font-size:1rem; color:var(--deep); margin:0 0 8px;}
     .card p{font-size:.9rem; color:var(--ink); margin:0; line-height:1.6;}
     #modeller .model-gallery{
-      grid-template-columns:1fr;
+      grid-template-columns:repeat(2,minmax(320px,1fr));
       gap:20px;
-      max-width:1080px;
+      max-width:1200px;
       margin:0 auto 24px;
     }
     #modeller .model-gallery .card{
@@ -1332,9 +1332,11 @@ const ELMALI_DELTA_CAP_PP = (() => {
 const ELMALI_SCENARIO_GAIN = (() => {
   const med = Number(ELMALI_SIM_CAL.delta_abs_median_pp);
   if (!Number.isFinite(med)) return 1.05;
-  return hardClamp(0.85 + (med / 10), 0.9, 1.35);
+  return hardClamp(0.95 + (med / 9), 1.0, 1.55);
 })();
 const ELMALI_ET0_RUNOFF_BETA = 0.42;
+const ELMALI_RAIN_SENS_GAIN = 1.65;
+const ELMALI_ET0_SENS_GAIN = 1.75;
 const SIM_START_UTC = new Date(Date.UTC(2026, 2, 1)); // 2026-03-01
 
 const MONTHLY_USE_WEIGHTS_RAW = (MONTHLY_USE_M3 || []).map((v) => Number(v) || 0);
@@ -1966,11 +1968,14 @@ function getSeries(model, rain, et0, useM3, useGrowth) {
 
     const precipBase = MONTHLY_RAIN[month] ?? 0;
     const et0Base = BASE_ET0_MONTHLY[month] ?? 0;
-    const precipScen = precipBase * (1 + (rain / 100));
-    const et0Scen = et0Base * (1 + (et0 / 100));
+    const rainAdj = (rain / 100) * ELMALI_RAIN_SENS_GAIN;
+    const et0AdjPct = et0 * ELMALI_ET0_SENS_GAIN;
+    const et0Adj = et0AdjPct / 100;
+    const precipScen = precipBase * (1 + rainAdj);
+    const et0Scen = et0Base * (1 + et0Adj);
 
     const runoffBase = runoffFromEt0AndStorage(0, prevBaseFill);
-    const runoffScen = runoffFromEt0AndStorage(et0, prevAdjFill);
+    const runoffScen = runoffFromEt0AndStorage(et0AdjPct, prevAdjFill);
 
     const areaBaseKm2 = lakeAreaFromFill(prevBaseFill);
     const areaScenKm2 = lakeAreaFromFill(prevAdjFill);

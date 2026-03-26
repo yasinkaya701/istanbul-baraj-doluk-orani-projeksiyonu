@@ -243,19 +243,19 @@
       <h2>Doğruluk Metrikleri (Basit Anlatım)</h2>
       <div class="metric-help">
         <div class="metric-pill">
-          <strong>RMSE</strong>
+          <strong>Root Mean Squared Error (Kök Ortalama Kare Hata)</strong>
           Kareli hata ortalaması kökü. Büyük hataları daha fazla cezalandırır. Birimi “doluluk yüzdesi puanı”dır. Düşükse daha iyidir.
         </div>
         <div class="metric-pill">
-          <strong>MAE</strong>
+          <strong>Mean Absolute Error (Ortalama Mutlak Hata)</strong>
           Ortalama mutlak hata. “Ortalama kaç puan yanıldık?” sorusunun cevabı. Birimi yüzde puandır.
         </div>
         <div class="metric-pill">
-          <strong>MAPE</strong>
+          <strong>Mean Absolute Percentage Error (Ortalama Mutlak Yüzde Hata)</strong>
           Ortalama yüzde hata. %10 → tahminler gerçeğin ortalama %10’u kadar sapıyor demektir.
         </div>
         <div class="metric-pill">
-          <strong>Pearson</strong>
+          <strong>Pearson Correlation Coefficient (Pearson Korelasyon Katsayısı)</strong>
           Gerçek seri ile tahmin serisinin doğrusal uyumunu ölçer. -1 ile +1 arasındadır. Sitede % olarak yazılıdır: %90 → r=0.90 demektir. 1’e yakınsa trend uyumu güçlüdür, 0’a yakınsa zayıftır.
         </div>
       </div>
@@ -469,10 +469,10 @@
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim/su trendlerinin ana hattını, minimum gürültü ile saf doğrultuda görmek için referans (baseline) baz model görevini alır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png?v=20260323" alt="Ridge 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png?v=20260326-2" alt="Ridge 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260326-1" alt="Ridge 5y/10y karşılaştırma" />
-                <img class="media-small zoomable" src="assets/img/ridge_projection_zoom_2040.png?v=20260323" alt="Ridge 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260326-2" alt="Ridge 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/ridge_projection_zoom_2040.png?v=20260326-2" alt="Ridge 2024-2040" />
               </div>
             </div>
           </div>
@@ -487,10 +487,10 @@
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklimsel kırılma noktalarını (kuraklık başı/sonu) hassasiyetle yakalayabilen dinamik doğrusal olmayan (non-linear) karmaşık öngörüler yapar.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png?v=20260323" alt="GBR 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png?v=20260326-2" alt="GBR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260326-1" alt="GBR 5y/10y karşılaştırma" />
-                <img class="media-small zoomable" src="assets/img/gbr_projection_zoom_2040.png?v=20260323" alt="GBR 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260326-2" alt="GBR 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/gbr_projection_zoom_2040.png?v=20260326-2" alt="GBR 2024-2040" />
               </div>
             </div>
           </div>
@@ -505,10 +505,10 @@
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Veri kayıplarına tolerans eşiği yüksek olduğu için, projeksiyondaki eksik/sınırlı senaryo özelliklerini başarıyla tolere eden bir yapay zekadır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png?v=20260323" alt="HGB 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png?v=20260326-2" alt="HGB 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260326-1" alt="HGB 5y/10y karşılaştırma" />
-                <img class="media-small zoomable" src="assets/img/hgb_projection_zoom_2040.png?v=20260323" alt="HGB 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260326-2" alt="HGB 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/hgb_projection_zoom_2040.png?v=20260326-2" alt="HGB 2024-2040" />
               </div>
             </div>
           </div>
@@ -523,10 +523,10 @@
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Uçuk sapmaları yumuşatıp aşırı oynaklığı azaltılmış, olası orta senaryoyu izlemek için kullanılır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png?v=20260323" alt="RF 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png?v=20260326-2" alt="RF 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260326-1" alt="RF 5y/10y karşılaştırma" />
-                <img class="media-small zoomable" src="assets/img/rf_projection_zoom_2040.png?v=20260323" alt="RF 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260326-2" alt="RF 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/rf_projection_zoom_2040.png?v=20260326-2" alt="RF 2024-2040" />
               </div>
             </div>
           </div>
@@ -541,10 +541,10 @@
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç modellerde görülen erken düzleşme eğilimini azaltan, yüksek genelleme kabiliyetine sahip referans ansambl modelidir.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260323" alt="ETR 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260326-2" alt="ETR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260326-1" alt="ETR 5y/10y karşılaştırma" />
-                <img class="media-small zoomable" src="assets/img/etr_projection_zoom_2040.png?v=20260323" alt="ETR 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260326-2" alt="ETR 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/etr_projection_zoom_2040.png?v=20260326-2" alt="ETR 2024-2040" />
               </div>
             </div>
           </div>
@@ -839,25 +839,6 @@
         <h3>CV Karşılaştırma Grafiği</h3>
         <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260322" alt="V3 CV comparison"/>
         <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı. QuantileGBM-10 en düşük RMSE ile en iyi model seçildi.</p>
-      </div>
-
-      <!-- ── Özellik Özeti ──────────────── -->
-      <div class="card" style="margin-top:16px;">
-        <h3>38 Özellik — Yeni Katkılar (Sürüm 4)</h3>
-        <div class="grid three" style="gap:8px;">
-          <div>
-            <strong>SPEI-3 / SPEI-6 ← YENİ</strong>
-            <p class="note">Vicente-Serrano 2010 — ET0 içeren gelişmiş kuraklık indeksi. IPCC AR6 standardı. SPI'dan üstün: iklim değişikliğini yakalar.</p>
-          </div>
-          <div>
-            <strong>Thornthwaite Runoff ← YENİ</strong>
-            <p class="note">Deterministik su bütçesi çıkışı özellik olarak besleniyor — fizik katmanından ML'e bilgi akışı.</p>
-          </div>
-          <div>
-            <strong>Sıcaklık Trendi ← YENİ</strong>
-            <p class="note">İklim değişikliğinin sistematik ısınma etkisini yakalar. Uzun vadeli 2040 projeksiyonlarında kritik.</p>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1792,12 +1773,17 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const climate = getClimateRow(d.date);
         const precipBase = climate ? climate.precip_mm_month : 0;
         const et0Base = climate ? climate.et0_mm_month : 0;
-        const precipScen = precipBase * (1 + rain / 100);
-        const et0Scen = et0Base * (1 + et0 / 100);
+        const rainSensGain = coeff.rain_sensitivity_gain ?? 1.70;
+        const et0SensGain = coeff.et0_sensitivity_gain ?? 1.80;
+        const rainAdj = (rain / 100) * rainSensGain;
+        const et0Adj = (et0 / 100) * et0SensGain;
+
+        const precipScen = precipBase * (1 + rainAdj);
+        const et0Scen = et0Base * (1 + et0Adj);
 
         const runoffCoeff = getRunoffCoeff(m, runoffFallback);
-        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.40;
-        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * (et0 / 100)), 0.0, 1.5);
+        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.62;
+        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * et0Adj), 0.0, 1.5);
         const inflowBase = runoffCoeff * precipBase * catchmentKm2 * 0.001;
         const inflowScen = runoffScen * precipScen * catchmentKm2 * 0.001;
         const lakeRainBase = precipBase * lakeAreaKm2 * 0.001;
@@ -1813,8 +1799,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const adjScale = getScenarioAdjScale(m);
         const offsetCapPp = coeff.scenario_offset_cap_pp ?? 30.0;
         const offsetFloor = coeff.scenario_offset_damping_floor ?? 0.25;
-        const deltaCapPp = coeff.scenario_delta_cap_pp ?? 2.7;
-        const responseGain = coeff.scenario_response_gain ?? 0.45;
+        const deltaCapPp = coeff.scenario_delta_cap_pp ?? 4.2;
+        const responseGain = coeff.scenario_response_gain ?? 0.62;
         
         const offsetFromBase = prevAdj - curFill;
         const offsetDamping = clamp(1 - Math.abs(offsetFromBase) / offsetCapPp, offsetFloor, 1);
@@ -2165,11 +2151,11 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         adjScaleEl.textContent = Number(scale).toFixed(3);
       }
       if (responseGainEl) {
-        const gain = Number.isFinite(coeff.scenario_response_gain) ? coeff.scenario_response_gain : 0.45;
+        const gain = Number.isFinite(coeff.scenario_response_gain) ? coeff.scenario_response_gain : 0.62;
         responseGainEl.textContent = Number(gain).toFixed(2);
       }
       if (deltaCapEl) {
-        const capPp = coeff.scenario_delta_cap_pp ?? 2.7;
+        const capPp = coeff.scenario_delta_cap_pp ?? 4.2;
         deltaCapEl.textContent = Number(capPp).toFixed(2);
       }
       if (meanRainEl && climateClim && climateClim.length) {
