@@ -207,6 +207,18 @@
     .mtable td{padding:10px 12px; border-bottom:1px solid var(--line); color:var(--ink);}
     .mtable tr:hover td{background:rgba(0,0,0,0.015);}
     .mtable .best{background:rgba(214,90,58,0.05); font-weight:500;}
+    .mtable tbody tr:nth-child(even) td{background:#fcfbf8;}
+    .mtable th{position:sticky; top:0; z-index:1;}
+
+    .elmali-tabs{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 14px;}
+    .elmali-tab{border:1px solid var(--line); background:#f7f5f0; color:var(--deep); border-radius:999px; padding:8px 14px; font-weight:700; cursor:pointer;}
+    .elmali-tab.active{background:var(--deep); color:#fff; border-color:var(--deep);}
+    .elmali-model-panel{display:none;}
+    .elmali-model-panel.active{display:block;}
+    .elmali-stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:12px 0 16px;}
+    .elmali-stat{background:#f7f5f0; border:1px solid var(--line); border-radius:10px; padding:10px 12px;}
+    .elmali-stat small{display:block; color:var(--muted); font-size:.74rem; line-height:1.3;}
+    .elmali-stat strong{display:block; margin-top:4px; font-size:1.08rem; color:var(--deep);}
 
     /* LEGEND */
     .legend-row{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:.85rem; font-weight:600; color:var(--muted);}
@@ -759,14 +771,16 @@
 
       <div class="card">
         <h4 style="margin:0 0 8px; color:var(--deep);">Kullanım ve Kayıplar</h4>
-        <label>Kullanım Miktarı (milyon m³ / yıl)</label>
+        <label>Yıllık Kullanım (milyon m³ / yıl)</label>
         <input type="range" id="sim-use-m3" min="1.5" max="9.0" value="3.6" step="0.1" />
         <div class="value" id="sim-use-m3-val">—</div>
 
-        <label>Kullanım Trendi (% / yıl)</label>
+        <label>Yıllık Kullanım Artışı (% / yıl)</label>
         <input type="range" id="sim-use-growth" min="-1.0" max="3.0" value="0.0" step="0.1" />
         <div class="value" id="sim-use-growth-val">0.0% / yıl</div>
-        <div class="note">2040 tahmini kullanım: <strong id="sim-use-2040">—</strong></div>
+        <div class="note">2040 tahmini kullanım (seçili artış hızına göre): <strong id="sim-use-2040">—</strong></div>
+        <div class="note" id="sim-use-range">Kullanım artış bandı: —</div>
+        <div class="note" id="sim-use-season">Mevsimsel dağılım: —</div>
 
         <label>Buharlaşma (ET0 ile bağlı)</label>
         <div class="value" id="sim-evap-m3-val">—</div>
@@ -814,147 +828,55 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
   </div>
 </section>
 
-<!-- YENİ EKLENEN MODEL GRAFİKLERİ BÖLÜMÜ -->
 
+<!-- MODEL KATALOĞU -->
 <section id="modeller" class="sec">
   <h2 class="sec-title">Elmalı İçin İklim Regresyon Modelleri</h2>
-  <p class="note" style="margin-bottom:8px;">Aşağıdaki grafikler, Elmalı Barajı için farklı model ailelerinin projeksiyon çıktılarını karşılaştırmalı olarak sunar. Görsellerde eğitim-test ayrımı ve belirsizlik bandı birlikte gösterilir.</p>
-  <p class="note" style="margin-bottom:24px;"><strong>Sürüm 4 (V4)</strong>, modelin adı değil; aynı veri seti, aynı özellik mühendisliği ve aynı doğrulama protokolü ile üretilen güncel model sürümünü ifade eder.</p>
+  <p class="note" style="margin-bottom:10px;">Model seçimini standartlaştırmak için mekanizma, grafik karakteri ve kullanım bağlamı tek matriste verildi. Simülasyon paneli bu listedeki tüm modellerle birebir entegredir.</p>
+  <p class="note" style="margin-bottom:24px;"><strong>V4</strong> model adı değil; aynı veri işleme, aynı özellik mühendisliği ve aynı doğrulama protokolüyle üretilen güncel sürüm etiketidir.</p>
 
   <div class="chart-card">
-    <h3>Model Kullanım Matrisi (Mekanizma · Grafik Karakteri · Kullanım Bağlamı)</h3>
+    <h3>Modellerin Kullanım Rehberi</h3>
     <div style="overflow-x:auto;">
       <table class="mtable" id="model-usage-table"></table>
     </div>
-    <p class="note">Bu tablo, model karşılaştırmasını tek şablonda toplar ve dağınık açıklamaları standardize eder.</p>
   </div>
-  
-  <h3 style="margin:24px 0 12px; font-size:1.15rem; color:var(--deep);">Lineer ve Olasılıksal Modeller</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">RidgeCV</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">L2 düzenlileştirmeli doğrusal referans modeldir; temel eğilimleri düşük varyansla izlemek için kullanılır.</p>
-      <img class="zoomable" src="assets/elmali_models/ridge_elmali_projection.png" alt="RidgeCV" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">ElasticNet</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">L1+L2 düzenlileştirmesiyle değişken seçimi ve katsayı kararlılığı arasında dengeli bir çözüm üretir.</p>
-      <img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png" alt="ElasticNet" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">BayesRidge</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Parametre belirsizliğini olasılıksal çerçevede temsil ederek risk değerlendirmesine katkı sağlar.</p>
-      <img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png" alt="BayesRidge" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">Huber Regressor</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Aykırı gözlemlere dayanıklı kayıp fonksiyonu sayesinde kuraklık uç değerlerinde daha dengeli tahmin üretir.</p>
-      <img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png" alt="Huber" style="width:100%; border-radius:8px; border:1px solid var(--line);">
+
+  <div class="elmali-tabs" data-elmali-tabs>
+    <button class="elmali-tab active" data-elmali-tab="temel">Temel Modeller</button>
+    <button class="elmali-tab" data-elmali-tab="v4">V4 Gelişmiş Modeller</button>
+  </div>
+
+  <div class="elmali-model-panel active" id="elmali-panel-temel">
+    <p class="note" style="margin-bottom:14px;">Temel set (Ridge, GBR, HGB, RF, ETR) günlük operasyon ve hızlı senaryo karşılaştırması için birincil referans gruptur.</p>
+    <div class="grid model-gallery">
+      <div class="card"><h3 style="margin-top:0;">Ridge</h3><p class="note">Düşük varyanslı lineer referans model.</p><img class="zoomable" src="assets/elmali_models/ridge_elmali_projection.png" alt="Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GBR</h3><p class="note">Kırılım noktalarına duyarlı boosting modeli.</p><img class="zoomable" src="assets/elmali_models/gbr_elmali_projection.png" alt="GBR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">HGB</h3><p class="note">Histogram tabanlı, dengeli ve hızlı boosting.</p><img class="zoomable" src="assets/elmali_models/hgb_elmali_projection.png" alt="HGB Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Random Forest</h3><p class="note">Orta rejimde yumuşak, robust topluluk model.</p><img class="zoomable" src="assets/elmali_models/rf_elmali_projection.png" alt="RF Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Extra Trees</h3><p class="note">Yüksek rastgeleleştirme ile gürültüye dayanıklı model.</p><img class="zoomable" src="assets/elmali_models/etr_elmali_projection.png" alt="ETR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
     </div>
   </div>
 
-  <h3 style="margin:40px 0 12px; font-size:1.15rem; color:var(--deep);">Ağaç Tabanlı ve Ensemble Modeller</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">Random Forest</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Birden fazla karar ağacının ortalamasını alarak genellenebilir tahminler üretir, aşırı öğrenmeye dirençlidir.</p>
-      <img class="zoomable" src="assets/elmali_models/rf_elmali_projection.png" alt="Random Forest" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">Extra Trees</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Daha yüksek rastgeleleştirme ile varyansı azaltırken önyargı-varyans dengesini farklı bir noktaya taşır.</p>
-      <img class="zoomable" src="assets/elmali_models/etr_elmali_projection.png" alt="Extra Trees" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">GBR (Gradient Boosting)</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Art arda öğrenen zayıf öğrenicilerle artık hatayı azaltarak doğruluğu artıran boosting yaklaşımıdır.</p>
-      <img class="zoomable" src="assets/elmali_models/gbr_elmali_projection.png" alt="GBR" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">HGB (HistGradientBoosting)</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Histogram tabanlı boosting mimarisiyle hesaplama maliyetini azaltırken karmaşık ilişkileri yakalar.</p>
-      <img class="zoomable" src="assets/elmali_models/hgb_elmali_projection.png" alt="HGB" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-  </div>
-
-  <h3 style="margin:40px 0 12px; font-size:1.15rem; color:var(--deep);">Gelişmiş Boosting Modelleri (XGB / LGBM / CatBoost)</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">XGBoost</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Düzenlileştirilmiş boosting yapısı ile doğrusal olmayan kırılmaları yüksek duyarlılıkla takip eder.</p>
-      <img class="zoomable" src="assets/elmali_models/xgb_elmali_projection.png" alt="XGBoost" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">LightGBM DART</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Ağaç bazlı modellerde DART (Dropouts meet Multiple Additive Regression Trees) yöntemini kullanarak aşırı öğrenmeyi engeller.</p>
-      <img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png" alt="LightGBM" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">CatBoost</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Kategorik dönüşümleri yerleşik olarak yöneten yapısı ile istikrarlı ve genellenebilir tahminler üretir.</p>
-      <img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png" alt="CatBoost" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-  </div>
-
-  <h3 style="margin:40px 0 12px; font-size:1.15rem; color:var(--deep);">Gelişmiş İstatistiksel Modeller (SVR, GPR, ARIMAX)</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">SVR (RBF Kernel)</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Çekirdek fonksiyon yaklaşımıyla doğrusal olmayan iklim-doluluk ilişkilerini sınırlı veri altında modelleyebilir.</p>
-      <img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png" alt="SVR" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">NGBoost</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Nokta tahminine ek olarak dağılım parametreleri üreterek belirsizliği nicel olarak raporlar.</p>
-      <img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png" alt="NGBoost" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">GPR (Gauss Süreci)</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Sürekli çekirdek yapısı ile yumuşak tahmin bantları üretir; ekstrapolasyonda dikkatli yorum gerektirir.</p>
-      <img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png" alt="GPR" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0; color:var(--accent);">GBM Quantile %10</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Alt kuantil odaklı yaklaşım ile düşük olasılıklı ancak etkisi yüksek kuraklık rejimlerini temsil eder.</p>
-      <img class="zoomable" src="assets/elmali_models/gbmq10_elmali_projection.png" alt="GBM Quantile" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">ARIMAX</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Otoregresif yapı ile dışsal iklim değişkenlerini birleştirerek seri bağımlılığını doğrudan modele dahil eder.</p>
-      <img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png" alt="ARIMAX" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-  </div>
-
-  <h3 style="margin:40px 0 12px; font-size:1.15rem; color:var(--deep);">Fizik Tabanlı Hidro-İklim Modelleri</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">Budyko</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Su-enerji denge ilişkisi üzerinden uzun dönem hidrolojik tutarlılığı yüksek bir referans üretir.</p>
-      <img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png" alt="Budyko" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">Thornthwaite</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Sıcaklık temelli evapotranspirasyon varsayımıyla kurak dönemlerdeki kaybı daha belirgin yansıtır.</p>
-      <img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png" alt="Thornthwaite" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0;">HBV</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Kavramsal havza yaklaşımı ile depolama ve akış bileşenlerini birlikte ele alan fizik temelli bir modeldir.</p>
-      <img class="zoomable" src="assets/elmali_models/hbv_elmali_projection.png" alt="HBV" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-  </div>
-
-  <h3 style="margin:40px 0 12px; font-size:1.15rem; color:var(--deep);">Toplulaştırma ve Nihai Karar Modelleri</h3>
-  <div class="grid model-gallery">
-    <div class="card">
-      <h3 style="margin-top:0;">Stacking Ensemble</h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Alt modellerin çıktılarını meta-öğrenici ile birleştirerek tekil model yanlılıklarını azaltmayı amaçlar.</p>
-      <img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);">
-    </div>
-    <div class="card">
-      <h3 style="margin-top:0; display:flex; align-items:center;">Ensemble Median <span style="font-size:0.6rem; background:var(--ok); color:#fff; padding:2px 6px; border-radius:4px; margin-left:8px;">Önerilen Karar Referansı</span></h3>
-      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">Modeller arası medyan birleştirme ile uç değer etkisini azaltan ve karar destekte referans alınan bileşik tahmindir.</p>
-      <img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);">
+  <div class="elmali-model-panel" id="elmali-panel-v4">
+    <p class="note" style="margin-bottom:14px;">V4 panelinde gelişmiş boosting, olasılıksal, zaman serisi ve fizik tabanlı modeller birlikte izlenir; stres testi ve belirsizlik raporlarında tamamlayıcı set olarak kullanılır.</p>
+    <div class="grid model-gallery">
+      <div class="card"><h3 style="margin-top:0;">ElasticNet</h3><img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png" alt="ElasticNet Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Bayesian Ridge</h3><img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png" alt="Bayesian Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Huber</h3><img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png" alt="Huber Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">XGBoost</h3><img class="zoomable" src="assets/elmali_models/xgb_elmali_projection.png" alt="XGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">LightGBM DART</h3><img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png" alt="LightGBM Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">CatBoost</h3><img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png" alt="CatBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">SVR (RBF)</h3><img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png" alt="SVR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">NGBoost</h3><img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png" alt="NGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GPR</h3><img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png" alt="GPR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GBM Quantile %10</h3><img class="zoomable" src="assets/elmali_models/gbmq10_elmali_projection.png" alt="GBM Quantile %10 Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">ARIMAX</h3><img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png" alt="ARIMAX Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Budyko</h3><img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png" alt="Budyko Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Thornthwaite</h3><img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png" alt="Thornthwaite Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">HBV</h3><img class="zoomable" src="assets/elmali_models/hbv_elmali_projection.png" alt="HBV Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Stacking Ensemble</h3><img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Ensemble Median</h3><img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
     </div>
   </div>
 </section>
@@ -962,8 +884,35 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
 <section class="sec" id="akademik-yorum">
   <h2 class="sec-title">Akademik Gelecek Değerlendirmesi</h2>
   <div class="card">
-    <p>Elmalı için temel model ailesi ve su dengesi simülasyonu birlikte ele alındığında, 2026 sonrası dönemde doluluk rejimini belirleyen ana bileşenler yağış toplamından çok mevsimsel dağılım, ET0 eğilimi ve kullanım talebinin yıllık artışıdır. Bu nedenle karar desteğinde tek model yerine referans model + ensemble medyan + stres senaryosu birlikte raporlanmalıdır.</p>
-    <p>Operasyonel izleme önerisi: (i) aylık doluluk değişimi için rejim kırılım takibi, (ii) ET0-yağış ortak şokları için duyarlılık analizi, (iii) yıllık plan notlarında belirsizlik aralığı ile model mutabakat skorunun eşzamanlı verilmesi. Bu çerçeve, kısa vadeli işletme kararları ile orta vadeli kuraklık hazırlığını aynı metodoloji altında birleştirir.</p>
+    <p>Elmalı Barajı için değerlendirme çerçevesi; model saçılımı, fizik tabanlı su dengesi ve talep baskısını tek tabloda birleştirir. Amaç, tek model eğrisi yerine açıklanabilir risk aralığı üretmektir.</p>
+    <div class="elmali-stat-grid">
+      <div class="elmali-stat"><small>Simülasyona Entegre Model</small><strong id="elm-acad-model-count">—</strong></div>
+      <div class="elmali-stat"><small>2040 Dağılımı (Min–Maks)</small><strong id="elm-acad-2040-minmax">—</strong></div>
+      <div class="elmali-stat"><small>2040 Medyanı</small><strong id="elm-acad-2040-median">—</strong></div>
+      <div class="elmali-stat"><small>2040 IQR (Q1–Q3)</small><strong id="elm-acad-2040-iqr">—</strong></div>
+      <div class="elmali-stat"><small>Tarihsel Ortalama Doluluk</small><strong id="elm-acad-hist-mean">—</strong></div>
+      <div class="elmali-stat"><small>Kullanım / Buharlaşma (baz)</small><strong id="elm-acad-loss-balance">—</strong></div>
+      <div class="elmali-stat"><small>+10% Yağış (Ridge 2040)</small><strong id="elm-acad-sens-rain">—</strong></div>
+      <div class="elmali-stat"><small>+10% ET0 (Ridge 2040)</small><strong id="elm-acad-sens-et0">—</strong></div>
+      <div class="elmali-stat"><small>+20% Kullanım (Ridge 2040)</small><strong id="elm-acad-sens-use">—</strong></div>
+      <div class="elmali-stat"><small>+1 puan/yıl Talep Artışı</small><strong id="elm-acad-sens-growth">—</strong></div>
+    </div>
+
+    <h3 style="margin-top:18px;">Bilimsel Yorum Çerçevesi</h3>
+    <ul>
+      <li>Rezerv değişimi, havza akışı + göl yağışı − ET0 buharlaşması − kullanım bileşenlerinin hacim dengesiyle hesaplanır.</li>
+      <li>Model geçişindeki yapay kırılmayı azaltmak için projeksiyon başlangıcı son gözlenen aylık doluluğa ankore edilir.</li>
+      <li>GBR/HGB/RF/ETR ailesinde senaryo etkisi, Ridge'e göre göreli oynaklığa bağlı normalizasyonla dengelenir.</li>
+      <li>Karar notlarında medyan + IQR + stres senaryosu birlikte verilmelidir; min–maks tek başına yorumlanmamalıdır.</li>
+    </ul>
+
+    <h3>Operasyonel Sonuçlar</h3>
+    <ol>
+      <li>Aylık takip notlarında eşik-altı model oranı (ör. %30 altı) raporlanmalıdır.</li>
+      <li>Yağış ve ET0 birlikte değerlendirilmelidir; tek değişkenli yorum Elmalı gibi küçük hacimli barajlarda yanıltıcı olur.</li>
+      <li>Kalibrasyon parametreleri çeyreklik olarak güncellenmeli ve kullanım dağılımı yeni ölçümle yeniden fit edilmelidir.</li>
+    </ol>
+    <p class="note" id="elm-acad-note">Bu özet, sayfadaki güncel veri ve model setinden otomatik hesaplanır.</p>
   </div>
 </section>
 
@@ -1372,20 +1321,20 @@ const ELMALI_BASE_USAGE_MCM_YEAR = Math.max(
 const ELMALI_BASE_USAGE_MCM_YEAR_UI = Number(ELMALI_BASE_USAGE_MCM_YEAR.toFixed(1));
 const ELMALI_ADJ_SCALE = (() => {
   const p75 = Number(ELMALI_SIM_CAL.delta_abs_p75_pp);
-  if (!Number.isFinite(p75)) return 0.22;
-  return hardClamp(p75 / 45, 0.12, 0.35);
+  if (!Number.isFinite(p75)) return 0.18;
+  return hardClamp(p75 / 55, 0.10, 0.28);
 })();
 const ELMALI_DELTA_CAP_PP = (() => {
   const p90 = Number(ELMALI_SIM_CAL.delta_abs_p90_pp);
-  if (!Number.isFinite(p90)) return 1.8;
-  return hardClamp(p90 * 0.16, 0.8, 2.6);
+  if (!Number.isFinite(p90)) return 1.5;
+  return hardClamp(p90 * 0.14, 0.7, 2.1);
 })();
 const ELMALI_SCENARIO_GAIN = (() => {
   const med = Number(ELMALI_SIM_CAL.delta_abs_median_pp);
-  if (!Number.isFinite(med)) return 1.35;
-  return hardClamp(0.95 + (med / 8), 1.0, 2.1);
+  if (!Number.isFinite(med)) return 1.05;
+  return hardClamp(0.85 + (med / 10), 0.9, 1.35);
 })();
-const ELMALI_ET0_RUNOFF_BETA = 0.30;
+const ELMALI_ET0_RUNOFF_BETA = 0.42;
 const SIM_START_UTC = new Date(Date.UTC(2026, 2, 1)); // 2026-03-01
 
 const MONTHLY_USE_WEIGHTS_RAW = (MONTHLY_USE_M3 || []).map((v) => Number(v) || 0);
@@ -1553,6 +1502,8 @@ const ELMALI_RUNOFF = (() => {
 
 let modelData = {};
 let modelSummary = null;
+let modelScenarioFactor = {};
+let modelBaseBlend = {};
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
@@ -1592,6 +1543,41 @@ function buildModelDataFromDaily() {
 
 function getAvailableModelKeys() {
   return Object.keys(modelData || {}).filter((k) => (modelData[k] || []).length > 0);
+}
+
+function computeModelScenarioCalibration() {
+  const focus = new Set(['gbr', 'hgb', 'rf', 'etr']);
+  const available = getAvailableModelKeys();
+  const ridgeSeries = modelData.ridge || [];
+  const stdOfDelta = (series) => {
+    if (!series || series.length < 3) return null;
+    const deltas = [];
+    for (let i = 1; i < series.length; i += 1) {
+      const prev = Number(series[i - 1].fill);
+      const cur = Number(series[i].fill);
+      if (Number.isFinite(prev) && Number.isFinite(cur)) deltas.push(cur - prev);
+    }
+    if (deltas.length < 2) return null;
+    const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+    const variance = deltas.reduce((a, b) => a + ((b - mean) ** 2), 0) / Math.max(1, deltas.length - 1);
+    return Math.sqrt(Math.max(0, variance));
+  };
+
+  const ridgeStd = stdOfDelta(ridgeSeries) || 1.0;
+  modelScenarioFactor = {};
+  modelBaseBlend = {};
+  available.forEach((m) => {
+    modelScenarioFactor[m] = 1.0;
+    modelBaseBlend[m] = 0.0;
+  });
+  available.forEach((m) => {
+    if (!focus.has(m)) return;
+    const std = stdOfDelta(modelData[m] || []);
+    if (!Number.isFinite(std) || std <= 0) return;
+    const ratio = std / ridgeStd;
+    modelScenarioFactor[m] = clamp(1 / Math.sqrt(Math.max(0.25, ratio)), 0.78, 1.12);
+    modelBaseBlend[m] = clamp((ratio - 1) * 0.20, 0.0, 0.28);
+  });
 }
 
 function syncSimModelSelect(preferred = 'ridge') {
@@ -1741,6 +1727,113 @@ function renderModelUsageTable() {
   `;
 }
 
+function initElmaliModelTabs() {
+  const tabWrap = document.querySelector('[data-elmali-tabs]');
+  if (!tabWrap) return;
+  const tabs = Array.from(tabWrap.querySelectorAll('[data-elmali-tab]'));
+  const panels = {
+    temel: document.getElementById('elmali-panel-temel'),
+    v4: document.getElementById('elmali-panel-v4')
+  };
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-elmali-tab');
+      tabs.forEach((t) => t.classList.remove('active'));
+      Object.values(panels).forEach((p) => p && p.classList.remove('active'));
+      btn.classList.add('active');
+      if (panels[key]) panels[key].classList.add('active');
+    });
+  });
+}
+
+function renderAcademicElmali() {
+  const setText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+  const fmtSigned = (v) => Number.isFinite(v) ? `${v >= 0 ? '+' : ''}${v.toFixed(1)} puan` : '—';
+
+  const models = getAvailableModelKeys();
+  setText('elm-acad-model-count', String(models.length));
+
+  const endVals = models
+    .map((m) => modelData[m])
+    .filter((arr) => arr && arr.length)
+    .map((arr) => arr[arr.length - 1].fill)
+    .filter((v) => Number.isFinite(v))
+    .sort((a, b) => a - b);
+  if (endVals.length) {
+    const q1 = quantile(endVals, 0.25);
+    const q2 = quantile(endVals, 0.5);
+    const q3 = quantile(endVals, 0.75);
+    setText('elm-acad-2040-minmax', `${endVals[0].toFixed(1)}% – ${endVals[endVals.length - 1].toFixed(1)}%`);
+    setText('elm-acad-2040-median', `${q2.toFixed(1)}%`);
+    setText('elm-acad-2040-iqr', `${q1.toFixed(1)}% – ${q3.toFixed(1)}%`);
+  } else {
+    setText('elm-acad-2040-minmax', '—');
+    setText('elm-acad-2040-median', '—');
+    setText('elm-acad-2040-iqr', '—');
+  }
+
+  const histMean = MONTHLY_SERIES.length
+    ? (MONTHLY_SERIES.reduce((a, b) => a + Number(b.fill_avg_pct || 0), 0) / MONTHLY_SERIES.length)
+    : null;
+  setText('elm-acad-hist-mean', Number.isFinite(histMean) ? `${histMean.toFixed(1)}%` : '—');
+
+  const baseEvapMcm = BASE_ET0_MONTHLY.reduce((sum, mm, i) => {
+    const seasonalFill = Number.isFinite(MONTHLY_AVG[i]) ? MONTHLY_AVG[i] : 50;
+    const area = lakeAreaFromFill(seasonalFill);
+    return sum + (mm * ELMALI_KC * area * 0.001);
+  }, 0);
+  setText('elm-acad-loss-balance', `${ELMALI_BASE_USAGE_MCM_YEAR_UI.toFixed(2)} / ${baseEvapMcm.toFixed(2)} milyon m³`);
+
+  const sensitivityModel = models.includes('ridge') ? 'ridge' : (models[0] || null);
+  if (sensitivityModel) {
+    const b = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const r = getSeries(sensitivityModel, 10, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const e = getSeries(sensitivityModel, 0, 10, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const u = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI * 1.2, 0).adjusted;
+    const g = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0.01).adjusted;
+    const baseEnd = b.length ? b[b.length - 1].fill : null;
+    const rainEnd = r.length ? r[r.length - 1].fill : null;
+    const et0End = e.length ? e[e.length - 1].fill : null;
+    const useEnd = u.length ? u[u.length - 1].fill : null;
+    const growthEnd = g.length ? g[g.length - 1].fill : null;
+    setText('elm-acad-sens-rain', fmtSigned(rainEnd - baseEnd));
+    setText('elm-acad-sens-et0', fmtSigned(et0End - baseEnd));
+    setText('elm-acad-sens-use', fmtSigned(useEnd - baseEnd));
+    setText('elm-acad-sens-growth', fmtSigned(growthEnd - baseEnd));
+  } else {
+    setText('elm-acad-sens-rain', '—');
+    setText('elm-acad-sens-et0', '—');
+    setText('elm-acad-sens-use', '—');
+    setText('elm-acad-sens-growth', '—');
+  }
+
+  const yearlyUse = YEARLY.map((d) => Number(d.use_m3)).filter((v) => Number.isFinite(v) && v > 0);
+  const yoy = [];
+  for (let i = 1; i < yearlyUse.length; i += 1) {
+    yoy.push((yearlyUse[i] - yearlyUse[i - 1]) / yearlyUse[i - 1]);
+  }
+  const p10 = quantile(yoy, 0.10);
+  const p90 = quantile(yoy, 0.90);
+  const firstUse = yearlyUse.length ? yearlyUse[0] : null;
+  const lastUse = yearlyUse.length ? yearlyUse[yearlyUse.length - 1] : null;
+  const cagr = (Number.isFinite(firstUse) && Number.isFinite(lastUse) && yearlyUse.length > 1)
+    ? (Math.pow(lastUse / firstUse, 1 / (yearlyUse.length - 1)) - 1)
+    : null;
+
+  const note = [];
+  if (Number.isFinite(p10) && Number.isFinite(p90)) {
+    note.push(`Kullanım artış bandı (p10–p90): ${(p10 * 100).toFixed(2)}%–${(p90 * 100).toFixed(2)}%/yıl`);
+  }
+  if (Number.isFinite(cagr)) {
+    note.push(`Referans CAGR: ${(cagr * 100).toFixed(2)}%/yıl`);
+  }
+  note.push(`Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+  setText('elm-acad-note', note.join(' • '));
+}
+
 function updateModelSummarySelection(selected) {
   const grid = document.getElementById('model-focus-grid');
   if (!grid) return;
@@ -1822,14 +1915,37 @@ function updateModelSummaryFromSeries(seriesMap) {
 }
 
 function getSeries(model, rain, et0, useM3, useGrowth) {
-  const base = (modelData[model] || []).slice();
-  if (!base.length) return { base: [], adjusted: [] };
+  const baseRaw = (modelData[model] || []).slice();
+  if (!baseRaw.length) return { base: [], adjusted: [] };
+  const ridgeBase = model === 'ridge' ? null : (modelData.ridge || []);
+  const blendWeight = modelBaseBlend[model] ?? 0;
+  const blendWithRidge = (fill, idx) => {
+    const f = Number(fill);
+    if (!Number.isFinite(f)) return null;
+    if (!ridgeBase || !blendWeight) return f;
+    const ridgeFill = ridgeBase[idx] && Number.isFinite(ridgeBase[idx].fill) ? Number(ridgeBase[idx].fill) : null;
+    if (!Number.isFinite(ridgeFill)) return f;
+    return ((1 - blendWeight) * f) + (blendWeight * ridgeFill);
+  };
+  const obsAnchorFill = MONTHLY_SERIES.length
+    ? Number(MONTHLY_SERIES[MONTHLY_SERIES.length - 1].fill_avg_pct)
+    : null;
+  const firstBlended = blendWithRidge(baseRaw[0].fill, 0);
+  const anchorOffset = (Number.isFinite(obsAnchorFill) && Number.isFinite(firstBlended))
+    ? (obsAnchorFill - firstBlended)
+    : 0;
+  const base = baseRaw.map((d, i) => {
+    const blended = blendWithRidge(d.fill, i);
+    const f = Number.isFinite(blended) ? (blended + anchorOffset) : null;
+    return { date: d.date, fill: Number.isFinite(f) ? clamp(f, 0, 100) : null };
+  });
 
   const startDate = new Date(base[0].date);
   const baseUseMcmYear = ELMALI_BASE_USAGE_MCM_YEAR_UI;
   const adjusted = [];
   let prevAdjFill = clamp(base[0].fill, 0, 100);
   let prevAdjReserveM3 = reserveFromFill(prevAdjFill);
+  const modelFactor = modelScenarioFactor[model] ?? 1.0;
 
   base.forEach((d, i) => {
     if (i === 0) {
@@ -1877,9 +1993,9 @@ function getSeries(model, rain, et0, useM3, useGrowth) {
       - (inflowBase + lakeRainBase - evapBase - useBaseMcm);
 
     const offsetFromBase = prevAdjFill - baseFill;
-    const damping = clamp(1 - Math.abs(offsetFromBase) / 30, 0.12, 1.0);
+    const damping = clamp(1 - Math.abs(offsetFromBase) / 30, 0.18, 1.0);
     const deltaAdjMcm = clamp(
-      deltaMcm * ELMALI_ADJ_SCALE * ELMALI_SCENARIO_GAIN * damping,
+      deltaMcm * ELMALI_ADJ_SCALE * ELMALI_SCENARIO_GAIN * damping * modelFactor,
       -ELMALI_DELTA_CAP_MCM,
       ELMALI_DELTA_CAP_MCM
     );
@@ -1917,7 +2033,7 @@ function renderSim() {
 
   document.getElementById('sim-rain-val').textContent = `${rain.toFixed(0)}%`;
   document.getElementById('sim-et0-val').textContent = `${et0.toFixed(0)}%`;
-  document.getElementById('sim-use-m3-val').textContent = `${useM3.toFixed(2)} milyon m³/yıl (kayıp payı ${(useShare * 100).toFixed(1)}%)`;
+  document.getElementById('sim-use-m3-val').textContent = `${useM3.toFixed(2)} milyon m³/yıl kullanım (kayıp payı ${(useShare * 100).toFixed(1)}%)`;
   document.getElementById('sim-use-growth-val').textContent = `${(useGrowth * 100).toFixed(1)}% / yıl`;
   document.getElementById('sim-evap-m3-val').textContent = `${evapM3.toFixed(2)} milyon m³/yıl (kayıp payı ${(evapShare * 100).toFixed(1)}%)`;
 
@@ -2318,8 +2434,49 @@ document.addEventListener('DOMContentLoaded', () => {
   if (meanReserveEl) meanReserveEl.textContent = Number(ELMALI_STATS.mean_reserve_m3_month || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 });
   if (srcEl) srcEl.textContent = 'Kaynaklar: İSKİ Elmalı günlük doluluk-seviye-rezerv serileri (2002–2026), yağış-verilen su serisi, Elmalı meta verisi (havza/göl/depolama), aylık özet veri paketi, model projeksiyon seti (2026–2040) ve FAO-56 ET0 yaklaşımı. Seviye-rezerv eşleşmesi, doluluk↔hacim dönüşümünde doğrudan kullanılmıştır.';
 
+  const growthSlider = document.getElementById('sim-use-growth');
+  const rangeEl = document.getElementById('sim-use-range');
+  const seasonEl = document.getElementById('sim-use-season');
+  const yearlyUse = YEARLY.map((d) => Number(d.use_m3)).filter((v) => Number.isFinite(v) && v > 0);
+  const yoy = [];
+  for (let i = 1; i < yearlyUse.length; i += 1) {
+    yoy.push((yearlyUse[i] - yearlyUse[i - 1]) / yearlyUse[i - 1]);
+  }
+  const p10 = quantile(yoy, 0.10);
+  const p90 = quantile(yoy, 0.90);
+  const cagr = (yearlyUse.length > 1)
+    ? (Math.pow(yearlyUse[yearlyUse.length - 1] / yearlyUse[0], 1 / (yearlyUse.length - 1)) - 1)
+    : null;
+  if (growthSlider && Number.isFinite(p10) && Number.isFinite(p90)) {
+    const minPct = Math.round((p10 * 100) * 10) / 10;
+    const maxPct = Math.round((p90 * 100) * 10) / 10;
+    growthSlider.min = String(Math.min(-1.5, minPct));
+    growthSlider.max = String(Math.max(3.5, maxPct));
+    growthSlider.step = '0.1';
+    growthSlider.value = '0';
+    if (rangeEl) {
+      rangeEl.textContent = `Kullanım artışı için tarihsel bant (p10–p90): ${minPct.toFixed(1)}%–${maxPct.toFixed(1)}%/yıl${Number.isFinite(cagr) ? ` · referans CAGR: ${(cagr * 100).toFixed(2)}%/yıl` : ''} · varsayılan: 0.0%`;
+    }
+  } else if (rangeEl) {
+    rangeEl.textContent = 'Kullanım artış bandı: tarihsel seri yetersiz';
+  }
+
+  if (seasonEl) {
+    const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    let maxIdx = 0;
+    let minIdx = 0;
+    MONTHLY_USE_WEIGHTS.forEach((v, i) => {
+      if ((MONTHLY_USE_WEIGHTS[maxIdx] ?? 0) < v) maxIdx = i;
+      if ((MONTHLY_USE_WEIGHTS[minIdx] ?? 1e9) > v) minIdx = i;
+    });
+    seasonEl.textContent = `Mevsimsel kullanım dağılımı: en yüksek ${monthNames[maxIdx]} (%${(MONTHLY_USE_WEIGHTS[maxIdx] * 100).toFixed(1)}), en düşük ${monthNames[minIdx]} (%${(MONTHLY_USE_WEIGHTS[minIdx] * 100).toFixed(1)}).`;
+  }
+
   renderModelUsageTable();
+  initElmaliModelTabs();
+  computeModelScenarioCalibration();
   buildModelSummary();
+  renderAcademicElmali();
 
   ['sim-model', 'sim-rain', 'sim-et0', 'sim-use-m3', 'sim-use-growth'].forEach((id) => {
     const el = document.getElementById(id);

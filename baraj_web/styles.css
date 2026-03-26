@@ -738,6 +738,23 @@ figcaption { margin-top: 8px; color: var(--muted); }
   background: #f7f5f0;
   color: var(--deep);
   font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.model-guide-table tbody tr:nth-child(even) {
+  background: #fcfbf8;
+}
+
+.model-guide-table tbody tr:hover {
+  background: #f1efe9;
+}
+
+.model-guide-table td:first-child {
+  white-space: nowrap;
+  color: var(--deep);
+  font-weight: 700;
 }
 
 .metric-help {

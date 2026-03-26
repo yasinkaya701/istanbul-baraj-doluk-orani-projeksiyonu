@@ -30,7 +30,7 @@
         <p class="lead">Bu sayfa, baraj doluluk oranlarını iklim değişkenleriyle modelleyen çalışmanın yöntemini, modellerini, değerlendirmelerini ve 2040’a uzanan projeksiyonlarını sunar.</p>
         <div class="meta">
           <span>Model yaklaşımı: veri‑odaklı (iklim + gecikmeler)</span>
-          <span>Değerlendirme: 5y / 10y backtest</span>
+          <span>Değerlendirme: Purged walk-forward backtest</span>
           <span>Belirsizlik: ±RMSE bandı</span>
         </div>
       </div>
@@ -41,12 +41,12 @@
           <li>Gözlenen doluluk: 2000–2024</li>
           <li>İklim projeksiyonu: 2026–2040</li>
           <li>Değişkenler: yağış, ET0, sıcaklık, nem, basınç, VPD</li>
-          <li>Modeller: Ridge, GBR, HGB, RF, ETR</li>
+          <li>Modeller: 22 farklı model ailesi (lineer, ağaç, boosting, zaman serisi, fizik tabanlı)</li>
         </ul>
         <div class="hero-stats">
           <div><small>Toplam ay</small><strong>480+</strong></div>
           <div><small>Projeksiyon</small><strong>2040</strong></div>
-          <div><small>Model sayısı</small><strong>5</strong></div>
+          <div><small>Model sayısı</small><strong>22</strong></div>
         </div>
         <div class="hero-actions">
           <a class="btn ghost" href="#simulasyon">Simülasyona Git</a>
@@ -215,7 +215,8 @@
             <li><strong>t_mean_c:</strong> Panel + iklim projeksiyonu</li>
             <li><strong>rh_mean_pct:</strong> Panel + iklim projeksiyonu</li>
           </ul>
-          <p class="note">2026–2040 için iklim projeksiyonu kullanılır; 2000–2024 iklim sürücüleri gözlemden gelir. 2025 ayları klimatolojik dolgu ile tamamlanır. Doluluk gözlemi 2000–2024 aralığındadır.</p>
+          <p class="note"><strong>Panel</strong> ifadesi, aylık satır (zaman) ve değişken sütunlarından (iklim + doluluk sürücüleri) oluşan birleşik veri tablosunu ifade eder. 2000–2024 döneminde iklim sürücüleri gözlemden, 2026–2040 döneminde iklim projeksiyonundan gelir; 2025 ayları klimatolojik dolgu ile tamamlanır.</p>
+          <p class="note"><strong>Tahmin başlangıcındaki kopukluk neden görülebilir?</strong> Gözlenen son ay ile model projeksiyonunun ilk ayı farklı örnekleme rejimlerinden gelir (gözlem → model geçişi). Bu sürümde geçişteki sıçramayı azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; yine de bazı modellerde küçük seviye farkı kalabilir.</p>
         </div>
         <div class="card">
           <h3>Türetilen / Doldurulan</h3>
@@ -231,29 +232,10 @@
     </section>
 
     <section id="modeller">
-      <h2>Temel Modeller için 5Y / 10Y Kartları</h2>
-      <p class="note mobile-hscroll-tip">Mobilde grafiklerde sola-sağa kaydırarak eksenleri ve değerleri daha net okuyabilirsin.</p>
-      <div class="grid three">
-        <figure class="card">
-          <img class="zoomable" src="assets/img/ridge_5y_10y.png?v=20260323" alt="Ridge 5y/10y" />
-          <figcaption>Ridge</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/gbr_5y_10y.png?v=20260323" alt="GBR 5y/10y" />
-          <figcaption>GBR</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/hgb_5y_10y.png?v=20260323" alt="HGB 5y/10y" />
-          <figcaption>HGB</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/rf_5y_10y.png?v=20260323" alt="RF 5y/10y" />
-          <figcaption>RF</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/etr_5y_10y.png?v=20260323" alt="ETR 5y/10y" />
-          <figcaption>ETR</figcaption>
-        </figure>
+      <h2>Temel Model Kapsamı</h2>
+      <div class="card">
+        <p>Karar desteğinde temel model seti; doğrusal (Ridge), ağaç tabanlı (GBR, HGB, RF, ETR), ileri boosting (XGBoost, LightGBM, CatBoost), olasılıksal/istatistiksel (NGBoost, GPR, ARIMAX, Bayesian Ridge) ve fizik tabanlı (Budyko, Thornthwaite, HBV) aileleri birlikte kapsar.</p>
+        <p class="note">Bu sürümde simülasyon paneli, veri bulunan tüm model ailesini tek yerden çalıştıracak şekilde entegre edilmiştir. Model seçimi menüsünde görülen her model doğrudan senaryo motoruna bağlıdır.</p>
       </div>
     </section>
 
@@ -277,13 +259,14 @@
           Gerçek seri ile tahmin serisinin doğrusal uyumunu ölçer. -1 ile +1 arasındadır. Sitede % olarak yazılıdır: %90 → r=0.90 demektir. 1’e yakınsa trend uyumu güçlüdür, 0’a yakınsa zayıftır.
         </div>
       </div>
-      <p class="note">Her model için bu değerler, 5y/10y kartlarının sağ alt köşesindeki bilgi kutusunda yazılıdır.</p>
+      <p class="note">Her model için bu değerler, ilgili model görsellerindeki bilgi kutularında raporlanır.</p>
     </section>
 
     <section>
       <h2>Modellerin Kullanım Rehberi</h2>
       <p class="note">Mekanizma, grafik karakteri ve kullanım bağlamını tek tabloda topladık. Böylece model seçiminde hızlı ve tutarlı karar verebilirsiniz.</p>
       <div class="card table-wrap">
+        <p class="note" style="margin-top:0;">Tablo, model yorumunu standartlaştırır: <strong>Mekanizma</strong> modelin matematiksel çekirdeğini, <strong>Grafik Karakteri</strong> eğri davranışını, <strong>Kullanım Bağlamı</strong> karar notlarında hangi soruya daha uygun olduğunu özetler.</p>
         <table class="model-guide-table">
           <thead>
             <tr>
@@ -318,6 +301,7 @@
             <tr><td>Ensemble Median</td><td>Model medyanı ile konsensüs</td><td>Uç değerlere dirençli</td><td>Karar notlarında birincil referans</td></tr>
           </tbody>
         </table>
+        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (HBV/Budyko/ARIMAX).</p>
       </div>
     </section>
 
@@ -487,7 +471,7 @@
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png?v=20260323" alt="Ridge 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260323" alt="Ridge 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260326-1" alt="Ridge 5y/10y karşılaştırma" />
                 <img class="media-small zoomable" src="assets/img/ridge_projection_zoom_2040.png?v=20260323" alt="Ridge 2024-2040" />
               </div>
             </div>
@@ -505,7 +489,7 @@
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png?v=20260323" alt="GBR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260323" alt="GBR 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260326-1" alt="GBR 5y/10y karşılaştırma" />
                 <img class="media-small zoomable" src="assets/img/gbr_projection_zoom_2040.png?v=20260323" alt="GBR 2024-2040" />
               </div>
             </div>
@@ -523,7 +507,7 @@
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png?v=20260323" alt="HGB 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260323" alt="HGB 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260326-1" alt="HGB 5y/10y karşılaştırma" />
                 <img class="media-small zoomable" src="assets/img/hgb_projection_zoom_2040.png?v=20260323" alt="HGB 2024-2040" />
               </div>
             </div>
@@ -541,7 +525,7 @@
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png?v=20260323" alt="RF 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260323" alt="RF 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260326-1" alt="RF 5y/10y karşılaştırma" />
                 <img class="media-small zoomable" src="assets/img/rf_projection_zoom_2040.png?v=20260323" alt="RF 2024-2040" />
               </div>
             </div>
@@ -559,7 +543,7 @@
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260323" alt="ETR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260323" alt="ETR 5y/10y" />
+                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260326-1" alt="ETR 5y/10y karşılaştırma" />
                 <img class="media-small zoomable" src="assets/img/etr_projection_zoom_2040.png?v=20260323" alt="ETR 2024-2040" />
               </div>
             </div>
@@ -974,16 +958,16 @@
 
           <div class="card">
             <h4>Kayıp Bileşenleri</h4>
-            <label>Baraj Çekişi (milyon m³ / yıl)</label>
-            <input type="range" id="sim-use-m3" min="150" max="700" value="275" step="5" />
+            <label>Yıllık Kullanım (milyon m³ / yıl)</label>
+            <input type="range" id="sim-use-m3" min="180" max="500" value="275" step="5" />
             <div class="value" id="sim-use-m3-val">—</div>
 
-            <label>Kullanım Trendini Ayarla (% / yıl)</label>
+            <label>Yıllık Kullanım Artışı (% / yıl)</label>
             <input type="range" id="sim-use-growth" min="-2" max="4" value="0" step="0.25" />
             <div class="value" id="sim-use-growth-val">0%</div>
-            <div class="note">2040 tahmini kullanım: <strong id="sim-use-2040">—</strong></div>
+            <div class="note">2040 tahmini kullanım (seçili artış hızına göre): <strong id="sim-use-2040">—</strong></div>
             <div class="note" id="sim-use-range">Trend aralığı: —</div>
-            <div class="note" id="sim-use-season">Mevsimsellik: —</div>
+            <div class="note" id="sim-use-season">Mevsimsel dağılım: —</div>
 
             <label>Buharlaşma (ET0 ile bağlı)</label>
             <div class="value" id="sim-evap-m3-val">—</div>
@@ -1056,8 +1040,75 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     <section id="akademik-gelecek">
       <h2>Akademik Gelecek Değerlendirmesi</h2>
       <div class="card">
-        <p>Mevcut model seti ve su dengesi simülasyonu birlikte değerlendirildiğinde, 2026 sonrası dönemde ana risk belirleyicilerinin yalnızca yağış toplamı değil; ET0 artışı, mevsimsel talep deseni ve çok yıllı kuraklık kümelenmesi olduğu görülmektedir. Bu nedenle sonuçlar tekil model çıktısı yerine, temel model ailesi + ensemble medyan + stres senaryosu üçlüsü ile birlikte yorumlanmalıdır.</p>
-        <p>İzleme açısından önerilen akademik çerçeve: (i) aylık doluluk değişimi için rejim-kırılım takibi, (ii) ET0 ve yağış anomalisinin ortak etkisi için senaryo duyarlılık raporu, (iii) yıllık karar notlarında belirsizlik aralığı (p10–p90) ve model mutabakat skoru ile birlikte yayınlama. Bu yaklaşım, politika ve işletme kararlarında tek sayı yerine açıklanabilir risk dağılımı sunar.</p>
+        <p>Bu bölüm, 2040 ufku için tek model çıktısı yerine çoklu model dağılımını, su dengesi parametrelerini ve iklim/talep duyarlılığını birlikte raporlamak amacıyla hazırlanmıştır. Yorumlama yaklaşımı; <strong>merkezi eğilim (medyan)</strong>, <strong>saçılım (IQR)</strong> ve <strong>stres duyarlılığı</strong> eksenlerini birlikte kullanır.</p>
+
+        <div class="stat-grid">
+          <div class="stat">
+            <small>Simülasyona Entegre Model Sayısı</small>
+            <strong id="acad-model-count">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 Dağılımı (Min–Maks)</small>
+            <strong id="acad-2040-minmax">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 Medyanı (Q2)</small>
+            <strong id="acad-2040-median">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 IQR (Q1–Q3)</small>
+            <strong id="acad-2040-iqr">—</strong>
+          </div>
+          <div class="stat">
+            <small>ET0 Yıllık Ortalama (2010–2024)</small>
+            <strong id="acad-et0-mean">—</strong>
+          </div>
+          <div class="stat">
+            <small>Çekiş / Buharlaşma (2023)</small>
+            <strong id="acad-loss-balance">—</strong>
+          </div>
+          <div class="stat">
+            <small>+10% Yağış Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-rain">—</strong>
+          </div>
+          <div class="stat">
+            <small>+10% ET0 Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-et0">—</strong>
+          </div>
+          <div class="stat">
+            <small>+20% Çekiş Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-use">—</strong>
+          </div>
+          <div class="stat">
+            <small>+2 puan/yıl Talep Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-growth">—</strong>
+          </div>
+        </div>
+
+        <h4>Yöntemsel Çerçeve</h4>
+        <ul>
+          <li>Çekirdek denklem aylık rezerv değişimini hacim bazında hesaplar: havza akışı + göl yüzeyi yağışı − ET0 kaynaklı buharlaşma − yıllık kullanımdan türetilen aylık çekiş.</li>
+          <li>Akış katsayısı 2010–2024 doluluk değişiminden kalibre edilir; parametreler fiziksel sınırlar içinde tutulur ve aylık etki tavanı ile dengesiz salınım engellenir.</li>
+          <li>Model geçişindeki kopukluk riskini azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; ardından senaryo farkı baz projeksiyona eklenir.</li>
+          <li>GBR/HGB/RF/ETR için senaryo tepkisi, Ridge’e göre göreli oynaklığa bağlı olarak normalize edilir; böylece model aileleri arası etki büyüklüğü daha karşılaştırılabilir olur.</li>
+        </ul>
+
+        <h4>Veri Tabanlı Bulgular</h4>
+        <ul>
+          <li>2040 min–maks aralığı bazı modellerde 0–100 sınırına dayanabilir; bu nedenle karar raporunda tek başına min–maks yerine medyan + IQR + alt/üst kuantil birlikte verilmelidir.</li>
+          <li>+10% yağış, +10% ET0 ve kullanım artışı senaryoları birlikte değerlendirildiğinde; iklim sinyali ile talep baskısı aynı düzlemde karşılaştırılabilir hale gelir.</li>
+          <li>ET0 artışı ile kullanım artışı aynı yönde negatif etki üretir; yağış artışı dengeleyici etki gösterir ancak tek başına yeterli bir güvenlik tamponu oluşturmaz.</li>
+          <li>Belirsizlik tek kaynaktan gelmez: model ailesi farkı, iklim projeksiyon saçılımı ve talep büyüme varsayımı birlikte toplam riski belirler.</li>
+        </ul>
+
+        <h4>Operasyonel Yorum</h4>
+        <ol>
+          <li>Aylık izleme notlarında asgari raporlama seti: 2040 medyanı, Q1–Q3 bandı, stres senaryosu ve eşik-altı model oranı.</li>
+          <li>ET0 eğilimi yıllık yağış toplamından ayrı değil birlikte yorumlanmalıdır; tek değişkenli açıklama karar hatası üretir.</li>
+          <li>Kritik eşik yönetiminde tek model eğrisi yerine model mutabakat oranı (kaç model eşik altında) esas alınmalıdır.</li>
+          <li>Kalibrasyon parametreleri çeyreklik döngüde güncellenmeli; kullanım profili ve iklim katsayıları yeni gözlem geldikçe yeniden fit edilmelidir.</li>
+        </ol>
+        <p class="note" id="acad-note">Bu göstergeler sayfadaki güncel model/iklim verilerinden otomatik hesaplanır; metrikler kullanıcı senaryosu değiştiğinde yeniden üretilir.</p>
       </div>
     </section>
 
@@ -1120,6 +1171,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     let climateClim = null;
     let reservoirRef = null;
     let runoffCalibration = null;
+    let modelScenarioFactor = {};
+    let modelBaseBlend = {};
 
     function parseCSV(text) {
       const lines = text.trim().split('\n');
@@ -1163,6 +1216,16 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function quantile(sortedValues, p) {
+      if (!sortedValues || !sortedValues.length) return null;
+      if (sortedValues.length === 1) return sortedValues[0];
+      const idx = (sortedValues.length - 1) * p;
+      const lo = Math.floor(idx);
+      const hi = Math.ceil(idx);
+      const t = idx - lo;
+      return sortedValues[lo] * (1 - t) + sortedValues[hi] * t;
     }
 
     function buildClimateClimatology() {
@@ -1258,6 +1321,95 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       setText('et0-stat-baseline', fmt(s.baselineMean));
       setText('et0-stat-forecast', fmt(s.forecastMean));
       setText('et0-stat-delta', fmtSigned(s.deltaForecastVsBaseline));
+    }
+
+    function renderAcademicOutlook() {
+      const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+      const fmtSigned = (v) => {
+        if (!Number.isFinite(v)) return '—';
+        return `${v >= 0 ? '+' : ''}${v.toFixed(1)}`;
+      };
+
+      const modelKeys = Object.keys(modelData || {}).filter((m) => (modelData[m] || []).some((d) => d.fill !== null && d.fill !== undefined));
+      setText('acad-model-count', `${modelKeys.length}`);
+
+      const endVals = modelKeys
+        .map((m) => (modelData[m] || []).filter((d) => d.fill !== null && d.fill !== undefined))
+        .filter((arr) => arr.length)
+        .map((arr) => arr[arr.length - 1].fill)
+        .filter((v) => Number.isFinite(v))
+        .sort((a, b) => a - b);
+
+      if (endVals.length) {
+        const q1 = quantile(endVals, 0.25);
+        const q2 = quantile(endVals, 0.5);
+        const q3 = quantile(endVals, 0.75);
+        setText('acad-2040-minmax', `${endVals[0].toFixed(1)}% – ${endVals[endVals.length - 1].toFixed(1)}%`);
+        setText('acad-2040-median', `${q2.toFixed(1)}%`);
+        setText('acad-2040-iqr', `${q1.toFixed(1)}% – ${q3.toFixed(1)}%`);
+      } else {
+        setText('acad-2040-minmax', '—');
+        setText('acad-2040-median', '—');
+        setText('acad-2040-iqr', '—');
+      }
+
+      const et0Summary = computeEt0YearlySummary();
+      if (et0Summary && Number.isFinite(et0Summary.meanHist)) {
+        setText('acad-et0-mean', `${et0Summary.meanHist.toFixed(1)} mm/yıl`);
+      } else {
+        setText('acad-et0-mean', '—');
+      }
+
+      if (baseline && Number.isFinite(baseline.usage_baraj_m3) && Number.isFinite(baseline.evap_total_m3)) {
+        const useMcm = baseline.usage_baraj_m3 / 1e6;
+        const evapMcm = baseline.evap_total_m3 / 1e6;
+        setText('acad-loss-balance', `${useMcm.toFixed(1)} / ${evapMcm.toFixed(1)} milyon m³`);
+      } else {
+        setText('acad-loss-balance', '—');
+      }
+
+      const sensitivityModel = modelKeys.includes('ridge') ? 'ridge' : (modelKeys[0] || null);
+      const computeEndForSensitivityModel = (rainPct, et0Pct, useM3, useGrowth) => {
+        if (!sensitivityModel) return null;
+        const { adjusted } = getSeries(sensitivityModel, rainPct, et0Pct, useM3, useGrowth);
+        if (!adjusted || !adjusted.length) return null;
+        return adjusted[adjusted.length - 1].fill;
+      };
+
+      const baseUseM3 = baseline && Number.isFinite(baseline.usage_baraj_m3)
+        ? baseline.usage_baraj_m3 / 1e6
+        : 275;
+      const baseSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3, 0.0);
+      const rainSensitivityEnd = computeEndForSensitivityModel(10, 0, baseUseM3, 0.0);
+      const et0SensitivityEnd = computeEndForSensitivityModel(0, 10, baseUseM3, 0.0);
+      const useSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3 * 1.2, 0.0);
+      const growthSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3, 0.02);
+
+      if (Number.isFinite(baseSensitivityEnd)) {
+        setText('acad-sens-rain', `${fmtSigned(rainSensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-et0', `${fmtSigned(et0SensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-use', `${fmtSigned(useSensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-growth', `${fmtSigned(growthSensitivityEnd - baseSensitivityEnd)} puan`);
+      } else {
+        setText('acad-sens-rain', '—');
+        setText('acad-sens-et0', '—');
+        setText('acad-sens-use', '—');
+        setText('acad-sens-growth', '—');
+      }
+
+      const trend = window.USAGE_TREND || null;
+      const noteParts = [];
+      if (trend && Number.isFinite(trend.yoy_p10) && Number.isFinite(trend.yoy_p90)) {
+        noteParts.push(`Kullanım trend aralığı (p10–p90): ${(trend.yoy_p10 * 100).toFixed(2)}% – ${(trend.yoy_p90 * 100).toFixed(2)}%/yıl`);
+      }
+      if (Number.isFinite(baseSensitivityEnd)) {
+        noteParts.push(`Kalibrasyon referansı (${(sensitivityModel || 'seçili').toUpperCase()} 2040): ${baseSensitivityEnd.toFixed(1)}%`);
+      }
+      noteParts.push(`Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+      setText('acad-note', noteParts.join(' • '));
     }
 
     function computeRunoffCalibration(series, usageProfile, baseUseMonthlyMcm, lakeAreaKm2, catchmentKm2, kc, capacityMcm) {
@@ -1512,6 +1664,44 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       return Object.keys(modelData || {}).filter((k) => (modelData[k] || []).some((d) => d.fill !== null && d.fill !== undefined));
     }
 
+    function computeModelScenarioCalibration() {
+      const focus = new Set(['gbr', 'hgb', 'rf', 'etr']);
+      const available = getAvailableModelKeys();
+      const ridgeSeries = (modelData.ridge || []).filter((d) => d.date >= '2024-03-01' && Number.isFinite(d.fill));
+      const stdOfDelta = (series) => {
+        if (!series || series.length < 3) return null;
+        const deltas = [];
+        for (let i = 1; i < series.length; i += 1) {
+          const prev = Number(series[i - 1].fill);
+          const cur = Number(series[i].fill);
+          if (Number.isFinite(prev) && Number.isFinite(cur)) deltas.push(cur - prev);
+        }
+        if (deltas.length < 2) return null;
+        const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+        const variance = deltas.reduce((a, b) => a + ((b - mean) ** 2), 0) / Math.max(1, deltas.length - 1);
+        return Math.sqrt(Math.max(0, variance));
+      };
+      const ridgeStd = stdOfDelta(ridgeSeries) || 1.0;
+
+      modelScenarioFactor = {};
+      modelBaseBlend = {};
+      available.forEach((m) => {
+        modelScenarioFactor[m] = 1.0;
+        modelBaseBlend[m] = 0.0;
+      });
+
+      available.forEach((m) => {
+        if (!focus.has(m)) return;
+        const series = (modelData[m] || []).filter((d) => d.date >= '2024-03-01' && Number.isFinite(d.fill));
+        const std = stdOfDelta(series);
+        if (!Number.isFinite(std) || std <= 0) return;
+        const ratio = std / ridgeStd;
+        // Higher volatility than Ridge gets moderated; smoother series stay closer to 1.
+        modelScenarioFactor[m] = clamp(1 / Math.sqrt(Math.max(0.25, ratio)), 0.78, 1.12);
+        modelBaseBlend[m] = clamp((ratio - 1) * 0.20, 0.0, 0.28);
+      });
+    }
+
     function syncSimModelSelect(preferred = 'ridge') {
       const select = document.getElementById('sim-model');
       if (!select) return 'all';
@@ -1544,8 +1734,32 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
     function getSeries(model, rain, et0, useM3, useGrowth) {
       const coeff = window.SIM_COEFFS || {};
-      const base = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
+      const baseRaw = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
+      if (!baseRaw.length) return { base: [], adjusted: [] };
       const usageProfile = (window.USAGE_PROFILE && window.USAGE_PROFILE.profile) ? window.USAGE_PROFILE.profile : null;
+      const ridgeBase = model === 'ridge'
+        ? null
+        : (modelData.ridge || []).filter(d => d.date >= '2024-03-01');
+      const blendWeight = modelBaseBlend[model] ?? 0;
+      const blendWithRidge = (fill, idx) => {
+        const f = Number(fill);
+        if (!Number.isFinite(f)) return null;
+        if (!ridgeBase || !blendWeight) return f;
+        const ridgeFill = ridgeBase[idx] && Number.isFinite(ridgeBase[idx].fill) ? Number(ridgeBase[idx].fill) : null;
+        if (!Number.isFinite(ridgeFill)) return f;
+        return ((1 - blendWeight) * f) + (blendWeight * ridgeFill);
+      };
+      const hist = (modelData[model] || []).filter(d => d.date < '2024-03-01' && Number.isFinite(d.fill));
+      const anchorFill = hist.length ? Number(hist[hist.length - 1].fill) : null;
+      const firstBlended = blendWithRidge(baseRaw[0].fill, 0);
+      const anchorOffset = (Number.isFinite(anchorFill) && Number.isFinite(firstBlended))
+        ? (anchorFill - firstBlended)
+        : 0;
+      const base = baseRaw.map((d, i) => {
+        const blended = blendWithRidge(d.fill, i);
+        const f = Number.isFinite(blended) ? blended + anchorOffset : null;
+        return { date: d.date, fill: Number.isFinite(f) ? clamp(f, 0, 100) : null };
+      });
       const startDate = base[0] ? new Date(base[0].date) : null;
       const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
       const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
@@ -1555,6 +1769,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       // Reservoir mass-balance should use reservoir withdrawal (baraj cekisi), not total city supply.
       const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
       let prevAdj = base[0] && base[0].fill !== null && base[0].fill !== undefined ? base[0].fill : 0;
+      const modelFactor = modelScenarioFactor[model] ?? 1.0;
       const adjusted = base.map((d, i) => {
         const curFill = d.fill !== null && d.fill !== undefined ? d.fill : prevAdj;
         if (i === 0) {
@@ -1604,7 +1819,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const offsetFromBase = prevAdj - curFill;
         const offsetDamping = clamp(1 - Math.abs(offsetFromBase) / offsetCapPp, offsetFloor, 1);
         
-        const deltaAdjRaw = deltaPct * adjScale * offsetDamping * responseGain;
+        const deltaAdjRaw = deltaPct * adjScale * offsetDamping * responseGain * modelFactor;
         const deltaAdj = clamp(deltaAdjRaw, -deltaCapPp, deltaCapPp);
 
         const next = clamp(prevAdj + baseDelta + deltaAdj, 0, 100);
@@ -1638,7 +1853,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
       document.getElementById('sim-rain-val').textContent = `${rain}%`;
       document.getElementById('sim-et0-val').textContent = `${et0}%`;
-      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³ (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
+      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³/yıl kullanım (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
       document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
       document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (kayıp payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
 
@@ -1876,6 +2091,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         simModelSelect.value = 'ridge';
       }
       syncSimModelSelect('ridge');
+      computeModelScenarioCalibration();
       baseline = window.BASELINE || null;
       reservoirRef = window.RESERVOIR_REFERENCE || null;
       climateBaseline = window.CLIMATE_BASELINE || {};
@@ -1999,13 +2215,23 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         slider.value = '0';
         const rangeEl = document.getElementById('sim-use-range');
         if (rangeEl) {
-          rangeEl.textContent = `Tarihsel aralık (p10–p90): ${histMinPct.toFixed(2)}%–${histMaxPct.toFixed(2)}%/yıl · referans CAGR(2019–2023): ${suggestedPct.toFixed(2)}%/yıl · varsayılan: 0.00%`;
+          rangeEl.textContent = `Kullanım artışı için tarihsel bant (p10–p90): ${histMinPct.toFixed(2)}%–${histMaxPct.toFixed(2)}%/yıl. Referans büyüme (CAGR 2019–2023): ${suggestedPct.toFixed(2)}%/yıl. Varsayılan senaryo: 0.00% (nötr).`;
         }
       }
       if (usageProfile) {
         const seasonEl = document.getElementById('sim-use-season');
         if (seasonEl) {
-          seasonEl.textContent = `Mevsimsellik: ${usageProfile.year_min}–${usageProfile.year_max} aylık dağılım`;
+          const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+          const profile = Array.isArray(usageProfile.profile) ? usageProfile.profile : [];
+          let maxIdx = 0;
+          let minIdx = 0;
+          profile.forEach((v, i) => {
+            if ((profile[maxIdx] ?? 0) < v) maxIdx = i;
+            if ((profile[minIdx] ?? 1e9) > v) minIdx = i;
+          });
+          const maxPct = profile[maxIdx] ? (profile[maxIdx] * 100).toFixed(1) : '—';
+          const minPct = profile[minIdx] ? (profile[minIdx] * 100).toFixed(1) : '—';
+          seasonEl.textContent = `Mevsimsel dağılım (${usageProfile.year_min}–${usageProfile.year_max}): en yüksek ${months[maxIdx]} (%${maxPct}), en düşük ${months[minIdx]} (%${minPct}).`;
         }
       }
       if (baseline) {
@@ -2043,6 +2269,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         document.getElementById('sim-use-m3').value = 275;
       }
       buildModelSummary();
+      renderAcademicOutlook();
       renderSim();
     });
 
