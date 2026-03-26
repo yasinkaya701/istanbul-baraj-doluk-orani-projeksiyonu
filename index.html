@@ -237,7 +237,7 @@
     <section id="modeller">
       <h2>Temel Model Kapsamı</h2>
       <div class="card">
-        <p>Karar desteğinde temel model seti; doğrusal (Ridge), ağaç tabanlı (GBR, HGB, RF, ETR), ileri boosting (XGBoost, LightGBM, CatBoost), olasılıksal/istatistiksel (NGBoost, GPR, ARIMAX, Bayesian Ridge) ve fizik tabanlı (Budyko, Thornthwaite, HBV) aileleri birlikte kapsar.</p>
+        <p>Karar desteğinde temel model seti; doğrusal (Ridge), ağaç tabanlı (GBR, HGB, RF, ETR), ileri boosting (XGBoost, LightGBM, CatBoost), olasılıksal/istatistiksel (NGBoost, GPR, ARIMAX, Bayesian Ridge) ve fizik tabanlı (Budyko, Thornthwaite) aileleri birlikte kapsar.</p>
         <p class="note">Bu sürümde simülasyon paneli, veri bulunan tüm model ailesini tek yerden çalıştıracak şekilde entegre edilmiştir. Model seçimi menüsünde görülen her model doğrudan senaryo motoruna bağlıdır.</p>
       </div>
     </section>
@@ -292,19 +292,17 @@
             <tr><td>NGBoost</td><td>Olasılık dağılımı öğrenen boosting</td><td>Belirsizlik bandı üreten</td><td>Risk odaklı karar desteği</td></tr>
             <tr><td>GPR</td><td>Gaussian süreç regresyonu</td><td>Yumuşak ve sürekli</td><td>Belirsizlikli kısa/orta vade</td></tr>
             <tr><td>ARIMAX</td><td>Zaman serisi + dışsal değişken</td><td>Mevsimsellik ve otokorelasyon odaklı</td><td>Saf seri davranışı karşılaştırması</td></tr>
-            <tr><td>GBM Quantile %10</td><td>Alt kuantil odaklı boosting</td><td>Kötümser (kuraklık) sınırı</td><td>Alt risk bandı</td></tr>
-            <tr><td>GBM Quantile %50</td><td>Medyan kuantil boosting</td><td>Merkez rejim çizgisi</td><td>Nötr referans senaryo</td></tr>
+                        <tr><td>GBM Quantile %50</td><td>Medyan kuantil boosting</td><td>Merkez rejim çizgisi</td><td>Nötr referans senaryo</td></tr>
             <tr><td>Bayesian Ridge</td><td>Bayesçi doğrusal katsayı tahmini</td><td>Daha temkinli, olasılıksal</td><td>Parametre belirsizliği analizi</td></tr>
             <tr><td>ElasticNet</td><td>L1+L2 birlikte düzenleme</td><td>Sadeleştirilmiş, dengeli</td><td>Özellik seçimi ve stabilite</td></tr>
             <tr><td>Huber</td><td>Aykırı değerlere dayanıklı kayıp</td><td>Ekstrem noktalarda stabil</td><td>Outlier baskın dönemler</td></tr>
             <tr><td>Budyko</td><td>Su-enerji denge yaklaşımı</td><td>Fiziksel tutarlılık odaklı</td><td>Uzun dönem hidrolojik referans</td></tr>
             <tr><td>Thornthwaite</td><td>Sıcaklık temelli su dengesi</td><td>Kurak dönemde belirgin düşüş</td><td>Klasik iklim-su kıyaslaması</td></tr>
-            <tr><td>HBV</td><td>Kavramsal havza modeli</td><td>Depolama-akış dinamikli</td><td>Fizik tabanlı kontrol modeli</td></tr>
-            <tr><td>Stacking</td><td>Meta-öğrenici ile model birleştirme</td><td>Tekil model sapmasını azaltan</td><td>Genel performans optimizasyonu</td></tr>
+                        <tr><td>Stacking</td><td>Meta-öğrenici ile model birleştirme</td><td>Tekil model sapmasını azaltan</td><td>Genel performans optimizasyonu</td></tr>
             <tr><td>Ensemble Median</td><td>Model medyanı ile konsensüs</td><td>Uç değerlere dirençli</td><td>Karar notlarında birincil referans</td></tr>
           </tbody>
         </table>
-        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (HBV/Budyko/ARIMAX).</p>
+        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (Budyko/ARIMAX).</p>
       </div>
     </section>
 
@@ -439,13 +437,12 @@
         </div>
 
         <div class="card">
-          <h3>Fiziksel Modeller: Budyko, Thornthwaite & HBV</h3>
+          <h3>Fiziksel Modeller: Budyko ve Thornthwaite</h3>
           <span class="chip" style="margin-bottom:8px;display:inline-block;">Gerçek Hidroloji · Zeka Yok, Sırf Doğa Kuralları</span>
           <ul>
             <li><strong>Budyko Eğrisi:</strong> Yağışın ne kadarının buharlaşmaya, ne kadarının topraktan akışa geçeceğini anlatan dünyaca ünlü hidrolojik sınır eğrisi! Aşırı sıcak (aridity index) yıllarındaki kuruma çöküntüsünü bu formüller yönetir.</li>
             <li><strong>Thornthwaite-Mather Su Dengesi:</strong> Toprağın su tutma kapasitesini depolama yaklaşımıyla temsil eder; toprak doygunluğunda oluşan fazla akışı (runoff) hesaplayan klasik bir yöntemdir.</li>
-            <li><strong>HBV (Svenska Model):</strong> Karların erimesi, toprak nem depolaması ve havzanın temel akış mantıklarını birleştiren tam konseptual hidrolojik modelin kodlanmış kopyasıdır. Yapay Zeka değillerdir; ancak yapay zekalara <strong>Karşılaştırma (Referans)</strong> olması için özellikle bu modüle yerleştirilmişlerdir.</li>
-          </ul>
+                      </ul>
         </div>
       </div>
     </section>
@@ -565,7 +562,7 @@
         <p style="margin-bottom: 10px;">Simülasyon ekranında 22 farklı model bulunmaktadır. <strong>Neye bakarken hangisinin yararlı olacağını</strong> aşağıdan seçebilirsiniz:</p>
         <ul style="line-height: 1.6;">
           <li><strong>Ortalama ve En Gerçekçi Gelecek Beklentisi:</strong> <span style="color: var(--accent); font-weight: bold;">ENSEMBLE_MEDIAN</span> veya <span style="font-weight: bold;">STACKING</span>. Aşırı senaryoları törpüler, en güvenli rotayı çizer.</li>
-          <li><strong>En Kötü Senaryo (Şiddetli Kuraklık / Kriz) Analizi:</strong> <span style="color: #d90429; font-weight: bold;">QuantileGBM-10</span> (kesin kötümser), <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Su seviyesinin diplere vurma ihtimalini görmek için bakılmalıdır.</li>
+          <li><strong>En Kötü Senaryo (Şiddetli Kuraklık / Kriz) Analizi:</strong> <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Su seviyesinin diplere vurma ihtimalini görmek için bakılmalıdır.</li>
           <li><strong>Uzun Vadeli Stabil Trend (Yönsüz):</strong> <span style="color: #2b9348; font-weight: bold;">Ridge</span>, <span style="font-weight: bold;">BayesianRidge</span> veya <span style="font-weight: bold;">ElasticNet</span>. Geçmiş su tüketim ivmesinin, gürültüden arındırılmış saf lineer gidişatını izlemek için yararlıdır.</li>
           <li><strong>Ani İklim Şokları ve Mevsimsel Kırılmalar:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Beklenmedik dalgalanmaları ve hidrolojik sapmaları simüle etmek için kritiktir.</li>
           <li><strong>Doğal Varyans (Tahminden Ziyade Desen):</strong> <span style="font-weight: bold;">RF (Random Forest)</span>, <span style="font-weight: bold;">ETR</span> veya <span style="font-weight: bold;">GBM_Q50</span>.</li>
@@ -588,13 +585,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr style="background:rgba(255,200,0,0.08);font-weight:700;">
-              <td style="padding:7px 10px;">🥇 QuantileGBM&ndash;10</td>
-              <td style="text-align:center;"><span class="chip">İklim</span></td>
-              <td style="text-align:center;color:#F59E0B;">39.29</td><td style="text-align:center;">84.4%</td>
-              <td style="text-align:center;color:#34D399;">0.805</td>
-              <td style="padding:7px 10px;">%10 kurak senaryo — worst-case kuraklık</td>
-            </tr>
             <tr><td style="padding:7px 10px;">XGBoost</td><td style="text-align:center;"><span class="chip">ML</span></td>
               <td style="text-align:center;">39.33</td><td style="text-align:center;">85.1%</td><td style="text-align:center;color:#34D399;">0.839</td>
               <td style="padding:7px 10px;">En yüksek Pearson korelasyonu</td></tr>
@@ -650,19 +640,7 @@
       <!-- ── Fizik Modelleri ─────────────── -->
       <h3 style="margin:24px 0 12px;">🌍 Gerçek Fizik-Tabanlı İklim/Hidroloji Modelleri (ML Yok)</h3>
       <div class="grid three">
-        <div class="card">
-          <h3>HBV-Light v2 — Bergström 1976</h3>
-          <span class="chip" style="background:rgba(52,211,153,0.15);color:#34D399;margin-bottom:10px;display:inline-block;">Fizik · SMHI · WMO Referansı · Geliştirilmiş</span>
-          <ul>
-            <li><strong>Kar:</strong> degree-day birikimi + erimesi (melt_rate=3 mm/°C)</li>
-            <li><strong>Toprak:</strong> beta fonksiyonu (fc=200&thinsp;mm, β=3.0) — Istanbul killi toprak</li>
-            <li><strong>Rezervuarlar:</strong> hızlı (k_fast=0.25) + yavaş (k_slow=0.04) çift depo</li>
-            <li><strong>Kalibrasyon:</strong> SPI-6 + snow_proxy + Ridge OLS (4 değişken)</li>
-            <li>100+ Avrupa havzasında operasyonel; IPCC AR6 WG1 referansı</li>
-          </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Havzadaki kar erimesi ve yeraltı suyuna sızma dinamiklerini dikkate alan deterministik hidrolojik döngülere bakarken önerilir.</p>
-          <img class="zoomable" src="assets/v3/hbv_v3_projection.png?v=20260326-7" alt="HBV Projeksiyon"/>
-        </div>
+        
         <div class="card">
           <h3>Budyko-Fu v2 — 1974/2007</h3>
           <span class="chip" style="background:rgba(52,211,153,0.15);color:#34D399;margin-bottom:10px;display:inline-block;">Fizik · UNESCO · WMO · Mevsimsel Dinamik ω</span>
@@ -704,17 +682,7 @@
           <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Geleneksel mevsimsel döngüler çerçevesinde, sıcaklık ve yağışın standart zaman serisine etkisine bakarken yararlıdır.</p>
           <img class="zoomable" src="assets/v3/arimax_v3_projection.png?v=20260326-7" alt="ARIMAX Projeksiyon"/>
         </div>
-        <div class="card">
-          <h3>QuantileGBM-10 &#9733; En İyi</h3>
-          <span class="chip" style="background:rgba(251,191,36,0.15);color:#F59E0B;margin-bottom:10px;display:inline-block;">En Düşük RMSE</span>
-          <ul>
-            <li>%10 kuantil loss — en kötü kuraklık senaryosu</li>
-            <li>CV RMSE: <strong>39.29&thinsp;pp</strong> &middot; r=0.805 &middot; MAPE: <strong>84.4%</strong></li>
-            <li>800 estimator, lr=0.03, max_depth=5</li>
-          </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> En kötü kriz senaryosu (şiddetli susuzluk) ve dip doluluk noktalarına bakarken yararlıdır.</p>
-          <img class="zoomable" src="assets/v3/gbm_q10_v3_projection.png?v=20260326-7" alt="QuantileGBM-10"/>
-        </div>
+        
         <div class="card">
           <h3>NGBoost (Stanford)</h3>
           <span class="chip" style="margin-bottom:10px;display:inline-block;">Olasılıksal &middot; Duan et al. 2020</span>
@@ -841,7 +809,7 @@
       <div class="card" style="margin-top:14px;">
         <h3>CV Karşılaştırma Grafiği</h3>
         <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260326-7" alt="V3 CV comparison"/>
-        <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı. QuantileGBM-10 en düşük RMSE ile en iyi model seçildi.</p>
+        <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı; model sonuçları birlikte değerlendirilmelidir.</p>
       </div>
     </section>
 
@@ -917,14 +885,12 @@
                 <option value="huber">Huber Regressor (Aykırı Değer Dirençli)</option>
                 <option value="gpr">Gaussian Process (Matern Kernel GPR)</option>
                 <option value="ngboost">NGBoost (Doğal Gradyan Dağılım)</option>
-                <option value="gbm_q10">GBM Quantile (%10 Kötü Senaryo Karamsar)</option>
                 <option value="gbm_q50">GBM Quantile (%50 En Olası Medyan)</option>
               </optgroup>
               <optgroup label="Fiziksel & Zaman Serisi Modelleri">
                 <option value="arimax">ARIMAX (Dışsal Varyeteli Mevsimsel)</option>
                 <option value="budyko">Budyko (Kavramsal Çevresel Denklem)</option>
                 <option value="thornthwaite">Thornthwaite-Mather Su Dengesi</option>
-                <option value="hbv">HBV (Kar-Yağış Akış Simülasyonu)</option>
               </optgroup>
             </select>
           </div>
@@ -1636,16 +1602,20 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       huber: '#d62728',
       gpr: '#9467bd',
       ngboost: '#e377c2',
-      gbm_q10: '#ff7f0e',
       gbm_q50: '#2ca02c',
       arimax: '#1f77b4',
       budyko: '#8c564b',
       thornthwaite: '#17becf',
-      hbv: '#7f7f7f'
     };
 
     function getAvailableModelKeys() {
-      return Object.keys(modelData || {}).filter((k) => (modelData[k] || []).some((d) => d.fill !== null && d.fill !== undefined));
+      const allowed = new Set([
+        'ensemble_median', 'xgb', 'lgb_dart', 'stack',
+        'etr', 'ridge', 'gbr', 'hgb', 'rf',
+        'catboost', 'svr', 'bayes_ridge', 'elasticnet', 'huber', 'gpr', 'ngboost', 'gbm_q50',
+        'arimax', 'budyko', 'thornthwaite'
+      ]);
+      return Object.keys(modelData || {}).filter((k) => allowed.has(k) && (modelData[k] || []).some((d) => d.fill !== null && d.fill !== undefined));
     }
 
     function computeModelScenarioCalibration() {
