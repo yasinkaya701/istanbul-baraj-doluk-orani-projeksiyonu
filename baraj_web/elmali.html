@@ -941,7 +941,12 @@ const ELMALI_OBS = (typeof window.ELMALI_OBSERVED_MONTHLY !== 'undefined' && win
   : null;
 
 const MONTHLY_SERIES = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
-  ? ELMALI_OBS.monthly.filter((d) => d && d.is_full_month).map((d) => ({
+  ? ELMALI_OBS.monthly.filter((d) => (
+      d
+      && d.is_full_month
+      && Number(d.month_days || 0) >= 28
+      && Number(d.obs_days || 0) >= 28
+    )).map((d) => ({
       date: d.date,
       fill_avg_pct: Number(d.fill_avg_pct),
       rain_total_mm: Number(d.rain_total_mm),
@@ -1425,7 +1430,12 @@ function interpByY(curve, y, fallback = NaN) {
 }
 
 const ELMALI_MONTHLY_FULL = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
-  ? ELMALI_OBS.monthly.filter((d) => d && d.is_full_month)
+  ? ELMALI_OBS.monthly.filter((d) => (
+      d
+      && d.is_full_month
+      && Number(d.month_days || 0) >= 28
+      && Number(d.obs_days || 0) >= 28
+    ))
   : [];
 const ELMALI_FILL_RESERVE_CURVE = buildMonotonicCurve(ELMALI_MONTHLY_FULL, 'fill_avg_pct', 'reserve_avg_m3');
 const ELMALI_FILL_LEVEL_CURVE = buildMonotonicCurve(ELMALI_MONTHLY_FULL, 'fill_avg_pct', 'level_avg_m');
@@ -1481,7 +1491,13 @@ function runoffFromEt0AndStorage(et0Pct, fillPct) {
 
 const ELMALI_RUNOFF = (() => {
   const src = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
-    ? ELMALI_OBS.monthly.filter((d) => d && d.is_full_month && Number.isFinite(Number(d.fill_avg_pct)))
+    ? ELMALI_OBS.monthly.filter((d) => (
+        d
+        && d.is_full_month
+        && Number(d.month_days || 0) >= 28
+        && Number(d.obs_days || 0) >= 28
+        && Number.isFinite(Number(d.fill_avg_pct))
+      ))
     : [];
   if (src.length < 24) return 0.28;
   const cands = [];
@@ -2515,7 +2531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const galleryVersion = '20260326-3';
+  const galleryVersion = '20260326-4';
   const modal = document.getElementById('img-modal');
   const modalImg = document.getElementById('img-modal-image');
   const modalCap = document.getElementById('img-modal-caption');
