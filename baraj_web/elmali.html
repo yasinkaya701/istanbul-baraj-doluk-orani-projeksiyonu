@@ -884,7 +884,7 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
     <p>Elmalı Barajı için değerlendirme çerçevesi; model saçılımı, fizik tabanlı su dengesi ve talep baskısını tek tabloda birleştirir. Amaç, tek model eğrisi yerine açıklanabilir risk aralığı üretmektir.</p>
     <div class="elmali-stat-grid">
       <div class="elmali-stat"><small>Simülasyona Entegre Model</small><strong id="elm-acad-model-count">—</strong></div>
-      <div class="elmali-stat"><small>2040 Dağılımı (Min–Maks)</small><strong id="elm-acad-2040-minmax">—</strong></div>
+      <div class="elmali-stat"><small>2040 Konsensüs Bandı (P20–P80)</small><strong id="elm-acad-2040-minmax">—</strong></div>
       <div class="elmali-stat"><small>2040 Medyanı</small><strong id="elm-acad-2040-median">—</strong></div>
       <div class="elmali-stat"><small>2040 IQR (Q1–Q3)</small><strong id="elm-acad-2040-iqr">—</strong></div>
       <div class="elmali-stat"><small>Tarihsel Ortalama Doluluk</small><strong id="elm-acad-hist-mean">—</strong></div>
@@ -1290,6 +1290,17 @@ function quantile(arr, q) {
   return vals[lo] * (1 - w) + vals[hi] * w;
 }
 const median = (arr) => quantile(arr, 0.5);
+function summarizeConsensus(values, lowQ = 0.20, highQ = 0.80) {
+  const vals = (values || []).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  if (!vals.length) return null;
+  return {
+    min: vals[0],
+    max: vals[vals.length - 1],
+    low: quantile(vals, lowQ),
+    median: quantile(vals, 0.5),
+    high: quantile(vals, highQ),
+  };
+}
 
 const ELMALI_META = (ELMALI_OBS && ELMALI_OBS.meta) ? ELMALI_OBS.meta : {};
 const ELMALI_SIM_CAL = (ELMALI_OBS && ELMALI_OBS.sim_calibration) ? ELMALI_OBS.sim_calibration : {};
@@ -1665,8 +1676,8 @@ function buildModelSummary() {
   cards.push(`
     <div class="model-card" data-model="all">
       <div class="model-title">Tümü (Karşılaştırmalı)</div>
-      <div class="model-meta" data-field="mean">2040 ortalama: —</div>
-      <div class="model-delta" data-field="range">Aralık: —</div>
+      <div class="model-meta" data-field="mean">2040 medyan: —</div>
+      <div class="model-delta" data-field="range">Konsensüs bandı (P20–P80): —</div>
       <div class="model-bar"><span data-field="bar" style="background:#0b2a3c;width:0%"></span></div>
     </div>
   `);
@@ -1766,10 +1777,15 @@ function renderAcademicElmali() {
     .filter((v) => Number.isFinite(v))
     .sort((a, b) => a - b);
   if (endVals.length) {
+    const consensus = summarizeConsensus(endVals, 0.20, 0.80);
     const q1 = quantile(endVals, 0.25);
     const q2 = quantile(endVals, 0.5);
     const q3 = quantile(endVals, 0.75);
-    setText('elm-acad-2040-minmax', `${endVals[0].toFixed(1)}% – ${endVals[endVals.length - 1].toFixed(1)}%`);
+    if (consensus) {
+      setText('elm-acad-2040-minmax', `${consensus.low.toFixed(1)}% – ${consensus.high.toFixed(1)}%`);
+    } else {
+      setText('elm-acad-2040-minmax', '—');
+    }
     setText('elm-acad-2040-median', `${q2.toFixed(1)}%`);
     setText('elm-acad-2040-iqr', `${q1.toFixed(1)}% – ${q3.toFixed(1)}%`);
   } else {
@@ -1851,7 +1867,7 @@ function updateModelSummarySelection(selected) {
   }
   if (selected === 'all' && modelSummary.ensemble) {
     const e = modelSummary.ensemble;
-    pill.textContent = `Ortalama ${e.mean.toFixed(1)}% • Aralık ${e.min.toFixed(1)}–${e.max.toFixed(1)}%`;
+    pill.textContent = `Medyan ${e.median.toFixed(1)}% • P20–P80 ${e.low.toFixed(1)}–${e.high.toFixed(1)}%`;
     return;
   }
   const s = modelSummary.stats ? modelSummary.stats[selected] : null;
@@ -1880,11 +1896,14 @@ function updateModelSummaryFromSeries(seriesMap) {
   if (minLen > 0) {
     const idx = minLen - 1;
     const vals = models.map(m => (seriesMap[m][idx] ? seriesMap[m][idx].fill : null)).filter(v => Number.isFinite(v));
-    if (vals.length) {
+    const consensus = summarizeConsensus(vals, 0.20, 0.80);
+    if (consensus) {
       ensemble = {
-        mean: vals.reduce((a, b) => a + b, 0) / vals.length,
-        min: Math.min(...vals),
-        max: Math.max(...vals)
+        median: consensus.median,
+        low: consensus.low,
+        high: consensus.high,
+        min: consensus.min,
+        max: consensus.max
       };
     }
   }
@@ -1896,9 +1915,9 @@ function updateModelSummaryFromSeries(seriesMap) {
     const meanEl = allCard.querySelector('[data-field="mean"]');
     const rangeEl = allCard.querySelector('[data-field="range"]');
     const barEl = allCard.querySelector('[data-field="bar"]');
-    if (meanEl) meanEl.textContent = `2040 ortalama: ${ensemble.mean.toFixed(1)}%`;
-    if (rangeEl) rangeEl.textContent = `Aralık: ${ensemble.min.toFixed(1)}–${ensemble.max.toFixed(1)}%`;
-    if (barEl) barEl.style.width = `${clamp(ensemble.mean, 0, 100)}%`;
+    if (meanEl) meanEl.textContent = `2040 medyan: ${ensemble.median.toFixed(1)}%`;
+    if (rangeEl) rangeEl.textContent = `Konsensüs bandı (P20–P80): ${ensemble.low.toFixed(1)}–${ensemble.high.toFixed(1)}%`;
+    if (barEl) barEl.style.width = `${clamp(ensemble.median, 0, 100)}%`;
   }
 
   models.forEach((m) => {
@@ -2088,24 +2107,24 @@ function renderSim() {
     }
   } else {
     const ref = adjSeries[models[0]] || [];
-    const meanSeries = [];
-    const minSeries = [];
-    const maxSeries = [];
+    const medianSeries = [];
+    const lowSeries = [];
+    const highSeries = [];
     for (let i = 0; i < ref.length; i += 1) {
       const vals = models.map((m) => (adjSeries[m][i] ? adjSeries[m][i].fill : null)).filter(v => Number.isFinite(v));
-      if (!vals.length) continue;
-      const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-      meanSeries.push({ date: ref[i].date, fill: mean });
-      minSeries.push({ date: ref[i].date, fill: Math.min(...vals) });
-      maxSeries.push({ date: ref[i].date, fill: Math.max(...vals) });
+      const consensus = summarizeConsensus(vals, 0.20, 0.80);
+      if (!consensus) continue;
+      medianSeries.push({ date: ref[i].date, fill: consensus.median });
+      lowSeries.push({ date: ref[i].date, fill: consensus.low });
+      highSeries.push({ date: ref[i].date, fill: consensus.high });
     }
-    const meanPath = linePath(meanSeries, width, height, pad);
-    const minPath = linePath(minSeries, width, height, pad);
-    const maxPath = linePath(maxSeries, width, height, pad);
-    if (minPath && maxPath && meanPath) {
-      paths += `<path d="${minPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
-      paths += `<path d="${maxPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
-      paths += `<path d="${meanPath}" fill="none" stroke="#0b2a3c" stroke-width="2.7" opacity="0.92"/>`;
+    const medianPath = linePath(medianSeries, width, height, pad);
+    const lowPath = linePath(lowSeries, width, height, pad);
+    const highPath = linePath(highSeries, width, height, pad);
+    if (lowPath && highPath && medianPath) {
+      paths += `<path d="${lowPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
+      paths += `<path d="${highPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
+      paths += `<path d="${medianPath}" fill="none" stroke="#0b2a3c" stroke-width="2.7" opacity="0.92"/>`;
     }
   }
 
@@ -2165,7 +2184,7 @@ function renderSim() {
   const legend = document.getElementById('model-legend');
   if (legend) {
     if (model === 'all') {
-      legend.innerHTML = `<span class="dot" style="background:#0b2a3c"></span>Model Ortalaması <span class="dot" style="background:#9aa0a7"></span>Model Aralığı`;
+      legend.innerHTML = `<span class="dot" style="background:#0b2a3c"></span>Model Medyanı <span class="dot" style="background:#9aa0a7"></span>P20–P80 Bandı`;
     } else {
       legend.textContent = MODEL_META[model]?.label ? `Aktif model: ${MODEL_META[model].label}` : '';
     }
@@ -2205,9 +2224,9 @@ function renderSim() {
       metricBase.textContent = `${baseLast.fill.toFixed(1)}%`;
       if (model === 'all') {
         const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => Number.isFinite(v));
-        if (vals.length) {
-          const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-          metricAdj.textContent = `${mean.toFixed(1)}%`;
+        const consensus = summarizeConsensus(vals, 0.20, 0.80);
+        if (consensus) {
+          metricAdj.textContent = `${consensus.median.toFixed(1)}%`;
         }
       } else {
         const adjLast = (adjSeries[anyModel] || [])[idx];
@@ -2243,11 +2262,11 @@ function renderSim() {
     let tip = '';
     if (model === 'all') {
       const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => Number.isFinite(v));
-      const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-      const min = Math.min(...vals);
-      const max = Math.max(...vals);
-      tip = `${basePoint.date} • Ortalama ${mean.toFixed(1)}% (Aralık ${min.toFixed(1)}–${max.toFixed(1)})`;
-      metricAdj.textContent = `${mean.toFixed(1)}%`;
+      const consensus = summarizeConsensus(vals, 0.20, 0.80);
+      if (consensus) {
+        tip = `${basePoint.date} • Medyan ${consensus.median.toFixed(1)}% (P20–P80 ${consensus.low.toFixed(1)}–${consensus.high.toFixed(1)})`;
+        metricAdj.textContent = `${consensus.median.toFixed(1)}%`;
+      }
     } else {
       tip = `${basePoint.date} • ${adjPoint.fill.toFixed(1)}%`;
       metricAdj.textContent = `${adjPoint.fill.toFixed(1)}%`;
