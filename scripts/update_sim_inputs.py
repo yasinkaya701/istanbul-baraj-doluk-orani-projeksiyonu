@@ -261,9 +261,9 @@ def build_sim_coeffs(panel: pd.DataFrame, climate: dict, existing: dict, baselin
     adjustment_scale = compute_adjustment_scale(panel, baseline, reservoir, runoff_coeff)
 
     # Calibrated gains (increased to keep sliders decision-relevant while bounded).
-    rain_sensitivity_gain = float(np.clip(0.30 + 0.20 * beta_rain, 0.30, 0.52))
+    rain_sensitivity_gain = float(np.clip(0.36 + 0.28 * beta_rain, 0.38, 0.60))
     et0_sensitivity_gain = float(np.clip(1.12 + 0.95 * beta_et0, 1.20, 1.60))
-    et0_effect_gain = float(np.clip(1.20 + 0.80 * beta_et0, 1.30, 1.80))
+    et0_effect_gain = float(np.clip(1.05 + 0.45 * beta_et0, 1.15, 1.45))
     use_sensitivity_gain = float(np.clip(1.60 + 1.20 * beta_use, 1.55, 2.00))
     scenario_response_gain = float(np.clip(0.95 + 0.75 * adjustment_scale, 1.10, 1.45))
 
