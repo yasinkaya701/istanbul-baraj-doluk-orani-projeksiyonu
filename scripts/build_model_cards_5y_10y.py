@@ -14,6 +14,7 @@ from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, GradientBoostingRegressor, HistGradientBoostingRegressor
+from sklearn.base import clone
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 ROOT = Path("/Users/yasinkaya/Hackhaton")
@@ -175,6 +176,51 @@ def split_window(df, train_start, train_end, test_start, test_end):
     return train, test
 
 
+def rolling_window_predict(
+    df: pd.DataFrame,
+    model_template,
+    lookback_months: int,
+    test_start: pd.Timestamp,
+    test_end: pd.Timestamp,
+):
+    data = df.sort_values("date").reset_index(drop=True).copy()
+    feat_cols = [c for c in data.columns if c not in ["date", "fill_pct"]]
+    test = data[(data["date"] >= test_start) & (data["date"] <= test_end)].copy()
+
+    dates = []
+    y_true = []
+    y_pred = []
+    train_windows = []
+
+    for _, row in test.iterrows():
+        cur_date = pd.Timestamp(row["date"])
+        train_end = (cur_date - pd.DateOffset(months=1)).normalize()
+        train_start = (train_end - pd.DateOffset(months=lookback_months - 1)).normalize()
+        train = data[(data["date"] >= train_start) & (data["date"] <= train_end)].copy()
+        if len(train) < lookback_months:
+            continue
+
+        X_train = train[feat_cols].to_numpy(dtype=float)
+        y_train = train["fill_pct"].to_numpy(dtype=float)
+        X_cur = np.asarray(row[feat_cols], dtype=float).reshape(1, -1)
+
+        model = clone(model_template)
+        model.fit(X_train, y_train)
+        pred = float(model.predict(X_cur)[0])
+
+        dates.append(cur_date)
+        y_true.append(float(row["fill_pct"]))
+        y_pred.append(pred)
+        train_windows.append((train_start, train_end))
+
+    return (
+        np.asarray(dates),
+        np.asarray(y_true, dtype=float),
+        np.asarray(y_pred, dtype=float),
+        train_windows,
+    )
+
+
 def model_catalog():
     return {
         "ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
@@ -256,47 +302,47 @@ def main():
     end_date = feat["date"].max()
     test5_start = (end_date - pd.DateOffset(months=59)).normalize()
     test5_end = end_date
-    train5_end = (test5_start - pd.DateOffset(months=1)).normalize()
-    train5_start = (train5_end - pd.DateOffset(months=59)).normalize()
-
     test10_start = (end_date - pd.DateOffset(months=119)).normalize()
     test10_end = end_date
-    train10_end = (test10_start - pd.DateOffset(months=1)).normalize()
-    train10_start = (train10_end - pd.DateOffset(months=119)).normalize()
 
     windows = {
-        "5y": (train5_start, train5_end, test5_start, test5_end),
-        "10y": (train10_start, train10_end, test10_start, test10_end),
+        "5y": (60, test5_start, test5_end),
+        "10y": (120, test10_start, test10_end),
     }
 
     models = model_catalog()
     rows = []
     per_model = {name: {} for name in models.keys()}
 
-    for wlabel, (train_start, train_end, test_start, test_end) in windows.items():
-        train, test = split_window(feat, train_start, train_end, test_start, test_end)
-        if train.empty or test.empty:
-            continue
-        X_train = train.drop(columns=["date", "fill_pct"]).values
-        y_train = train["fill_pct"].values
-        X_test = test.drop(columns=["date", "fill_pct"]).values
-        y_test = test["fill_pct"].values
-
+    for wlabel, (lookback_months, test_start, test_end) in windows.items():
         for name, model in models.items():
-            model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
-            metrics = eval_metrics(y_test, y_pred)
+            dates, y_true, y_pred, train_windows = rolling_window_predict(
+                feat,
+                model,
+                lookback_months=lookback_months,
+                test_start=test_start,
+                test_end=test_end,
+            )
+            if len(y_true) == 0:
+                continue
+            metrics = eval_metrics(y_true, y_pred)
+            first_train = train_windows[0] if train_windows else (None, None)
+            last_train = train_windows[-1] if train_windows else (None, None)
             rows.append({
                 "model": name,
-                "train_window": f"{train_start.date()} -> {train_end.date()}",
+                "train_window": (
+                    f"rolling_{lookback_months}m "
+                    f"({first_train[0].date()} -> {first_train[1].date()}) .. "
+                    f"({last_train[0].date()} -> {last_train[1].date()})"
+                ),
                 "window": f"{test_start.date()} -> {test_end.date()}",
                 **metrics,
             })
 
             per_model[name][wlabel] = (
-                f"Test: {test_start.date()} -> {test_end.date()} | Egitim: {train_start.date()} -> {train_end.date()}",
-                test["date"].values,
-                y_test,
+                f"Test: {test_start.date()} -> {test_end.date()} | Rolling egitim: {lookback_months} ay",
+                dates,
+                y_true,
                 y_pred,
                 metrics,
             )
