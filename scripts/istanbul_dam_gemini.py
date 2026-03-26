@@ -805,7 +805,7 @@ class ARIMAXModel:
 
 class HBVModel:
     """
-    HBV-Light v2 (Bergström 1976 / SMHI) — Geliştirilmiş Yağış-Akış Modeli.
+    HBV kavramsal yağış-akış modeli.
     Kar birikimi/erimesi (degree-day) + Toprak nemi rutini (beta fonksiyonu) +
     Hızlı/Yavaş rezervuarlar (k_fast, k_slow). SPI-6 + snow_proxy ile 4-değişkenli
     Ridge OLS kalibrasyonu. WMO / IPCC AR6 referans modeli.
@@ -1056,14 +1056,10 @@ def build_model_catalog(lgb_params: dict | None = None,
     log.info("  NGBoost (Stanford) olasilıksal modeli eklendi")
     models["gbm_q50"] = make_quantile_gbm(0.5)
     log.info("  QuantileGBM-50 (medyan senaryo) eklendi")
-    models["gbm_q10"] = make_quantile_gbm(0.1)
-    log.info("  QuantileGBM-10 (en kötü kuraklık senaryosu) eklendi")
     models["arimax"] = ARIMAXModel()
     log.info("  ARIMAX (zaman serisi iklim modeli) eklendi")
 
     # 🌍 Gerçek Fizik-Tabanlı İklim Modelleri (ML YOK)
-    models["hbv"] = HBVModel(fc=200.0, beta=3.0, k_fast=0.25, k_slow=0.04, melt_rate=3.0)
-    log.info("  HBV (Bergström 1976 / SMHI) fiziksel yağış-akış modeli eklendi")
     models["budyko"] = BudykoModel(omega_wet=1.8, omega_dry=2.5)
     log.info("  Budyko-Fu (1974/2007) iklim elastikiyeti modeli eklendi")
     models["thornthwaite"] = ThornthwaiteBalanceModel(fc=180.0, wp=40.0)
@@ -1900,7 +1896,7 @@ def main():
     q10_model.fit(X_fin, y_fin)
     q90_model.fit(X_fin, y_fin)
 
-    target_subset = ["arimax", "ngboost", "gbm_q10", "gbm_q50", "bayes_ridge", "elasticnet", "huber", "budyko"]
+    target_subset = ["arimax", "ngboost", "gbm_q50", "bayes_ridge", "elasticnet", "huber", "budyko"]
     
     for name, model in models.items():
         if name not in target_subset:

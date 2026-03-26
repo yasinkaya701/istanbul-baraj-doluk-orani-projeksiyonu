@@ -735,14 +735,12 @@
             <option value="all">Tümü (Karşılaştır)</option>
           </optgroup>
           <optgroup label="Ağaç Tabanlı">
-            <option value="xgb">XGBoost</option>
             <option value="lgb">LightGBM DART</option>
             <option value="catboost">CatBoost</option>
             <option value="etr">Extra Trees</option>
             <option value="rf">Random Forest</option>
             <option value="gbr">Gradient Boosting</option>
             <option value="hgb">HistGradientBoosting</option>
-            <option value="gbm_q10">GBM Quantile %10</option>
           </optgroup>
           <optgroup label="Regresyon/Olasılıksal">
             <option value="bayesridge">Bayesian Ridge</option>
@@ -756,7 +754,6 @@
           <optgroup label="Fizik Tabanlı">
             <option value="budyko">Budyko</option>
             <option value="thornthwaite">Thornthwaite</option>
-            <option value="hbv">HBV</option>
           </optgroup>
         </select>
       </div>
@@ -867,17 +864,14 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
       <div class="card"><h3 style="margin-top:0;">ElasticNet</h3><img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png?v=20260326-7" alt="ElasticNet Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Bayesian Ridge</h3><img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png?v=20260326-7" alt="Bayesian Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Huber</h3><img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png?v=20260326-7" alt="Huber Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">XGBoost</h3><img class="zoomable" src="assets/elmali_models/xgb_elmali_projection.png?v=20260326-7" alt="XGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">LightGBM DART</h3><img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png?v=20260326-7" alt="LightGBM Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">CatBoost</h3><img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png?v=20260326-7" alt="CatBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">SVR (RBF)</h3><img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png?v=20260326-7" alt="SVR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">NGBoost</h3><img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png?v=20260326-7" alt="NGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">GPR</h3><img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png?v=20260326-7" alt="GPR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">GBM Quantile %10</h3><img class="zoomable" src="assets/elmali_models/gbmq10_elmali_projection.png?v=20260326-7" alt="GBM Quantile %10 Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">ARIMAX</h3><img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png?v=20260326-7" alt="ARIMAX Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Budyko</h3><img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png?v=20260326-7" alt="Budyko Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Thornthwaite</h3><img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png?v=20260326-7" alt="Thornthwaite Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">HBV</h3><img class="zoomable" src="assets/elmali_models/hbv_elmali_projection.png?v=20260326-7" alt="HBV Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Stacking Ensemble</h3><img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png?v=20260326-7" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
       <div class="card"><h3 style="margin-top:0;">Ensemble Median</h3><img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png?v=20260326-7" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
     </div>
@@ -1240,7 +1234,6 @@ const MODEL_META = {
   ensemble:     { label: 'Ensemble Median', col: '#0b2a3c' },
   stack:        { label: 'Stacking Ensemble', col: '#2b9348' },
   ridge:        { label: 'Ridge', col: '#1765a3' },
-  xgb:          { label: 'XGBoost', col: '#c17a2c' },
   lgb:          { label: 'LightGBM DART', col: '#1f7bb6' },
   catboost:     { label: 'CatBoost', col: '#4f9dd3' },
   etr:          { label: 'Extra Trees', col: '#58a2cb' },
@@ -1253,18 +1246,15 @@ const MODEL_META = {
   svr:          { label: 'SVR (RBF)', col: '#86a7ca' },
   ngboost:      { label: 'NGBoost', col: '#c58334' },
   gpr:          { label: 'Gaussian Process', col: '#88aed2' },
-  gbm_q10:      { label: 'GBM Quantile %10', col: '#d65a3a' },
   arimax:       { label: 'ARIMAX', col: '#1f77b4' },
   budyko:       { label: 'Budyko', col: '#3a9763' },
   thornthwaite: { label: 'Thornthwaite', col: '#519b77' },
-  hbv:          { label: 'HBV', col: '#2f8b62' }
 };
 
 const MODEL_ALIASES = {
   ensemble_median: 'ensemble',
   lgb_dart: 'lgb',
   bayes_ridge: 'bayesridge',
-  gbmq10: 'gbm_q10'
 };
 const MODEL_USAGE_GUIDE = {
   ridge: { mechanism: 'L2 düzenlileştirmeli doğrusal regresyon', behavior: 'Düşük varyanslı, kararlı trend hattı', use: 'Temel referans ve senaryo karşılaştırması' },
@@ -1275,17 +1265,14 @@ const MODEL_USAGE_GUIDE = {
   etr: { mechanism: 'Ekstra rastgele ağaç topluluğu', behavior: 'Daha hızlı rejim kırılımı tepkisi', use: 'Ani rejim değişimlerini yakalama' },
   gbr: { mechanism: 'Art arda hata azaltan boosting', behavior: 'İvme değişimlerine duyarlı eğri', use: 'Doğrusal olmayan trend dönüşümleri' },
   hgb: { mechanism: 'Histogram tabanlı boosting', behavior: 'Hızlı ve pürüzsüz yakınsama', use: 'Büyük özellik setlerinde verimli tahmin' },
-  xgb: { mechanism: 'Düzenlileştirilmiş gradient boosting', behavior: 'Kırılım noktalarında yüksek hassasiyet', use: 'Yapısal şoklara duyarlı modelleme' },
   lgb: { mechanism: 'DART dropout destekli boosting', behavior: 'Aşırı öğrenmeyi bastıran dengeli eğri', use: 'Uzun ufukta kararlılık gereksinimi' },
   catboost: { mechanism: 'Sıralı boosting + kategorik işleme', behavior: 'Dengeli ve genellenebilir geçiş', use: 'Karışık dağılımlı özellik setleri' },
   svr: { mechanism: 'RBF çekirdekli destek vektör regresyonu', behavior: 'Yerel eğriliklere duyarlı yumuşak hat', use: 'Sınırlı veride doğrusal olmayan ilişki' },
   ngboost: { mechanism: 'Dağılım parametresi üreten boosting', behavior: 'Olasılık odaklı merkez eğri', use: 'Belirsizlik aralığı yorumu' },
   gpr: { mechanism: 'Gauss süreci çekirdek regresyonu', behavior: 'Pürüzsüz fakat ekstrapolasyona hassas', use: 'Sürekli eğri ve güven aralığı analizi' },
-  gbm_q10: { mechanism: 'Alt kuantil (q10) boosting', behavior: 'Alt sınır odaklı ihtiyatlı seviye', use: 'Kuraklık tabanı ve risk alt bandı' },
   arimax: { mechanism: 'Otoregresif + dışsal iklim değişkenleri', behavior: 'Zaman bağımlılığı belirgin çizgi', use: 'Seri bağımlılığı yüksek dönemler' },
   budyko: { mechanism: 'Su-enerji denge bağıntısı', behavior: 'Uzun dönem fiziksel denge hattı', use: 'Hidrolojik tutarlılık kontrolü' },
   thornthwaite: { mechanism: 'Sıcaklık temelli ET yaklaşımı', behavior: 'Kurak dönemde düşüşü belirginleştirir', use: 'Basit fiziksel kontrol senaryosu' },
-  hbv: { mechanism: 'Kavramsal havza depolama-akış modeli', behavior: 'Mevsimsel depolama döngüsüne duyarlı', use: 'Fizik tabanlı operasyonel kontrol' },
   stack: { mechanism: 'Meta-öğrenici ile model birleştirme', behavior: 'Tekil model yanlılığını yumuşatır', use: 'Kompozit karar modeli' },
   ensemble: { mechanism: 'Model medyanı ile birleştirme', behavior: 'Uç değer etkisini bastıran merkezi hat', use: 'Nihai karar desteği için önerilen referans' }
 };
@@ -1552,7 +1539,13 @@ function buildModelDataFromDaily() {
 }
 
 function getAvailableModelKeys() {
-  return Object.keys(modelData || {}).filter((k) => (modelData[k] || []).length > 0);
+  const allowed = new Set([
+    'ridge', 'ensemble', 'stack',
+    'lgb', 'catboost', 'etr', 'rf', 'gbr', 'hgb',
+    'bayesridge', 'elasticnet', 'huber', 'svr', 'ngboost', 'gpr', 'arimax',
+    'budyko', 'thornthwaite'
+  ]);
+  return Object.keys(modelData || {}).filter((k) => allowed.has(k) && (modelData[k] || []).length > 0);
 }
 
 function computeModelScenarioCalibration() {
@@ -1706,9 +1699,9 @@ function renderModelUsageTable() {
   const order = [
     'ridge','elasticnet','bayesridge','huber',
     'rf','etr','gbr','hgb',
-    'xgb','lgb','catboost',
-    'svr','ngboost','gpr','gbm_q10','arimax',
-    'budyko','thornthwaite','hbv',
+    'lgb','catboost',
+    'svr','ngboost','gpr','arimax',
+    'budyko','thornthwaite',
     'stack','ensemble'
   ];
   const rows = order
