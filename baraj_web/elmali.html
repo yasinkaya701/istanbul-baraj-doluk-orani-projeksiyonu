@@ -539,7 +539,7 @@
 
   </style>
   <!-- Python tarafından üretilen model projeksiyon serileri -->
-  <script src="assets/elmali_models_data.js?v=3"></script>
+  <script src="assets/elmali_models_data.js?v=4"></script>
   <script src="assets/data/elmali_observed_monthly.js?v=20260326-1"></script>
   <script src="assets/data/climate_baseline.js?v=20260326-1"></script>
 </head>
@@ -853,33 +853,33 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
   <div class="elmali-model-panel active" id="elmali-panel-temel">
     <p class="note" style="margin-bottom:14px;">Temel set (Ridge, GBR, HGB, RF, ETR) günlük operasyon ve hızlı senaryo karşılaştırması için birincil referans gruptur.</p>
     <div class="grid model-gallery">
-      <div class="card"><h3 style="margin-top:0;">Ridge</h3><p class="note">Düşük varyanslı lineer referans model.</p><img class="zoomable" src="assets/elmali_models/ridge_elmali_projection.png" alt="Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">GBR</h3><p class="note">Kırılım noktalarına duyarlı boosting modeli.</p><img class="zoomable" src="assets/elmali_models/gbr_elmali_projection.png" alt="GBR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">HGB</h3><p class="note">Histogram tabanlı, dengeli ve hızlı boosting.</p><img class="zoomable" src="assets/elmali_models/hgb_elmali_projection.png" alt="HGB Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Random Forest</h3><p class="note">Orta rejimde yumuşak, robust topluluk model.</p><img class="zoomable" src="assets/elmali_models/rf_elmali_projection.png" alt="RF Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Extra Trees</h3><p class="note">Yüksek rastgeleleştirme ile gürültüye dayanıklı model.</p><img class="zoomable" src="assets/elmali_models/etr_elmali_projection.png" alt="ETR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Ridge</h3><p class="note">Düşük varyanslı lineer referans model.</p><img class="zoomable" src="assets/elmali_models/ridge_elmali_projection.png?v=20260326-7" alt="Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GBR</h3><p class="note">Kırılım noktalarına duyarlı boosting modeli.</p><img class="zoomable" src="assets/elmali_models/gbr_elmali_projection.png?v=20260326-7" alt="GBR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">HGB</h3><p class="note">Histogram tabanlı, dengeli ve hızlı boosting.</p><img class="zoomable" src="assets/elmali_models/hgb_elmali_projection.png?v=20260326-7" alt="HGB Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Random Forest</h3><p class="note">Orta rejimde yumuşak, robust topluluk model.</p><img class="zoomable" src="assets/elmali_models/rf_elmali_projection.png?v=20260326-7" alt="RF Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Extra Trees</h3><p class="note">Yüksek rastgeleleştirme ile gürültüye dayanıklı model.</p><img class="zoomable" src="assets/elmali_models/etr_elmali_projection.png?v=20260326-7" alt="ETR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
     </div>
   </div>
 
   <div class="elmali-model-panel" id="elmali-panel-v4">
     <p class="note" style="margin-bottom:14px;">V4 panelinde gelişmiş boosting, olasılıksal, zaman serisi ve fizik tabanlı modeller birlikte izlenir; stres testi ve belirsizlik raporlarında tamamlayıcı set olarak kullanılır.</p>
     <div class="grid model-gallery">
-      <div class="card"><h3 style="margin-top:0;">ElasticNet</h3><img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png" alt="ElasticNet Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Bayesian Ridge</h3><img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png" alt="Bayesian Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Huber</h3><img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png" alt="Huber Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">XGBoost</h3><img class="zoomable" src="assets/elmali_models/xgb_elmali_projection.png" alt="XGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">LightGBM DART</h3><img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png" alt="LightGBM Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">CatBoost</h3><img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png" alt="CatBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">SVR (RBF)</h3><img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png" alt="SVR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">NGBoost</h3><img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png" alt="NGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">GPR</h3><img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png" alt="GPR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">GBM Quantile %10</h3><img class="zoomable" src="assets/elmali_models/gbmq10_elmali_projection.png" alt="GBM Quantile %10 Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">ARIMAX</h3><img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png" alt="ARIMAX Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Budyko</h3><img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png" alt="Budyko Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Thornthwaite</h3><img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png" alt="Thornthwaite Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">HBV</h3><img class="zoomable" src="assets/elmali_models/hbv_elmali_projection.png" alt="HBV Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Stacking Ensemble</h3><img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
-      <div class="card"><h3 style="margin-top:0;">Ensemble Median</h3><img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">ElasticNet</h3><img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png?v=20260326-7" alt="ElasticNet Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Bayesian Ridge</h3><img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png?v=20260326-7" alt="Bayesian Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Huber</h3><img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png?v=20260326-7" alt="Huber Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">XGBoost</h3><img class="zoomable" src="assets/elmali_models/xgb_elmali_projection.png?v=20260326-7" alt="XGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">LightGBM DART</h3><img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png?v=20260326-7" alt="LightGBM Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">CatBoost</h3><img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png?v=20260326-7" alt="CatBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">SVR (RBF)</h3><img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png?v=20260326-7" alt="SVR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">NGBoost</h3><img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png?v=20260326-7" alt="NGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GPR</h3><img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png?v=20260326-7" alt="GPR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GBM Quantile %10</h3><img class="zoomable" src="assets/elmali_models/gbmq10_elmali_projection.png?v=20260326-7" alt="GBM Quantile %10 Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">ARIMAX</h3><img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png?v=20260326-7" alt="ARIMAX Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Budyko</h3><img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png?v=20260326-7" alt="Budyko Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Thornthwaite</h3><img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png?v=20260326-7" alt="Thornthwaite Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">HBV</h3><img class="zoomable" src="assets/elmali_models/hbv_elmali_projection.png?v=20260326-7" alt="HBV Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Stacking Ensemble</h3><img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png?v=20260326-7" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Ensemble Median</h3><img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png?v=20260326-7" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
     </div>
   </div>
 </section>
