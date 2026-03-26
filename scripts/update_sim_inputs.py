@@ -230,6 +230,7 @@ def build_sim_coeffs(panel: pd.DataFrame, climate: dict, existing: dict, baselin
     zcoef, *_ = np.linalg.lstsq(np.column_stack([Xz, np.ones(len(Xz))]), Yz, rcond=None)
     beta_rain = abs(float(zcoef[0]))
     beta_et0 = abs(float(zcoef[1]))
+    beta_use = abs(float(zcoef[2]))
 
     rows = []
     for date_str, vals in climate.items():
@@ -250,21 +251,21 @@ def build_sim_coeffs(panel: pd.DataFrame, climate: dict, existing: dict, baselin
     obs["delta_fill"] = fill_series.diff(1)
     abs_delta = obs["delta_fill"].abs().dropna()
     if len(abs_delta):
-        # Keep monthly scenario increment in a realistic band from observed volatility.
-        scenario_delta_cap_pp = float(np.clip(np.percentile(abs_delta, 75) * 0.18, 1.2, 2.2))
+        # Keep monthly scenario increment realistic but visible for policy stress tests.
+        scenario_delta_cap_pp = float(np.clip(np.percentile(abs_delta, 75) * 0.22, 1.6, 2.8))
     else:
-        scenario_delta_cap_pp = 1.6
+        scenario_delta_cap_pp = 2.0
 
     updated = dict(existing)
     runoff_coeff = float(existing.get("runoff_coeff", 0.6))
     adjustment_scale = compute_adjustment_scale(panel, baseline, reservoir, runoff_coeff)
 
-    # Calibrated gains (kept in conservative bounds):
-    # - rain gain lowered to avoid over-dominance of long-horizon runoff response
-    # - ET0 gain follows standardized ET0 signal strength
-    rain_sensitivity_gain = float(np.clip(0.38 + 0.35 * beta_rain, 0.35, 0.60))
-    et0_sensitivity_gain = float(np.clip(0.75 + 0.55 * beta_et0, 0.90, 1.20))
-    scenario_response_gain = float(np.clip(0.55 + 0.55 * adjustment_scale, 0.80, 1.00))
+    # Calibrated gains (increased to keep sliders decision-relevant while bounded).
+    rain_sensitivity_gain = float(np.clip(0.24 + 0.12 * beta_rain, 0.22, 0.40))
+    et0_sensitivity_gain = float(np.clip(1.12 + 0.95 * beta_et0, 1.20, 1.60))
+    et0_effect_gain = float(np.clip(1.20 + 0.80 * beta_et0, 1.30, 1.80))
+    use_sensitivity_gain = float(np.clip(1.60 + 1.20 * beta_use, 1.55, 2.00))
+    scenario_response_gain = float(np.clip(0.95 + 0.75 * adjustment_scale, 1.10, 1.45))
 
     updated.update(
         {
@@ -278,12 +279,14 @@ def build_sim_coeffs(panel: pd.DataFrame, climate: dict, existing: dict, baselin
             "adjustment_cap_scale": adjustment_scale,
             "scenario_delta_cap_pp": scenario_delta_cap_pp,
             "scenario_damping_floor": 0.25,
-            "scenario_offset_cap_pp": 20.0,
+            "scenario_offset_cap_pp": 35.0,
             "scenario_offset_damping_floor": 0.15,
             "scenario_response_gain": scenario_response_gain,
             "rain_sensitivity_gain": rain_sensitivity_gain,
             "et0_sensitivity_gain": et0_sensitivity_gain,
-            "et0_runoff_beta": 0.35,
+            "et0_effect_gain": et0_effect_gain,
+            "use_sensitivity_gain": use_sensitivity_gain,
+            "et0_runoff_beta": 0.70,
             "k_source": "observed_fill_pct_2010_2024_vs_balance_median_scale",
         }
     )

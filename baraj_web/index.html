@@ -1080,11 +1080,11 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
   </div>
 
   <script src="assets/data/projection_all_models.js?v=20260341_v5finalallb"></script>
-  <script src="assets/data/evap_usage_baseline.js?v=20260326-1"></script>
+  <script src="assets/data/evap_usage_baseline.js?v=20260327-2"></script>
   <script src="assets/data/reservoir_reference.js?v=20260321-6"></script>
-  <script src="assets/data/sim_coeffs.js?v=20260326-1"></script>
-  <script src="assets/data/usage_trend_stats.js?v=20260326-1"></script>
-  <script src="assets/data/usage_monthly_profile.js?v=20260326-1"></script>
+  <script src="assets/data/sim_coeffs.js?v=20260327-2"></script>
+  <script src="assets/data/usage_trend_stats.js?v=20260327-2"></script>
+  <script src="assets/data/usage_monthly_profile.js?v=20260327-2"></script>
   <script src="assets/data/climate_baseline.js?v=20260321-6"></script>
 
   <script>
@@ -1592,7 +1592,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           adjScale = kScale;
         }
       }
-      return clamp(adjScale, 0.07, 0.24);
+      return clamp(adjScale, 0.07, 0.33);
     }
 
     const MODEL_COLORS = {
@@ -1752,6 +1752,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
         const useMonthlyMcm = (useM3 * useScale) / 12.0 * seasonal;
         const baseUseMonthlySeasonal = baseUseMonthlyMcm * seasonal;
+        const useSensGain = coeff.use_sensitivity_gain ?? 1.0;
+        const useMonthlyScenario = baseUseMonthlySeasonal + (useMonthlyMcm - baseUseMonthlySeasonal) * useSensGain;
 
         const climate = getClimateRow(d.date);
         const precipBase = climate ? climate.precip_mm_month : 0;
@@ -1760,13 +1762,15 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const et0SensGain = coeff.et0_sensitivity_gain ?? 1.25;
         const rainAdj = (rain / 100) * rainSensGain;
         const et0Adj = (et0 / 100) * et0SensGain;
+        const et0EffectGain = coeff.et0_effect_gain ?? 1.0;
+        const et0AdjEff = et0Adj * et0EffectGain;
 
         const precipScen = precipBase * (1 + rainAdj);
-        const et0Scen = et0Base * (1 + et0Adj);
+        const et0Scen = et0Base * (1 + et0AdjEff);
 
         const runoffCoeff = getRunoffCoeff(m, runoffFallback);
         const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.55;
-        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * et0Adj), 0.0, 1.5);
+        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * et0AdjEff), 0.0, 1.5);
         const inflowBase = runoffCoeff * precipBase * catchmentKm2 * 0.001;
         const inflowScen = runoffScen * precipScen * catchmentKm2 * 0.001;
         const lakeRainBase = precipBase * lakeAreaKm2 * 0.001;
@@ -1774,7 +1778,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const evapBase = et0Base * kc * lakeAreaKm2 * 0.001;
         const evapScen = et0Scen * kc * lakeAreaKm2 * 0.001;
 
-        const deltaMcm = (inflowScen + lakeRainScen - evapScen - useMonthlyMcm)
+        const deltaMcm = (inflowScen + lakeRainScen - evapScen - useMonthlyScenario)
           - (inflowBase + lakeRainBase - evapBase - baseUseMonthlySeasonal);
         const deltaPct = capacityMcm ? (deltaMcm / capacityMcm) * 100 : 0;
         
