@@ -91,6 +91,7 @@
             <li>2028+ = 2000–(önceki yıl) ile eğitim</li>
             <li>Gelecek bandı: ±max(RMSE)</li>
           </ul>
+          <p class="note"><strong>Kurumsal kaynak ayrımı:</strong> Operasyonel baraj/doluluk ve su arzı verileri İSKİ ve İBB Açık Veri Portalı kaynaklıdır. İklim sürücü serileri Kandilli Rasathanesi (Boğaziçi Üniversitesi) ölçüm derlemeleri esas alınarak oluşturulmuştur; Kandilli ifadesi proje bağlamı/kurum bilgisidir.</p>
         </div>
       </div>
     </section>
@@ -556,8 +557,8 @@
     </section>
 
     <section id="gemini-modeller">
-      <h2>Gelişmiş Model Kataloğu (Sürüm 4 — 17 Model, Delta Hedef + SPEI)</h2>
-      <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim konfigürasyonudur: delta doluluk hedefi, SPEI kuraklık indeksi, 38 iklim özelliği ve purged walk-forward doğrulama birlikte kullanılır. Bu ifade bir model adı değil, aynı veri-kurulum ve doğrulama protokolünü temsil eden sürüm etiketidir.</p>
+      <h2>Gelişmiş Model Kataloğu (Sürüm 4 — 17 Model)</h2>
+      <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim sürümüdür. Bu bölümdeki terimler sade karşılıklarıyla: <strong>logit</strong> (doluluğu 0–100 aralığında tutan dönüşüm), <strong>anomali</strong> (mevsim normalinden sapma), <strong>fizik</strong> (su dengesi kısıtları), <strong>konformal</strong> (belirsizlik aralığı kalibrasyonu).</p>
 
       <div class="card" style="border-left: 5px solid var(--accent); background-color: rgba(67, 97, 238, 0.05); margin-bottom: 30px;">
         <h3 style="color: var(--accent); margin-top: 5px; margin-bottom: 15px;">📍 Kullanım Rehberi: Hangi Modele, Hangi Durumda Bakılmalı?</h3>
@@ -666,7 +667,7 @@
           <h3>Budyko-Fu v2 — 1974/2007</h3>
           <span class="chip" style="background:rgba(52,211,153,0.15);color:#34D399;margin-bottom:10px;display:inline-block;">Fizik · UNESCO · WMO · Mevsimsel Dinamik ω</span>
           <ul>
-            <li>φ = ET0/P (kuruluğ oranı) → Q/P = 1 − [1+φ − (1+φ<sup>ω</sup>)<sup>1/ω</sup>]</li>
+            <li>φ = ET0/P (kuruluk oranı) → Q/P = 1 − [1+φ − (1+φ<sup>ω</sup>)<sup>1/ω</sup>]</li>
             <li><strong>Dinamik ω:</strong> SPI-6 &lt; −0.5 → ω_dry=2.5; yağışlı → ω_wet=1.8</li>
             <li><strong>Kalibrasyon:</strong> runoff + (−ET0) + SPI-6 + API → Ridge OLS (4d)</li>
             <li>UNESCO/WMO/IPCC AR6 standart havza su dengesi referansı</li>
@@ -1106,7 +1107,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           <li><a href="https://data.ibb.gov.tr/api/3/action/datastore_search" target="_blank" rel="noopener">İBB Açık Veri API (CKAN)</a></li>
           <li><a href="https://iski.istanbul/baraj-doluluk" target="_blank" rel="noopener">İSKİ Baraj Doluluk</a></li>
           <li><a href="https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari" target="_blank" rel="noopener">İSKİ Su Kaynakları (baraj havzaları)</a></li>
-          <li><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener">Open‑Meteo Historical Weather API</a></li>
+          <li><a href="https://www.koeri.boun.edu.tr/" target="_blank" rel="noopener">Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü (Boğaziçi Üniversitesi)</a></li>
           <li><a href="https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii" target="_blank" rel="noopener">NOAA NAO indeks serisi</a></li>
           <li><a href="https://www.aa.com.tr/tr/gundem/istanbulda-gecen-yil-1-milyar-117-milyon-64-bin-116-metrekup-su-kullanildi/3104905" target="_blank" rel="noopener">AA 2023 İstanbul su kullanımı haberi</a></li>
           <li><a href="https://otexts.com/fpp3/" target="_blank" rel="noopener">Forecasting: Principles and Practice (FPP3)</a></li>
