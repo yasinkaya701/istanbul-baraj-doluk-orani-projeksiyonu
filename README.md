@@ -48,7 +48,7 @@ Hackhaton/
 - Ensemble ve konsensus paketleri: farklı model ailelerinden stabil birleşimler
 - Su dengesi ve senaryo simülasyonları: iklim, kullanım ve buharlaşma etkileri ile hacim tabanlı güncelleme
 - Olasılıksal yaklaşım: quantile tabanlı tahminler ve belirsizlik bantları
-- Konformal/kalibrasyon adımları: doğruluk ve güven aralığı iyileştirme
+- Güven aralığı kalibrasyon adımları: doğruluk ve belirsizlik aralığı iyileştirme
 - Validasyon ve stres testleri: holdout, walk-forward, senaryo testleri
 
 ## Web sunumu

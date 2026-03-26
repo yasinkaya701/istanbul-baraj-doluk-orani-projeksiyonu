@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anomali Haber Explorer</title>
+    <link rel="stylesheet" href="/static/anomaly-news.css" />
+  </head>
+  <body>
+    <div class="page-backdrop"></div>
+
+    <header class="masthead">
+      <div class="masthead-copy">
+        <p class="eyebrow">Anomali x Arsiv</p>
+        <h1>Iklim Anomali Haber Haritasi</h1>
+        <p class="hero-text">
+          Quant anomaly-day ciktilari burada sadece dogrudan gercek haber eslesmeleri ile
+          sunulur. Hover ve detay panelinde yalnizca gercek anomali, iklim ve dogrudan haber
+          kayitlari gosterilir.
+        </p>
+      </div>
+      <div class="masthead-actions">
+        <a class="ghost-link" href="/">Ana Dashboard</a>
+        <button id="refreshBtn" class="hero-btn" type="button">Yenile</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls-panel">
+        <div class="control-group">
+          <label for="runSelect">Run</label>
+          <select id="runSelect"></select>
+        </div>
+        <div class="control-group">
+          <label for="metricSelect">Y Eksen Metrigi</label>
+          <select id="metricSelect"></select>
+        </div>
+        <div class="control-group control-toggle">
+          <label for="newsOnlyToggle">Sadece haberli gunler</label>
+          <input id="newsOnlyToggle" type="checkbox" />
+        </div>
+        <div class="control-group grow">
+          <label>Degisken</label>
+          <div id="variableChips" class="chip-row"></div>
+        </div>
+        <div class="control-group grow">
+          <label>Tier</label>
+          <div id="tierChips" class="chip-row"></div>
+        </div>
+        <div class="control-group grow">
+          <label>Eslesme Tipi</label>
+          <div id="matchChips" class="chip-row"></div>
+        </div>
+      </section>
+
+      <section class="panel stats-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Haber Durumu</p>
+            <h2>Filtreli Dagilim</h2>
+          </div>
+        </div>
+        <div id="statsGrid" class="stats-grid"></div>
+      </section>
+
+      <section class="panel climate-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">En Guncel Snapshot</p>
+            <h2>Son Klima Verisi ve Degisken Ayrimi</h2>
+          </div>
+          <div id="latestMeta" class="section-meta"></div>
+        </div>
+        <div id="latestClimateCards" class="live-grid"></div>
+        <div id="variableBoards" class="variable-boards"></div>
+      </section>
+
+      <section class="panel coverage-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Eslesme Kalitesi</p>
+            <h2>Dogrudan, Benzer ve Arsiv Dagilimi</h2>
+          </div>
+          <div id="coverageMeta" class="section-meta"></div>
+        </div>
+        <div id="coverageGrid" class="coverage-grid"></div>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Zaman Seridi</p>
+            <h2 id="chartTitle">Yukleniyor</h2>
+          </div>
+          <div id="chartMeta" class="section-meta"></div>
+        </div>
+        <div id="chartWrap" class="chart-wrap">
+          <div id="chartPlot" class="chart-plot" aria-label="Anomali haber grafigi"></div>
+        </div>
+        <p id="integrityNote" class="integrity-note"></p>
+        <div class="legend-row">
+          <div class="legend-item"><span class="legend-fill temp"></span>Sicaklik</div>
+          <div class="legend-item"><span class="legend-fill humidity"></span>Nem</div>
+          <div class="legend-item"><span class="legend-fill pressure"></span>Basinc</div>
+          <div class="legend-item"><span class="legend-fill precip"></span>Yagis</div>
+          <div class="legend-item"><span class="legend-ring direct"></span>Dogrudan</div>
+          <div class="legend-item"><span class="legend-ring analog"></span>Benzer olay</div>
+          <div class="legend-item"><span class="legend-ring archive"></span>Arsiv</div>
+        </div>
+      </section>
+
+      <aside class="panel detail-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Secili Gun</p>
+            <h2 id="detailTitle">Bir gun sec</h2>
+          </div>
+          <div id="detailDate" class="section-meta"></div>
+        </div>
+        <div id="detailSummary" class="detail-summary"></div>
+        <div id="detailBadges" class="detail-badges"></div>
+        <div id="climateGrid" class="climate-grid"></div>
+        <div class="detail-block">
+          <h3>Haberler</h3>
+          <div id="newsCards" class="news-stack"></div>
+        </div>
+        <div class="detail-block">
+          <h3>Event Ozeti</h3>
+          <div id="eventCards" class="event-stack"></div>
+        </div>
+      </aside>
+
+      <section class="panel table-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Gun Listesi</p>
+            <h2>Filtrelenmis Anomali Takvimi</h2>
+          </div>
+          <div id="tableMeta" class="section-meta"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Degisken</th>
+                <th>Eslesme</th>
+                <th>Skor</th>
+                <th>Baslik</th>
+              </tr>
+            </thead>
+            <tbody id="dayTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/vendor/plotly-5.24.1.min.js"></script>
+    <script src="/static/anomaly-news.js"></script>
+  </body>
+</html>

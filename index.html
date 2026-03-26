@@ -17,7 +17,7 @@
         <a href="#modeller">Modeller</a>
         <a href="#kapsam">Kapsam</a>
         <a href="#et0">ET0</a>
-        <a href="#raporlar">Raporlar</a>
+        <a href="baraj_web/elmali.html" style="color:#00b4d8;font-weight:700;">Elmalı Barajı</a>
       </div>
     </div>
   </nav>
@@ -27,28 +27,34 @@
         <p class="kicker">İstanbul • Kandilli Yakını • 2000–2040</p>
         <h1>Baraj Doluluk Projeksiyonu</h1>
         <p class="lead">Bu sayfa, baraj doluluk oranlarını iklim değişkenleriyle modelleyen çalışmanın yöntemini, modellerini, değerlendirmelerini ve 2040’a uzanan projeksiyonlarını sunar.</p>
+        <figure style="margin:14px 0 0;">
+          <img src="assets/img/omerli_baraji.jpg?v=20260326-1" alt="Ömerli Barajı görünümü" style="width:100%;max-width:520px;border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,.12);object-fit:cover;" />
+          <figcaption class="note" style="margin-top:6px;">Ömerli Barajı (İstanbul'un aktif hacim açısından en büyük barajı).</figcaption>
+        </figure>
         <div class="meta">
           <span>Model yaklaşımı: veri‑odaklı (iklim + gecikmeler)</span>
-          <span>Değerlendirme: 5y / 10y backtest</span>
+          <span>Değerlendirme: Purged walk-forward backtest</span>
           <span>Belirsizlik: ±RMSE bandı</span>
         </div>
       </div>
-      <div class="hero-card">
-        <h3>Özet</h3>
+      <div class="hero-card" style="position: relative;">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;"><h3 style="margin:0;">Özet</h3><span style="background:var(--accent); color:#fff; padding:6px 12px; border-radius:20px; font-size:0.85rem; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.1);">Güncel İSKİ Baraj Doluluğu: %49.32</span></div>
         <ul>
           <li>Gözlenen doluluk: 2000–2024</li>
           <li>İklim projeksiyonu: 2026–2040</li>
           <li>Değişkenler: yağış, ET0, sıcaklık, nem, basınç, VPD</li>
-          <li>Modeller: Ridge, GBR, HGB, RF, ETR</li>
+          <li>Modeller: 22 farklı model ailesi (lineer, ağaç, boosting, zaman serisi, fizik tabanlı)</li>
         </ul>
         <div class="hero-stats">
           <div><small>Toplam ay</small><strong>480+</strong></div>
           <div><small>Projeksiyon</small><strong>2040</strong></div>
-          <div><small>Model sayısı</small><strong>5</strong></div>
+          <div><small>Model sayısı</small><strong>22</strong></div>
         </div>
         <div class="hero-actions">
           <a class="btn ghost" href="#simulasyon">Simülasyona Git</a>
           <a class="btn ghost" href="#modeller">Modellere Git</a>
+          <a class="btn ghost" href="baraj_web/elmali.html" style="border-color:#00b4d8;color:#00b4d8;">Elmalı Barajı Analizi</a>
         </div>
       </div>
     </div>
@@ -84,8 +90,7 @@
             <li>2028+ = 2000–(önceki yıl) ile eğitim</li>
             <li>Gelecek bandı: ±max(RMSE)</li>
           </ul>
-          <p class="note">Bu akış <code>scripts/project_to_2040_rolling.py</code> içinde tanımlıdır.</p>
-          <p class="note">Veri dosyaları ana proje ortamında tutulur; bu sayfada veri yolu paylaşılmaz.</p>
+          <p class="note"><strong>Kurumsal kaynak ayrımı:</strong> Operasyonel baraj/doluluk ve su arzı verileri İSKİ ve İBB Açık Veri Portalı kaynaklıdır. İklim sürücü serileri Kandilli Rasathanesi (Boğaziçi Üniversitesi) ölçüm derlemeleri esas alınarak oluşturulmuştur; Kandilli ifadesi proje bağlamı/kurum bilgisidir.</p>
         </div>
       </div>
     </section>
@@ -126,28 +131,28 @@
               <strong>1044.1 – 1160.9 mm/yıl</strong>
             </div>
             <div class="stat">
-              <small>Trend</small>
+              <small>Trend Eğimi (2010–2024)</small>
               <strong>+24.5 mm / 10 yıl</strong>
             </div>
             <div class="stat">
-              <small>Baz (2015–2024)</small>
+              <small>Baz Ortalama (2015–2024)</small>
               <strong>1099.6 mm/yıl</strong>
             </div>
             <div class="stat">
-              <small>2031–2035 Tahmin</small>
+              <small>2031–2035 Ortalama (Projeksiyon)</small>
               <strong>1155.7 mm/yıl</strong>
             </div>
             <div class="stat">
-              <small>Fark (2031–2035)</small>
+              <small>Seviye Farkı (2031–2035 ort. − 2015–2024 ort.)</small>
               <strong>+56.1 mm/yıl</strong>
             </div>
           </div>
           <ul class="link-list">
-            <li><a href="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-9" target="_blank" rel="noopener">Yıllık trend grafiği</a></li>
-            <li><a href="assets/et0/baraj_et0_10year_summary.png?v=20260321-9" target="_blank" rel="noopener">10 yıllık özet grafiği</a></li>
+            <li><a href="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-10" target="_blank" rel="noopener">Yıllık trend grafiği</a></li>
+            <li><a href="assets/et0/baraj_et0_10year_summary.png?v=20260321-10" target="_blank" rel="noopener">10 yıllık özet grafiği</a></li>
           </ul>
-          <p class="note">Kaynaklar: <a href="assets/et0/reports/baraj_et0_real_radiation_summary.json" target="_blank" rel="noopener">ET0 özet JSON</a> · <a href="assets/et0/reports/baraj_et0_method_note_tr.md" target="_blank" rel="noopener">Yöntem notu</a></p>
-          <p class="note">Not: Bu özet değerler 21 Mart 2026 tarihli güncel panel serisinden hesaplanmıştır.</p>
+                    <p class="note">Not: Bu özet değerler 21 Mart 2026 tarihli güncel panel serisinden hesaplanmıştır.</p>
+          <p class="note"><strong>Yorum notu:</strong> <code>+56.1 mm/yıl</code> yıllık artış hızı değildir; yalnızca iki dönem ortalaması arasındaki seviye farkıdır. Yıllık trend hızı için <code>+24.5 mm / 10 yıl</code> kullanılır.</p>
         </div>
       </div>
       <div class="card" style="margin-top:16px;">
@@ -157,6 +162,7 @@
           <li><strong>Rn, G, u2 gibi ham girdileri bu sayfada yeniden türetmiyoruz:</strong> repoda sürekli/günlük ham radyasyon-rüzgar seti tutulmuyor, o nedenle panelde tutarlı ET0 serisini baz alıyoruz.</li>
           <li><strong>Açık su buharlaşması için Kc kullanıyoruz:</strong> ET0 formülden gelir, baraj buharlaşmasına dönüşümde <code>E = Kc × ET0</code> uygulanır.</li>
           <li><strong>Yıllık ET0 özetini iklim panelinden hesaplıyoruz:</strong> 2010–2024 gözlem, 2031–2035 ileri dönem beklentisi aynı seri üzerinden çıkarılır.</li>
+          <li><strong>Trend ve dönem farkını ayrı tutuyoruz:</strong> <code>+24.5 mm / 10 yıl</code> lineer trend eğimidir; <code>+56.1 mm/yıl</code> ise yalnızca dönem ortalaması farkıdır.</li>
           <li><strong>Formülde VPD (e<sub>s</sub>−e<sub>a</sub>) kullanıyoruz:</strong> buharlaşma talebini fiziksel olarak en iyi taşıyan terim olduğu için sıcaklık ve nem etkisini birlikte yansıtır.</li>
         </ul>
       </div>
@@ -168,39 +174,35 @@
       <p class="note mobile-hscroll-tip">Mobilde görselleri sola-sağa kaydırarak detayları daha okunur görebilirsin.</p>
       <div class="grid three">
         <figure class="card">
-          <a href="assets/et0/baraj_et0_formula_explained.png?v=20260321-7" target="_blank" rel="noopener">
-            <img src="assets/et0/baraj_et0_formula_explained.png?v=20260321-7" alt="ET0 formül açıklaması" />
+          <a href="assets/et0/baraj_et0_formula_explained.png?v=20260321-11" target="_blank" rel="noopener">
+            <img src="assets/et0/baraj_et0_formula_explained.png?v=20260321-11" alt="ET0 formül açıklaması" />
           </a>
           <figcaption>Baraj ET0 — FAO‑56 Penman‑Monteith (referans)</figcaption>
         </figure>
         <figure class="card">
-          <a href="assets/et0/baraj_et0_monthly_explained_2004.png?v=20260321-6" target="_blank" rel="noopener">
-            <img src="assets/et0/baraj_et0_monthly_explained_2004.png?v=20260321-6" alt="ET0 aylık açıklamalı örnek" />
+          <a href="assets/et0/baraj_et0_monthly_explained_2004.png?v=20260321-10" target="_blank" rel="noopener">
+            <img src="assets/et0/baraj_et0_monthly_explained_2004.png?v=20260321-10" alt="ET0 aylık açıklamalı örnek" />
           </a>
           <figcaption>Baraj ET0 — Aylık (örnek yıl)</figcaption>
         </figure>
         <figure class="card">
-          <a href="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-9" target="_blank" rel="noopener">
-            <img src="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-9" alt="ET0 yıllık trend" />
+          <a href="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-10" target="_blank" rel="noopener">
+            <img src="assets/et0/baraj_et0_yearly_trend_robust_explained.png?v=20260321-10" alt="ET0 yıllık trend" />
           </a>
           <figcaption>Baraj ET0 — Yıllık Trend</figcaption>
         </figure>
         <figure class="card">
-          <a href="assets/et0/baraj_et0_10year_summary.png?v=20260321-9" target="_blank" rel="noopener">
-            <img src="assets/et0/baraj_et0_10year_summary.png?v=20260321-9" alt="ET0 10 yıllık özet" />
+          <a href="assets/et0/baraj_et0_10year_summary.png?v=20260321-10" target="_blank" rel="noopener">
+            <img src="assets/et0/baraj_et0_10year_summary.png?v=20260321-10" alt="ET0 10 yıllık özet" />
           </a>
           <figcaption>Baraj ET0 — 10 Yıllık Özet</figcaption>
         </figure>
         <figure class="card">
-          <a href="assets/et0/baraj_et0_monthly_5y_mean.png?v=20260321-6" target="_blank" rel="noopener">
-            <img src="assets/et0/baraj_et0_monthly_5y_mean.png?v=20260321-6" alt="ET0 aylık 5y ortalama" />
+          <a href="assets/et0/baraj_et0_monthly_5y_mean.png?v=20260321-10" target="_blank" rel="noopener">
+            <img src="assets/et0/baraj_et0_monthly_5y_mean.png?v=20260321-10" alt="ET0 aylık 5y ortalama" />
           </a>
           <figcaption>Baraj ET0 — Aylık 5y Ortalama</figcaption>
         </figure>
-      </div>
-      <div class="card">
-        <p><strong>Yöntem Notu:</strong> <a href="assets/et0/reports/baraj_et0_method_note_tr.md" target="_blank" rel="noopener">baraj_et0_method_note_tr.md</a></p>
-        <p><strong>Özet:</strong> <a href="assets/et0/reports/baraj_et0_real_radiation_summary.json" target="_blank" rel="noopener">baraj_et0_real_radiation_summary.json</a></p>
       </div>
     </section>
 
@@ -215,7 +217,8 @@
             <li><strong>t_mean_c:</strong> Panel + iklim projeksiyonu</li>
             <li><strong>rh_mean_pct:</strong> Panel + iklim projeksiyonu</li>
           </ul>
-          <p class="note">2026–2040 için iklim projeksiyonu kullanılır; 2000–2024 iklim sürücüleri gözlemden gelir. 2025 ayları klimatolojik dolgu ile tamamlanır. Doluluk gözlemi 2000–2024 aralığındadır.</p>
+          <p class="note"><strong>Panel</strong> ifadesi, aylık satır (zaman) ve değişken sütunlarından (iklim + doluluk sürücüleri) oluşan birleşik veri tablosunu ifade eder. 2000–2024 döneminde iklim sürücüleri gözlemden, 2026–2040 döneminde iklim projeksiyonundan gelir; 2025 ayları klimatolojik dolgu ile tamamlanır.</p>
+          <p class="note"><strong>Tahmin başlangıcındaki kopukluk neden görülebilir?</strong> Gözlenen son ay ile model projeksiyonunun ilk ayı farklı örnekleme rejimlerinden gelir (gözlem → model geçişi). Bu sürümde geçişteki sıçramayı azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; yine de bazı modellerde küçük seviye farkı kalabilir.</p>
         </div>
         <div class="card">
           <h3>Türetilen / Doldurulan</h3>
@@ -231,29 +234,10 @@
     </section>
 
     <section id="modeller">
-      <h2>Model Kartları (5y / 10y)</h2>
-      <p class="note mobile-hscroll-tip">Mobilde grafiklerde sola-sağa kaydırarak eksenleri ve değerleri daha net okuyabilirsin.</p>
-      <div class="grid three">
-        <figure class="card">
-          <img class="zoomable" src="assets/img/ridge_5y_10y.png?v=20260321-6" alt="Ridge 5y/10y" />
-          <figcaption>Ridge</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/gbr_5y_10y.png?v=20260321-6" alt="GBR 5y/10y" />
-          <figcaption>GBR</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/hgb_5y_10y.png?v=20260321-6" alt="HGB 5y/10y" />
-          <figcaption>HGB</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/rf_5y_10y.png?v=20260321-6" alt="RF 5y/10y" />
-          <figcaption>RF</figcaption>
-        </figure>
-        <figure class="card">
-          <img class="zoomable" src="assets/img/etr_5y_10y.png?v=20260321-6" alt="ETR 5y/10y" />
-          <figcaption>ETR</figcaption>
-        </figure>
+      <h2>Temel Model Kapsamı</h2>
+      <div class="card">
+        <p>Karar desteğinde temel model seti; doğrusal (Ridge), ağaç tabanlı (GBR, HGB, RF, ETR), ileri boosting (XGBoost, LightGBM, CatBoost), olasılıksal/istatistiksel (NGBoost, GPR, ARIMAX, Bayesian Ridge) ve fizik tabanlı (Budyko, Thornthwaite) aileleri birlikte kapsar.</p>
+        <p class="note">Bu sürümde simülasyon paneli, veri bulunan tüm model ailesini tek yerden çalıştıracak şekilde entegre edilmiştir. Model seçimi menüsünde görülen her model doğrudan senaryo motoruna bağlıdır.</p>
       </div>
     </section>
 
@@ -261,78 +245,209 @@
       <h2>Doğruluk Metrikleri (Basit Anlatım)</h2>
       <div class="metric-help">
         <div class="metric-pill">
-          <strong>RMSE</strong>
+          <strong>Root Mean Squared Error (Kök Ortalama Kare Hata)</strong>
           Kareli hata ortalaması kökü. Büyük hataları daha fazla cezalandırır. Birimi “doluluk yüzdesi puanı”dır. Düşükse daha iyidir.
         </div>
         <div class="metric-pill">
-          <strong>MAE</strong>
+          <strong>Mean Absolute Error (Ortalama Mutlak Hata)</strong>
           Ortalama mutlak hata. “Ortalama kaç puan yanıldık?” sorusunun cevabı. Birimi yüzde puandır.
         </div>
         <div class="metric-pill">
-          <strong>MAPE</strong>
+          <strong>Mean Absolute Percentage Error (Ortalama Mutlak Yüzde Hata)</strong>
           Ortalama yüzde hata. %10 → tahminler gerçeğin ortalama %10’u kadar sapıyor demektir.
         </div>
         <div class="metric-pill">
-          <strong>Pearson</strong>
+          <strong>Pearson Correlation Coefficient (Pearson Korelasyon Katsayısı)</strong>
           Gerçek seri ile tahmin serisinin doğrusal uyumunu ölçer. -1 ile +1 arasındadır. Sitede % olarak yazılıdır: %90 → r=0.90 demektir. 1’e yakınsa trend uyumu güçlüdür, 0’a yakınsa zayıftır.
         </div>
       </div>
-      <p class="note">Her model için bu değerler, 5y/10y kartlarının sağ alt köşesindeki bilgi kutusunda yazılıdır.</p>
+      <p class="note">Her model için bu değerler, ilgili model görsellerindeki bilgi kutularında raporlanır.</p>
     </section>
 
     <section>
-      <h2>Modellerin Nerede Kullanıldığı</h2>
+      <h2>Modellerin Kullanım Rehberi</h2>
+      <p class="note">Mekanizma, grafik karakteri ve kullanım bağlamını tek tabloda topladık. Böylece model seçiminde hızlı ve tutarlı karar verebilirsiniz.</p>
+      <div class="card table-wrap">
+        <p class="note" style="margin-top:0;">Tablo, model yorumunu standartlaştırır: <strong>Mekanizma</strong> modelin matematiksel çekirdeğini, <strong>Grafik Karakteri</strong> eğri davranışını, <strong>Kullanım Bağlamı</strong> karar notlarında hangi soruya daha uygun olduğunu özetler.</p>
+        <table class="model-guide-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Mekanizma</th>
+              <th>Grafik Karakteri</th>
+              <th>Kullanım Bağlamı</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ridge</td><td>L2 düzenlemeli doğrusal temel model</td><td>Düzgün, düşük varyanslı, stabil</td><td>Temel referans trend</td></tr>
+            <tr><td>GBR</td><td>Ardışık hata azaltan boosting</td><td>Kırılım noktalarına duyarlı</td><td>Rejim değişimi analizi</td></tr>
+            <tr><td>HGB</td><td>Histogram tabanlı boosting</td><td>Dengeli ve hızlı tepki</td><td>Büyük veri ve hızlı değerlendirme</td></tr>
+            <tr><td>RF</td><td>Bagging tabanlı ağaç topluluğu</td><td>Orta senaryolarda yumuşak</td><td>Robust genel tahmin</td></tr>
+            <tr><td>ETR</td><td>Ekstra rastgeleleştirilmiş ağaçlar</td><td>Daha pürüzsüz, daha temkinli</td><td>Gürültüye dayanıklı öngörü</td></tr>
+            <tr><td>XGBoost</td><td>Düzenlileştirmeli gradient boosting</td><td>Şoklara yüksek duyarlılık</td><td>Kuraklık stres testleri</td></tr>
+            <tr><td>LightGBM DART</td><td>Dropout destekli leaf-wise boosting</td><td>Keskin ama kontrollü</td><td>Yüksek doğruluk / düşük gecikme</td></tr>
+            <tr><td>CatBoost</td><td>Simetrik ağaç + hedef sızıntı kontrolü</td><td>Dengeli, stabil, genellenebilir</td><td>Karma veri yapıları</td></tr>
+            <tr><td>SVR (RBF)</td><td>Çekirdek tabanlı marjinal regresyon</td><td>Kıvrımlı, doğrusal olmayan</td><td>Non-lineer ilişki yakalama</td></tr>
+            <tr><td>NGBoost</td><td>Olasılık dağılımı öğrenen boosting</td><td>Belirsizlik bandı üreten</td><td>Risk odaklı karar desteği</td></tr>
+            <tr><td>GPR</td><td>Gaussian süreç regresyonu</td><td>Yumuşak ve sürekli</td><td>Belirsizlikli kısa/orta vade</td></tr>
+            <tr><td>ARIMAX</td><td>Zaman serisi + dışsal değişken</td><td>Mevsimsellik ve otokorelasyon odaklı</td><td>Saf seri davranışı karşılaştırması</td></tr>
+                        <tr><td>GBM Quantile %50</td><td>Medyan kuantil boosting</td><td>Merkez rejim çizgisi</td><td>Nötr referans senaryo</td></tr>
+            <tr><td>Bayesian Ridge</td><td>Bayesçi doğrusal katsayı tahmini</td><td>Daha temkinli, olasılıksal</td><td>Parametre belirsizliği analizi</td></tr>
+            <tr><td>ElasticNet</td><td>L1+L2 birlikte düzenleme</td><td>Sadeleştirilmiş, dengeli</td><td>Özellik seçimi ve stabilite</td></tr>
+            <tr><td>Huber</td><td>Aykırı değerlere dayanıklı kayıp</td><td>Ekstrem noktalarda stabil</td><td>Outlier baskın dönemler</td></tr>
+            <tr><td>Budyko</td><td>Su-enerji denge yaklaşımı</td><td>Fiziksel tutarlılık odaklı</td><td>Uzun dönem hidrolojik referans</td></tr>
+            <tr><td>Thornthwaite</td><td>Sıcaklık temelli su dengesi</td><td>Kurak dönemde belirgin düşüş</td><td>Klasik iklim-su kıyaslaması</td></tr>
+                        <tr><td>Stacking</td><td>Meta-öğrenici ile model birleştirme</td><td>Tekil model sapmasını azaltan</td><td>Genel performans optimizasyonu</td></tr>
+            <tr><td>Ensemble Median</td><td>Model medyanı ile konsensüs</td><td>Uç değerlere dirençli</td><td>Karar notlarında birincil referans</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (Budyko/ARIMAX).</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Temel Modeller</h2>
+      <p class="note">Bu bölümdeki modeller, karar desteğinde temel referans olarak seçilen çekirdek aileyi gösterir. Her model için mekanizma, grafik karakteri ve kullanım bağlamı aynı şablonda verilmiştir.</p>
       <div class="model-summary">
         <div class="card">
-          <h3>Ridge</h3>
+          <h3>RIDGE: Ridge Regression (L2 Düzenlemeli Doğrusal Kılavuz)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Doğrusal Ufuk · L2 Ceza</span>
           <ul>
-            <li><strong>Ne işe yarar?</strong> İklim değişkenleri ile doluluk arasındaki “doğrusal” ilişkiyi yakalar.</li>
-            <li><strong>Ne zaman iyi?</strong> Trendleri hızlı görmek, basit ve stabil bir referans oluşturmak.</li>
-            <li><strong>Sınırları?</strong> Karmaşık ve ani sıçramaları yakalamada zayıf kalabilir.</li>
-            <li><strong>Kod:</strong> <code>scripts/project_to_2040_rolling.py</code></li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Doğrudan iklim verilerini baraj düşüşüyle "matematiksel bir formül (y=mx+b)" halinde birbirine bağlar. Yapısındaki <em>L2 Penaltısı</em> sayesinde aşırı değerleri cezalandırarak dalgalanmaları engeller.</li>
+            <li><strong>Neden Varsayılan?:</strong> Diğer kompleks ağaç modellerine rehberlik etmesi için geliştirilmiş nihai konsensüs modelidir. Doğrusal matematiği en güvenli referanstır.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>GBR</h3>
+          <h3>GBR: Gradient Boosting Regressor (Hatadan Kendi Kendini İyileştiren Ağaç)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Ridge Entegreli · Ardışık Düzeltmeler</span>
           <ul>
-            <li><strong>Ne işe yarar?</strong> Doğrusal olmayan ilişkileri “katman katman” öğrenir.</li>
-            <li><strong>Ne zaman iyi?</strong> Mevsimsel dalgalanma ve ani değişimlerin olduğu dönemlerde.</li>
-            <li><strong>Sınırları?</strong> Veri gürültüsüne duyarlı olabilir, düzenli izleme gerekir.</li>
-            <li><strong>Kod:</strong> <code>scripts/project_to_2040_rolling.py</code></li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Önce sığ bir tahmin ağacı kurar; ardından her adımda kalan hatayı (gradyan) azaltacak yeni ağaçlar ekler. Bu ardışık düzeltme yaklaşımı doğrusal olmayan yapıları güçlü biçimde yakalar.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> Yeni mimaride kendi sığ yapısının içine 'Ridge' matematiğini gömdü. Hem hatayı ağaçla düzeltiyor, hem de lineer trende yapışıyor.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>HGB</h3>
+          <h3>HGB: Histogram-based Gradient Boosting (Sıkıştırılmış Sensör Analizörü)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Hist-Kutulama · Hızlı Kurşunlama</span>
           <ul>
-            <li><strong>Ne işe yarar?</strong> Büyük veride hızlı ve güçlü bir boosting yaklaşımı sağlar.</li>
-            <li><strong>Ne zaman iyi?</strong> Orta/uzun vadede stabil eğilimleri çıkarırken.</li>
-            <li><strong>Sınırları?</strong> Parametre seçimi iyi yapılmazsa aşırı uyum (overfit) olabilir.</li>
-            <li><strong>Kod:</strong> <code>scripts/project_to_2040_rolling.py</code></li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Dev veri setlerinde GBR algoritmasının şişmesini engellemek için değerleri 255 adet piksellenmiş histogram "sepetine (bin)" atar. Yıldırım hızında öğrenir ve uç noktadaki verileri sepette yakalar.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> L2 doğrusal referans (Ridge) ile birlikte kalibre edilmiştir; bu sayede grafik daha istikrarlı şok tepkileri üretir.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>RF</h3>
+          <h3>RF: Random Forest Regressor (Kaostan Oy Birliği Çıkaran Orman)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Bagging · Topluluk Aklı</span>
           <ul>
-            <li><strong>Ne işe yarar?</strong> Birçok karar ağacının ortalamasıyla “sağlam” tahmin üretir.</li>
-            <li><strong>Ne zaman iyi?</strong> Gürültülü veri ve uç değerlerin olduğu yıllarda.</li>
-            <li><strong>Sınırları?</strong> Çok uzun vadede yumuşatma yapabilir.</li>
-            <li><strong>Kod:</strong> <code>scripts/project_to_2040_rolling.py</code></li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Veriyi 500 defa rastgele karıştırır ve 500 defa kural kurar (derin karar ağaçları). Seçim günü tahminde 500 farklı ağaç oy birliği/ortalama alarak sapmaları sıfıra indirger.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> Random Forest'in üstüne özel bir <em>Voting Katmanı</em> yerleştirildi. Ağaçların geometrik yapısı ile Ridge modelinin doğrusal istikrarı harmanlanıyor.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>ETR</h3>
+          <h3>ETR: Extra Trees Regressor (Mekanik Kuralları Yıkan Ekstra-Rastgele Algoritma)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Hyper-Random · Şok Filtresi</span>
           <ul>
-            <li><strong>Ne işe yarar?</strong> Çok sayıda “rastgeleleştirilmiş” ağaçla güçlü genelleme üretir.</li>
-            <li><strong>Ne zaman iyi?</strong> Hem kısa hem uzun vadede dengeli performans istenince.</li>
-            <li><strong>Sınırları?</strong> Yorumlanabilirliği Ridge kadar net değildir.</li>
-            <li><strong>Kod:</strong> <code>scripts/project_to_2040_rolling.py</code></li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Random Forest’e göre daha yüksek rastgeleleştirme uygular; eşik değerlerini daha geniş bir uzayda örnekleyerek aşırı uyumu azaltır. Bu sayede ölçüm gürültüsüne karşı daha dayanıklı bir tahmin üretir.</li>
+            <li><strong>Grafik Karakteristiği:</strong> V4 güncellemesinde Voting tabanlı L2 adaptasyonu ile Ridge çizgisiyle uyumlu, daha tutarlı bir trend davranışı üretir.</li>
           </ul>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>Modeller (Sekmeli Görünüm)</h2>
+      <h2>Diğer Gelişmiş YZ ve Fiziksel Modeller</h2>
+      <div class="model-summary">
+        <div class="card">
+          <h3>CATBOOST (Categorical Boosting)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Simetrik Ağaç · V4 Ridge Harmanı</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Yandex tarafından geliştirilen bu model, karar ağaçlarındaki "hedef sızıntısı (target leakage)" problemini çözen Oblivious (Simetrik) Ağaçlar kullanır. Karşılaştığı her iklim sapmasında, verinin kategorik özelliklerini dengeli şekilde dağıtır ve ezberlemeyi(overfitting) ciddi oranda bastırır.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> V4 güncellemesiyle Ridge modeliyle uyumlu hale getirilmiştir. Bu sayede 2040 ufku boyunca ekstrem kuraklık (veya sellere) aşırı keskin olmayan, çok daha temkinli ve simetrik bir tepki vererek en pürüzsüz grafikleri oluşturur.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>SVR (Destek Vektör Regresyonu - RBF Kernel)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">N-Boyutlu Hiperdüzlem · Radyal Tabanlı Formül</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> RBF (Radial Basis Function) çekirdeği ile doğrusal olmayan ilişkileri epsilon-tube içinde modelleyerek küçük hataları tolere eder, büyük sapmaları ise daha güçlü ceza ile dengeler.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Doğası gereği radyal temelli olduğundan geçmişin merkezinden uzaklaştıkça salınım yapma eğilimindedir (Grafiğin düzleşmesi). V4 mimarisinde VotingRegressor(Ridge) ile desteklendiği için artık fiziksel sınırları aşmadan, doğrusal bir eğimin üzerinde kavisli manevralar yapabilen çok isabetli bir su seviyesi projeksiyonu sunar.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>NGBOOST (Doğal Gradyan Olasılıksal Boosting)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · İstatistik · Stanford Mimarisi</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Sadece bir nokta tahmini yerine olasılık dağılımı (genellikle Gaussian veya LogNormal) üretir. Doğal gradyan düzeltmesiyle hem ortalamayı (mu) hem varyansı (sigma) birlikte öğrenen güçlü bir olasılıksal yaklaşımdır.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> İklim senaryosunu uyguladığınızda NGBoost, "suyun o an yüzde kaç olacağını" değil, "hangi aralıklarda olma senaryosunun en güçlü olduğunu" hesaplayarak en makul zirve değerini sunar ve V4 modeli sayesinde bu olasılıkları geçmiş yıllardaki doğrusal rejim trendi ile harmanlar.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>GPR (Gaussian Process Regression - Matern Kernel)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Stokastik Süreçler · Bayesian Yaklaşımı</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Matern ve Constant kernel bileşimiyle veriyi Bayesçi süreç çerçevesinde sürekli bir olasılık fonksiyonu olarak temsil eder. İşlemsel maliyeti yüksektir ancak pürüzsüz ve açıklanabilir bantlar üretir.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> GPR normalde uzun projeksiyonlarda sonsuza dek "ortalama(mean) değere" dönme eğilimindedir. RidgeRegressor (Lineer) kalibrasyonuyla bu problem çözüldü! Artık 2040'a giderken sadece ortalamaya dönmekle kalmıyor, küresel ısınma verilerini kullanarak trende sadık kalıyor.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>ARIMAX (Mevsimsel Zaman Serisi)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">İstatistik · Oto-Regresif Mimarisi</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Dışsal değişkenlere (sıcaklık, nem) ve geçmişin gecikmeli kopyalarına dayanır. Hareketli Ortalamalar (Moving Average) ve Entegre (I) fark denklemleri yardımıyla veri yığınlarındaki gürültüyü ayrıştırır.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Verinin "zamanla olan yapısal ilişkisi" üzerinden projeksiyon yapar. Makine öğrenmesi harmanlaması yerine saf trendi gösterir ve <em>Stochastic Residuals (Fraktal Gürültü)</em> ile iklim volatilitesini geleceğe taşır. Yüksek yaz/kış genliğine sahiptir.</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Ani iklim şokları, mevsimsel sapma kırılmaları ve seri bağımlılığı birlikte değerlendirilirken öncelikli modeldir.</p>
+        </div>
+
+        <div class="card">
+          <h3>Quantile GBM (%10 ve %50 Birlikteliği)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Yüzdelik Kayıp · V4 Ekstrem</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> "Quantile Loss" (Pinball Loss) fonksiyonu ile çalışır. %50 Quantile sistemi sistemin tam ortanca davranışını modellerken, %10 Quantile "en kötü senaryonun %10'luk ekstrem kuraklık dilimine" odaklanarak eğitilmiştir.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Özellikle %10 Quantile modeli kuraklık tarafını temsil eder. 2040 ufkunda sert düşüşleri gösterebilir; V4 kalibrasyonu ile fiziksel sınırlar içinde tutulur.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Bayesian Ridge (Olasılıksal Doğrusal)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Bayes Teoremi · Stokhastik</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Katsayıları bir "Gaussian Olasılık Dağılımı" olarak ele alır. Yeni veya belirsiz iklim sapmalarını gördükçe toleransını (Varyans) ve olasılıklarını otomatik olarak günceller (Posteriori Dağılım).</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Aşırı agresif karar ağaçlarının aksine, tahminlerinde daima bir güvence bandı bulundurur. Düşüşleri veya pikleri kesin konuşmadan, yumuşak bir bant şeklinde 2040'a yansıtır.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>ElasticNet (Çift Katmanlı Küçültme)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · L1+L2 Harmonu · Regüler</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> Ridge (L2 katsayı küçültmesi) ve Lasso (L1 boyut azaltma) ağırlıklarını aynı hücrede bünyesinde eritir. İklim krizine etki etmeyen yapay faktörleri çöpe atıp sadeliği korur.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Aşırı uçlara daha az gider ve karmaşık rejimlerde istikrar sağlar. Düşük varyanslı yapısıyla karar desteğinde dayanıklı bir referans üretir.</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Düşük etkili iklim değişkenlerini otomatik sıfırlayan L1+L2 karması sayesinde rafine edilmiş lineer gidişatlara bakarken idealdir.</p>
+        </div>
+
+        <div class="card">
+          <h3>Huber Regressor (Aykırı Düşman)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Dayanıklı Kayıp · V4 Zırhı</span>
+          <ul>
+            <li><strong>Matematiksel Motor:</strong> 2007, 2014 ve 2023 yıllarındaki şiddetli İstanbul kuraklıklarının modelli saptırmasına izin vermez. Mutlak Hata ve Karesel Hata arasında bir eşik kurarak aykırı şokları sönümler.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Ekstrem şokların merkez eğilimi bozmasını sınırlar; ana trend hattını daha dayanıklı ve dengeli biçimde korur.</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> İklim verisindeki aşırı sapma değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
+        </div>
+
+        <div class="card">
+          <h3>Fiziksel Modeller: Budyko ve Thornthwaite</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Gerçek Hidroloji · Zeka Yok, Sırf Doğa Kuralları</span>
+          <ul>
+            <li><strong>Budyko Eğrisi:</strong> Yağışın ne kadarının buharlaşmaya, ne kadarının topraktan akışa geçeceğini anlatan dünyaca ünlü hidrolojik sınır eğrisi! Aşırı sıcak (aridity index) yıllarındaki kuruma çöküntüsünü bu formüller yönetir.</li>
+            <li><strong>Thornthwaite-Mather Su Dengesi:</strong> Toprağın su tutma kapasitesini depolama yaklaşımıyla temsil eder; toprak doygunluğunda oluşan fazla akışı (runoff) hesaplayan klasik bir yöntemdir.</li>
+                      </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Temel Modeller</h2>
       <p class="note">Siyah: Gözlenen (Geçmiş). Turuncu: Simülasyon (Gelecek). Kesik çizgi: son gözlenen ay. Turuncu gölgeli alan: ±RMSE bandı.</p>
       <div class="soft-section">
       <div class="tabs" data-tabs>
@@ -347,20 +462,16 @@
         <div class="panel active" id="ridge">
           <div class="panel-grid">
             <div class="panel-text">
-              <h3>Ridge</h3>
-              <p>Doğrusal, stabil temel model. Ölçekleme ile birlikte hızlı ve yorumlanabilir.</p>
-              <ul>
-                <li>5y/10y kart: Ridge performansı</li>
-                <li>2000–2040 projeksiyonu + belirsizlik bandı</li>
-                <li>2024+ yakınlaştırma</li>
-              </ul>
-              <p><code>scripts/project_to_2040_rolling.py</code></p>
+              <h3>Ridge (Lineer Temel)</h3>
+              <p><strong>Kategori:</strong> Temel Model (Lineer)</p>
+              <p><strong>Çalışma Mantığı:</strong> OLS'in L2 penaltısı (Ridge shrink) ile dengelenmiş versiyonu. Çoklu doğrusal bağlantıya dirençli, güvenilir bir sistemdir.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim/su trendlerinin ana hattını, minimum gürültü ile saf doğrultuda görmek için referans (baseline) baz model görevini alır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png?v=20260321-6" alt="Ridge 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/ridge_projection_2000_2040.png?v=20260326-9" alt="Ridge 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260321-6" alt="Ridge 5y/10y" />
-                <img class="media-small zoomable" src="assets/img/ridge_projection_2024-03-01_2040.png?v=20260321-6" alt="Ridge 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/ridge_5y_10y.png?v=20260326-14" alt="Ridge 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/ridge_projection_zoom_2040.png?v=20260326-9" alt="Ridge 2024-2040" />
               </div>
             </div>
           </div>
@@ -369,15 +480,16 @@
         <div class="panel" id="gbr">
           <div class="panel-grid">
             <div class="panel-text">
-              <h3>GBR</h3>
-              <p>Boosting tabanlı model; doğrusal olmayan ilişkileri yakalar.</p>
-              <p><code>scripts/project_to_2040_rolling.py</code></p>
+              <h3>GBR (Gradient Boosting)</h3>
+              <p><strong>Kategori:</strong> Temel Model (Ansambl Ağaç)</p>
+              <p><strong>Çalışma Mantığı:</strong> Zayıf ağaçların (weak learners) hatalarını kademeli şekilde sıfırlama (boosting) prensibine dayanır. Stokastik eklentilerle dengelenmiştir.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklimsel kırılma noktalarını (kuraklık başı/sonu) hassasiyetle yakalayabilen dinamik doğrusal olmayan (non-linear) karmaşık öngörüler yapar.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png?v=20260321-6" alt="GBR 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/gbr_projection_2000_2040.png?v=20260326-9" alt="GBR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260321-6" alt="GBR 5y/10y" />
-                <img class="media-small zoomable" src="assets/img/gbr_projection_2024-03-01_2040.png?v=20260321-6" alt="GBR 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/gbr_5y_10y.png?v=20260326-14" alt="GBR 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/gbr_projection_zoom_2040.png?v=20260326-9" alt="GBR 2024-2040" />
               </div>
             </div>
           </div>
@@ -386,15 +498,16 @@
         <div class="panel" id="hgb">
           <div class="panel-grid">
             <div class="panel-text">
-              <h3>HGB</h3>
-              <p>Histogram tabanlı gradient boosting; hızlı ve verimli.</p>
-              <p><code>scripts/project_to_2040_rolling.py</code></p>
+              <h3>HGB (HistGradient Boosting)</h3>
+              <p><strong>Kategori:</strong> Temel Model (Gelişmiş Ansambl)</p>
+              <p><strong>Çalışma Mantığı:</strong> Kesintisiz verileri histogramlaştırarak işleyen, aykırı uçlara karşı olağanüstü dayanıklı LightGBM tarzı hiper optimize edilmiş scikit-learn modelidir.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Veri kayıplarına tolerans eşiği yüksek olduğu için, projeksiyondaki eksik/sınırlı senaryo özelliklerini başarıyla tolere eden bir yapay zekadır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png?v=20260321-6" alt="HGB 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/hgb_projection_2000_2040.png?v=20260326-9" alt="HGB 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260321-6" alt="HGB 5y/10y" />
-                <img class="media-small zoomable" src="assets/img/hgb_projection_2024-03-01_2040.png?v=20260321-6" alt="HGB 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/hgb_5y_10y.png?v=20260326-14" alt="HGB 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/hgb_projection_zoom_2040.png?v=20260326-9" alt="HGB 2024-2040" />
               </div>
             </div>
           </div>
@@ -403,15 +516,16 @@
         <div class="panel" id="rf">
           <div class="panel-grid">
             <div class="panel-text">
-              <h3>RF</h3>
-              <p>Random Forest; kararlı ansambllar ile genel performansı yüksek.</p>
-              <p><code>scripts/project_to_2040_rolling.py</code></p>
+              <h3>RF (Random Forest)</h3>
+              <p><strong>Kategori:</strong> Temel Model (Bagging Ağaç)</p>
+              <p><strong>Çalışma Mantığı:</strong> Rastgele seçilmiş özellik kesitleriyle oluşturulmuş yüzlerce ağacın senkronize karar vermesi sonucu elde edilen "düşük varyans" algoritmasıdır.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Uçuk sapmaları yumuşatıp aşırı oynaklığı azaltılmış, olası orta senaryoyu izlemek için kullanılır.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png?v=20260321-6" alt="RF 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/rf_projection_2000_2040.png?v=20260326-9" alt="RF 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260321-6" alt="RF 5y/10y" />
-                <img class="media-small zoomable" src="assets/img/rf_projection_2024-03-01_2040.png?v=20260321-6" alt="RF 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/rf_5y_10y.png?v=20260326-14" alt="RF 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/rf_projection_zoom_2040.png?v=20260326-9" alt="RF 2024-2040" />
               </div>
             </div>
           </div>
@@ -420,15 +534,16 @@
         <div class="panel" id="etr">
           <div class="panel-grid">
             <div class="panel-text">
-              <h3>ETR</h3>
-              <p>Extra Trees; rastgeleleştirilmiş ağaçlar ile güçlü genelleme.</p>
-              <p><code>scripts/project_to_2040_rolling.py</code></p>
+              <h3>ETR (Extremely Randomized Trees)</h3>
+              <p><strong>Kategori:</strong> Temel Model (İleri Seviye Bagging)</p>
+              <p><strong>Çalışma Mantığı:</strong> RF'in maksimum rastgeleleştirilmiş versiyonudur. Karar ağacı düğümlerini spesifik bir eşiğe bağlamadan rastgele kırparak aşırı öğrenmeyi engeller.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç modellerde görülen erken düzleşme eğilimini azaltan, yüksek genelleme kabiliyetine sahip referans ansambl modelidir.</p>
             </div>
             <div class="panel-media">
-              <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260321-6" alt="ETR 2000-2040" />
+              <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260326-9" alt="ETR 2000-2040" />
               <div class="media-row">
-                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260321-6" alt="ETR 5y/10y" />
-                <img class="media-small zoomable" src="assets/img/etr_projection_2024-03-01_2040.png?v=20260321-6" alt="ETR 2024-2040" />
+                <img class="media-small zoomable" src="assets/img/etr_5y_10y.png?v=20260326-14" alt="ETR 5y/10y karşılaştırma" />
+                <img class="media-small zoomable" src="assets/img/etr_projection_zoom_2040.png?v=20260326-9" alt="ETR 2024-2040" />
               </div>
             </div>
           </div>
@@ -437,54 +552,266 @@
       </div>
     </section>
 
-    <section>
-      <h2>V3 Modeller (Yeni Mimari)</h2>
-      <p class="note">V3 mimarisi: logit hedef + fizik katmanı + purged walk‑forward CV + konformal belirsizlik bandı. Anomali bileşeni yoktur; eski çıktılara dokunulmadı, bunlar ek katmandır.</p>
+    <section id="gemini-modeller">
+      <h2>Gelişmiş Model Kataloğu (Sürüm 4 — 17 Model)</h2>
+      <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim sürümüdür; tüm modeller aynı veri hazırlama, eğitim ve doğrulama protokolüyle üretilmiştir.</p>
+
+      <div class="card" style="border-left: 5px solid var(--accent); background-color: rgba(67, 97, 238, 0.05); margin-bottom: 30px;">
+        <h3 style="color: var(--accent); margin-top: 5px; margin-bottom: 15px;">📍 Kullanım Rehberi: Hangi Modele, Hangi Durumda Bakılmalı?</h3>
+        <p style="margin-bottom: 10px;">Simülasyon ekranında 22 farklı model bulunmaktadır. <strong>Neye bakarken hangisinin yararlı olacağını</strong> aşağıdan seçebilirsiniz:</p>
+        <ul style="line-height: 1.6;">
+          <li><strong>Ortalama ve En Gerçekçi Gelecek Beklentisi:</strong> <span style="color: var(--accent); font-weight: bold;">ENSEMBLE_MEDIAN</span> veya <span style="font-weight: bold;">STACKING</span>. Aşırı senaryoları törpüler, en güvenli rotayı çizer.</li>
+          <li><strong>En Kötü Senaryo (Şiddetli Kuraklık / Kriz) Analizi:</strong> <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Su seviyesinin diplere vurma ihtimalini görmek için bakılmalıdır.</li>
+          <li><strong>Uzun Vadeli Stabil Trend (Yönsüz):</strong> <span style="color: #2b9348; font-weight: bold;">Ridge</span>, <span style="font-weight: bold;">BayesianRidge</span> veya <span style="font-weight: bold;">ElasticNet</span>. Geçmiş su tüketim ivmesinin, gürültüden arındırılmış saf lineer gidişatını izlemek için yararlıdır.</li>
+          <li><strong>Ani İklim Şokları ve Mevsimsel Kırılmalar:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Beklenmedik dalgalanmaları ve hidrolojik sapmaları simüle etmek için kritiktir.</li>
+          <li><strong>Doğal Varyans (Tahminden Ziyade Desen):</strong> <span style="font-weight: bold;">RF (Random Forest)</span>, <span style="font-weight: bold;">ETR</span> veya <span style="font-weight: bold;">GBM_Q50</span>.</li>
+        </ul>
+      </div>
+
+
+      <!-- ── CV Metrik Tablosu ─────────── -->
+      <div class="card" style="overflow-x:auto;margin-bottom:20px;">
+        <h3>📊 CV Karşılaştırma Tablosu (Purged Walk-Forward, 3 yıl)</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr style="background:rgba(255,160,0,0.12);">
+              <th style="text-align:left;padding:8px 10px;">Model</th>
+              <th style="text-align:center;padding:8px 10px;">Kategori</th>
+              <th style="text-align:center;padding:8px 10px;">RMSE&nbsp;↓</th>
+              <th style="text-align:center;padding:8px 10px;">MAPE&nbsp;↓</th>
+              <th style="text-align:center;padding:8px 10px;">Pearson r&nbsp;↑</th>
+              <th style="text-align:left;padding:8px 10px;">Açıklama</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:7px 10px;">XGBoost</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">39.33</td><td style="text-align:center;">85.1%</td><td style="text-align:center;color:#34D399;">0.839</td>
+              <td style="padding:7px 10px;">En yüksek Pearson korelasyonu</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">ARIMAX</td><td style="text-align:center;"><span class="chip">Zaman Serisi</span></td>
+              <td style="text-align:center;">39.73</td><td style="text-align:center;">85.6%</td><td style="text-align:center;">0.696</td>
+              <td style="padding:7px 10px;">SARIMAX(1,1,1) + SPEI-6 + kümülatif denge</td></tr>
+            <tr><td style="padding:7px 10px;">CatBoost</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">39.51</td><td style="text-align:center;">85.0%</td><td style="text-align:center;">0.792</td>
+              <td style="padding:7px 10px;">Kategorik değişken destekli boosting</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">QuantileGBM&ndash;50</td><td style="text-align:center;"><span class="chip">İklim</span></td>
+              <td style="text-align:center;">40.16</td><td style="text-align:center;">86.7%</td><td style="text-align:center;">0.783</td>
+              <td style="padding:7px 10px;">Medyan (en olası) senaryo</td></tr>
+            <tr><td style="padding:7px 10px;">NGBoost</td><td style="text-align:center;"><span class="chip">İklim</span></td>
+              <td style="text-align:center;">40.12</td><td style="text-align:center;">87.0%</td><td style="text-align:center;">0.685</td>
+              <td style="padding:7px 10px;">Stanford NGB — olasılıksal tahmin (Normal dağılım)</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">ExtraTrees (ETR)</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">40.11</td><td style="text-align:center;">87.1%</td><td style="text-align:center;">0.792</td>
+              <td style="padding:7px 10px;">Rastgeleleştirilmiş ağaçlar</td></tr>
+            <tr><td style="padding:7px 10px;">GPR</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">40.10</td><td style="text-align:center;">87.0%</td><td style="text-align:center;">0.711</td>
+              <td style="padding:7px 10px;">Matern + RationalQuadratic + White kernel</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">LightGBM DART</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">40.35</td><td style="text-align:center;">88.3%</td><td style="text-align:center;">0.798</td>
+              <td style="padding:7px 10px;">DART boosting — overfit engeli</td></tr>
+            <tr><td style="padding:7px 10px;">SVR</td><td style="text-align:center;"><span class="chip">ML</span></td>
+              <td style="text-align:center;">40.52</td><td style="text-align:center;">87.9%</td><td style="text-align:center;">0.764</td>
+              <td style="padding:7px 10px;">RBF kernel, C=50, ε=0.005</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">Huber</td><td style="text-align:center;"><span class="chip">Lineer</span></td>
+              <td style="text-align:center;">40.48</td><td style="text-align:center;">87.9%</td><td style="text-align:center;">0.734</td>
+              <td style="padding:7px 10px;">Aşırı iklim değerlerine dayanıklı regresyon</td></tr>
+            <tr><td style="padding:7px 10px;">ElasticNet</td><td style="text-align:center;"><span class="chip">Lineer</span></td>
+              <td style="text-align:center;">40.24</td><td style="text-align:center;">87.1%</td><td style="text-align:center;">0.679</td>
+              <td style="padding:7px 10px;">L1+L2 birleşik ceza — özellik seçimi</td></tr>
+            <tr style="background:rgba(52,211,153,0.05);">
+              <td style="padding:7px 10px;">BayesRidge</td><td style="text-align:center;"><span class="chip">Lineer</span></td>
+              <td style="text-align:center;">40.16</td><td style="text-align:center;">87.1%</td><td style="text-align:center;">0.688</td>
+              <td style="padding:7px 10px;">Belirsizlik bandı üretir</td></tr>
+            <tr><td style="padding:7px 10px;">RidgeCV</td><td style="text-align:center;"><span class="chip">Lineer</span></td>
+              <td style="text-align:center;">40.12</td><td style="text-align:center;">87.0%</td><td style="text-align:center;">0.685</td>
+              <td style="padding:7px 10px;">L2 ceza — stabil referans modeli</td></tr>
+            <tr style="background:rgba(52,211,153,0.1);font-style:italic;">
+              <td style="padding:7px 10px;">T-M 1955 — UNESCO IHP standart su bütçesi</td></tr>
+          </tbody>
+        </table>
+        <p class="note">🌿 Fizik tabanlı modeller geçmiş veriye overfit <em>etmez</em> — CV hatası görece yüksek ama gelecek iklim koşullarında extrapolation kapasiteleri çok daha güçlüdür.</p>
+      </div>
+
+      <!-- ── Fizik Modelleri ─────────────── -->
+      <h3 style="margin:24px 0 12px;">🌍 Gerçek Fizik-Tabanlı İklim/Hidroloji Modelleri (ML Yok)</h3>
+      <div class="grid three">
+        
+        <div class="card">
+          <h3>Budyko-Fu v2 — 1974/2007</h3>
+          <span class="chip" style="background:rgba(52,211,153,0.15);color:#34D399;margin-bottom:10px;display:inline-block;">Fizik · UNESCO · WMO · Mevsimsel Dinamik ω</span>
+          <ul>
+            <li>φ = ET0/P (kuruluk oranı) → Q/P = 1 − [1+φ − (1+φ<sup>ω</sup>)<sup>1/ω</sup>]</li>
+            <li><strong>Dinamik ω:</strong> SPI-6 &lt; −0.5 → ω_dry=2.5; yağışlı → ω_wet=1.8</li>
+            <li><strong>Kalibrasyon:</strong> runoff + (−ET0) + SPI-6 + API → Ridge OLS (4d)</li>
+            <li>UNESCO/WMO/IPCC AR6 standart havza su dengesi referansı</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Yapay zeka yerine saf fiziksel/coğrafi yasalarla belirlenen uzun vadeli doğal kuraklık limitlerine bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/budyko_v3_projection.png?v=20260326-7" alt="Budyko Projeksiyon"/>
+        </div>
+        <div class="card">
+          <h3>Thornthwaite-Mather v2 — 1955</h3>
+          <span class="chip" style="background:rgba(52,211,153,0.15);color:#34D399;margin-bottom:10px;display:inline-block;">Fizik · UNESCO IHP Standart · Wilting Point Düzeltmeli</span>
+          <ul>
+            <li>Yağış → Gerçek ET (toprak kapasitesi orantılı) → Satürasyon akışı</li>
+            <li><strong>Toprak:</strong> fc=180&thinsp;mm, wp=40&thinsp;mm (Istanbul killi-tın)</li>
+            <li><strong>Gerçek runoff:</strong> FC üstündeki fazla → yüzey akışına (wilting point düzeltmeli)</li>
+            <li><strong>Kalibrasyon:</strong> runoff + (−ET0) + SPI-3 + API → Ridge OLS (4d)</li>
+            <li>UNESCO IHP Uluslararası Hidrolojik Program metodolojisi</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Toprak nemi ve buharlaşma dengesinin aylık rutubet stresi limitlerine fiziksel olarak bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/thornthwaite_v3_projection.png?v=20260326-7" alt="Thornthwaite Projeksiyon"/>
+        </div>
+      </div>
+
+      <!-- ── İstatistiksel İklim Modelleri ─ -->
+      <h3 style="margin:24px 0 12px;">📡 İstatistiksel İklim Modelleri</h3>
       <div class="grid three">
         <div class="card">
-          <h3>LGB_DART</h3>
+          <h3>ARIMAX</h3>
+          <span class="chip" style="margin-bottom:10px;display:inline-block;">SARIMAX(1,1,1)</span>
           <ul>
-            <li>CV Pearson: <strong>0.829</strong></li>
-            <li>CV RMSE: <strong>41.05</strong> puan</li>
-            <li>CV MAPE: <strong>88.7%</strong></li>
+            <li>Dışsal değişkenler: cum_balance_12 + SPEI-6 + t_mean_c</li>
+            <li>IPCC AR6 minimal yeterli eksojen set</li>
+            <li>CV RMSE: <strong>39.73&thinsp;pp</strong> &middot; r=0.696</li>
           </ul>
-          <img class="zoomable" src="assets/v3/lgb_dart_v3_projection.png?v=20260321-6" alt="LGB DART v3 projection"/>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Geleneksel mevsimsel döngüler çerçevesinde, sıcaklık ve yağışın standart zaman serisine etkisine bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/arimax_v3_projection.png?v=20260326-7" alt="ARIMAX Projeksiyon"/>
+        </div>
+        
+        <div class="card">
+          <h3>NGBoost (Stanford)</h3>
+          <span class="chip" style="margin-bottom:10px;display:inline-block;">Olasılıksal &middot; Duan et al. 2020</span>
+          <ul>
+            <li>Her ay için delta doluluk → Normal dağılım</li>
+            <li>500 estimator, lr=0.05, natural_gradient=True</li>
+            <li>CV RMSE: <strong>40.12&thinsp;pp</strong> &middot; r=0.685</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Gelecekteki belirsizlik durumunun olasılıksal dağılımına (geniş bantlı belirsizlik) bakarken referans alınır.</p>
+          <img class="zoomable" src="assets/v3/ngboost_v3_projection.png?v=20260326-7" alt="NGBoost Projeksiyon"/>
+        </div>
+      </div>
+
+      <!-- ── ML Modeller ─────────────────── -->
+      <h3 style="margin:24px 0 12px;">🤖 Makine Öğrenmesi Modelleri</h3>
+      <div class="grid three">
+        <div class="card">
+          <h3>LightGBM DART</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.798</strong></li>
+            <li>CV RMSE: <strong>40.35</strong>&thinsp;pp &middot; MAPE: <strong>88.3%</strong></li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Düzenlileştirilmiş (overfitting engellenmiş) hızlı ve dropout destekli ağaç tahminlerinin stabilitesine bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/lgb_dart_v3_projection.png?v=20260326-7" alt="LGB DART v3"/>
         </div>
         <div class="card">
           <h3>XGBoost</h3>
           <ul>
-            <li>CV Pearson: <strong>0.854</strong></li>
-            <li>CV RMSE: <strong>40.72</strong> puan</li>
-            <li>CV MAPE: <strong>87.7%</strong></li>
+            <li>CV Pearson: <strong>0.839</strong> — en yüksek korelasyon</li>
+            <li>CV RMSE: <strong>39.33</strong>&thinsp;pp &middot; MAPE: <strong>85.1%</strong></li>
           </ul>
-          <img class="zoomable" src="assets/v3/xgb_v3_projection.png?v=20260321-6" alt="XGBoost v3 projection"/>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Eğilimdeki sert düşüş/yükseliş ivmelerine ve yapısal iklim kırılmalarına (şok reaksiyonlar) bakarken en ideal modeldir.</p>
+          <img class="zoomable" src="assets/v3/xgb_v3_projection.png?v=20260326-7" alt="XGBoost v3"/>
         </div>
         <div class="card">
           <h3>Extra Trees (ETR)</h3>
           <ul>
-            <li>CV Pearson: <strong>0.802</strong></li>
-            <li>CV RMSE: <strong>40.55</strong> puan</li>
-            <li>CV MAPE: <strong>87.0%</strong></li>
+            <li>CV Pearson: <strong>0.792</strong></li>
+            <li>CV RMSE: <strong>40.11</strong>&thinsp;pp &middot; MAPE: <strong>87.1%</strong></li>
           </ul>
-          <img class="zoomable" src="assets/v3/etr_v3_projection.png?v=20260321-6" alt="ETR v3 projection"/>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç modellerde görülen erken düzleşme eğilimini azaltan, yüksek genelleme kabiliyetine sahip referans ansambl modelidir.</p>
+          <img class="zoomable" src="assets/v3/etr_v3_projection.png?v=20260326-7" alt="ETR v3"/>
+        </div>
+        <div class="card">
+          <h3>CatBoost</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.792</strong></li>
+            <li>CV RMSE: <strong>39.51</strong>&thinsp;pp &middot; MAPE: <strong>85.0%</strong></li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Gürültü ve kesintili verilerde bile stabil, aşırıya kaçmayan tutucu ağaç tahminlerine bakarken kullanışlıdır.</p>
+          <img class="zoomable" src="assets/v3/catboost_v3_projection.png?v=20260326-7" alt="CatBoost v3"/>
+        </div>
+        <div class="card">
+          <h3>SVR (RBF Kernel)</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.764</strong></li>
+            <li>CV RMSE: <strong>40.52</strong>&thinsp;pp &middot; C=50, ε=0.005</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Doğrusal olmayan karmaşık (non-linear) trend rejimlerinin, maksimum sınır ötesi eğrilerine ve dip senaryolarına bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/svr_v3_projection.png?v=20260326-7" alt="SVR v3"/>
+        </div>
+        <div class="card">
+          <h3>GPR (Gauss Süreci)</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.711</strong></li>
+            <li>CV RMSE: <strong>40.10</strong>&thinsp;pp &middot; Matern(ν=1.5) + White kernel</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Olasılık dağılımlarının yüksek süreklilikle (smooth) üretildiği senaryolarda belirsizlik yapısını değerlendirmek için yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/gpr_v3_projection.png?v=20260326-7" alt="GPR v3"/>
         </div>
       </div>
+
+      <!-- ── Lineer Modeller ─────────────── -->
+      <h3 style="margin:24px 0 12px;">📐 Lineer / İklim Regresyon Modelleri</h3>
+      <div class="grid three">
+        <div class="card">
+          <h3>RidgeCV</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.685</strong> &middot; RMSE: <strong>40.12</strong>&thinsp;pp</li>
+            <li>L2 cezalı doğrusal — stabil referans modeli</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim/su trendlerinin ana hattını, minimum gürültü ile saf doğrultuda görmek için referans (baseline) baz model görevini alır.</p>
+          <img class="zoomable" src="assets/v3/ridge_cv_v3_projection.png?v=20260326-7" alt="RidgeCV v3"/>
+        </div>
+        <div class="card">
+          <h3>ElasticNet &amp; BayesRidge</h3>
+          <ul>
+            <li>ElasticNet: L1+L2, RMSE: <strong>40.24</strong>&thinsp;pp</li>
+            <li>BayesRidge: belirsizlik bandı, RMSE: <strong>40.16</strong>&thinsp;pp</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Düşük etkili iklim değişkenlerini otomatik sıfırlayan L1+L2 karması ve belirsizlik bandı hesaplayan parametrik olasılık sınırlarına aynı anda bakarken idealdir.</p>
+          <div style="display:flex;gap:6px;">
+            <img class="zoomable" src="assets/v3/elasticnet_v3_projection.png?v=20260326-7" alt="ElasticNet" style="width:49%;"/>
+            <img class="zoomable" src="assets/v3/bayes_ridge_v3_projection.png?v=20260326-7" alt="BayesRidge" style="width:49%;"/>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Huber Regressor</h3>
+          <ul>
+            <li>CV Pearson: <strong>0.734</strong> &middot; RMSE: <strong>40.48</strong>&thinsp;pp</li>
+            <li>ε=1.20 — aşırı değerlere dayanıklı robust regresyon</li>
+          </ul>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim verisindeki aşırı sapma değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/huber_v3_projection.png?v=20260326-7" alt="Huber v3"/>
+        </div>
+      </div>
+
+      <!-- ── Ensemble ───────────────────── -->
+      <h3 style="margin:24px 0 12px;">🔗 Ensemble Modeller</h3>
       <div class="grid two" style="margin-top:14px;">
         <div class="card">
-          <h3>Stacking</h3>
-          <img class="zoomable" src="assets/v3/stack_v3_projection.png?v=20260321-6" alt="Stacking v3 projection"/>
+          <h3>Stacking Ensemble</h3>
+          <p>Tüm modellerin tahminlerini girdi olarak kullanan meta-model (RidgeCV meta-learner).</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Tüm yapay zeka sistemlerinin komite kararı sonucu süzülmüş, en yüksek güvenilirliğe sahip nihai simülasyon ivmesine bakarken başvurulmalıdır.</p>
+          <img class="zoomable" src="assets/v3/stack_v3_projection.png?v=20260326-7" alt="Stacking v3 projection"/>
         </div>
         <div class="card">
           <h3>Ensemble Median</h3>
-          <img class="zoomable" src="assets/v3/ensemble_median_v3_projection.png?v=20260321-6" alt="Ensemble median v3 projection"/>
+          <p>Tüm model tahminlerinin medyanı — en muhafazakâr toplu projeksiyon.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Aşırı uç senaryoların baskılandığı medyan trendi ve genel iklimin en olası gidişatını izlemek için yararlıdır.</p>
+          <img class="zoomable" src="assets/v3/ensemble_median_v3_projection.png?v=20260326-7" alt="Ensemble median v3 projection"/>
         </div>
       </div>
       <div class="card" style="margin-top:14px;">
-        <h3>CV Karşılaştırma</h3>
-        <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260321-6" alt="V3 CV comparison"/>
-        <p class="note">Not: V3 sonuçları purged walk‑forward CV üzerinden hesaplandı.</p>
+        <h3>CV Karşılaştırma Grafiği</h3>
+        <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260326-7" alt="V3 CV comparison"/>
+        <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı; model sonuçları birlikte değerlendirilmelidir.</p>
       </div>
     </section>
+
 
     <section id="simulasyon">
       <h2>Etkileşimli Simülasyon</h2>
@@ -534,12 +861,36 @@
             </div>
             <label style="margin-top:12px;">Model</label>
             <select id="sim-model">
-              <option value="all">Tümü (Karşılaştır)</option>
-              <option value="ridge" selected>Ridge</option>
-              <option value="gbr">GBR</option>
-              <option value="hgb">HGB</option>
-              <option value="rf">RF</option>
-              <option value="etr">ETR</option>
+              <optgroup label="İleri Düzey Modeller (V4)">
+                <option value="all">Tümü (Karşılaştır)</option>
+                <option value="ensemble_median">Medyan Ortalaması (En Güvenilir)</option>
+                <option value="xgb">XGBoost</option>
+                <option value="lgb_dart">LightGBM (DART)</option>
+                <option value="stack">Stacking (Meta Model)</option>
+              </optgroup>
+              <optgroup label="Temel Modeller">
+                <option value="etr">Extra Trees</option>
+                <option value="ridge" selected>Ridge</option>
+                <option value="gbr">GBR</option>
+                <option value="hgb">HGB</option>
+                <option value="rf">RF</option>
+              </optgroup>
+
+              <optgroup label="Diğer Gelişmiş YZ Modelleri">
+                <option value="catboost">CatBoost (Yandex Boosting)</option>
+                <option value="svr">Destek Vektör Regresyonu (SVR)</option>
+                <option value="bayes_ridge">Bayesian Ridge (Olasılıksal Doğrusal)</option>
+                <option value="elasticnet">ElasticNet (L1+L2 Melez)</option>
+                <option value="huber">Huber Regressor (Aykırı Değer Dirençli)</option>
+                <option value="gpr">Gaussian Process (Matern Kernel GPR)</option>
+                <option value="ngboost">NGBoost (Doğal Gradyan Dağılım)</option>
+                <option value="gbm_q50">GBM Quantile (%50 En Olası Medyan)</option>
+              </optgroup>
+              <optgroup label="Fiziksel & Zaman Serisi Modelleri">
+                <option value="arimax">ARIMAX (Dışsal Varyeteli Mevsimsel)</option>
+                <option value="budyko">Budyko (Kavramsal Çevresel Denklem)</option>
+                <option value="thornthwaite">Thornthwaite-Mather Su Dengesi</option>
+              </optgroup>
             </select>
           </div>
 
@@ -556,16 +907,16 @@
 
           <div class="card">
             <h4>Kayıp Bileşenleri</h4>
-            <label>Kullanım Miktarı (milyon m³ / yıl)</label>
-            <input type="range" id="sim-use-m3" min="50" max="600" value="0" step="5" />
+            <label>Yıllık Kullanım (milyon m³ / yıl)</label>
+            <input type="range" id="sim-use-m3" min="180" max="500" value="275" step="5" />
             <div class="value" id="sim-use-m3-val">—</div>
 
-            <label>Kullanım Trendini Ayarla (% / yıl)</label>
+            <label>Yıllık Kullanım Artışı (% / yıl)</label>
             <input type="range" id="sim-use-growth" min="-2" max="4" value="0" step="0.25" />
             <div class="value" id="sim-use-growth-val">0%</div>
-            <div class="note">2040 tahmini kullanım: <strong id="sim-use-2040">—</strong></div>
+            <div class="note">2040 tahmini kullanım (seçili artış hızına göre): <strong id="sim-use-2040">—</strong></div>
             <div class="note" id="sim-use-range">Trend aralığı: —</div>
-            <div class="note" id="sim-use-season">Mevsimsellik: —</div>
+            <div class="note" id="sim-use-season">Mevsimsel dağılım: —</div>
 
             <label>Buharlaşma (ET0 ile bağlı)</label>
             <div class="value" id="sim-evap-m3-val">—</div>
@@ -608,11 +959,12 @@
 Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           <div class="sim-params">
             <div>Toplam havza alanı: <strong id="param-catchment">—</strong> km²</div>
-            <div>Toplam aktif kapasite: <strong id="param-capacity">—</strong> hm³</div>
+            <div>Toplam aktif kapasite: <strong id="param-capacity">—</strong> milyon m³</div>
             <div>Açık su alanı: <strong id="param-lake-area">—</strong> km²</div>
             <div>Kc (açık su): <strong id="param-kc">—</strong></div>
             <div>Akış katsayısı (aylık): <strong id="param-runoff">—</strong></div>
             <div>Senaryo ölçek katsayısı: <strong id="param-adj-scale">—</strong></div>
+            <div>Senaryo tepki kazancı: <strong id="param-response-gain">—</strong></div>
             <div>Aylık etki tavanı: <strong id="param-delta-cap">—</strong> puan/ay</div>
             <div>Ortalama yağış (mm/ay): <strong id="param-mean-rain">—</strong></div>
             <div>Ortalama ET0 (mm/ay): <strong id="param-mean-et0">—</strong></div>
@@ -622,52 +974,78 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       </div>
     </section>
 
-    <section>
-      <h2>Model Kodları (Özet)</h2>
-      <div class="grid two">
-        <div class="card">
-          <h3>project_to_2040_rolling.py</h3>
-          <ul>
-            <li>2000–2040 sürücü panelini iklim projeksiyonu ile birleştirir.</li>
-            <li>Özellikler: yağış/ET0, sıcaklık, nem, basınç, VPD, gecikmeler ve hareketli ortalamalar.</li>
-            <li>Yıllık yeniden eğitim: 2027=2000–2026, 2028+=2000–(önceki yıl).</li>
-            <li>Çıktılar: 2040 projeksiyon grafikleri ve ±RMSE belirsizlik bandı.</li>
-          </ul>
-          <p><code>scripts/project_to_2040_rolling.py</code></p>
-        </div>
-        <div class="card">
-          <h3>build_model_cards_5y_10y.py</h3>
-          <ul>
-            <li>5y ve 10y holdout pencerelerinde model doğrulaması yapar.</li>
-            <li>RMSE, MAE, MAPE, Pearson metriklerini hesaplar.</li>
-            <li>Her model için tek görselde 5y/10y kart üretir.</li>
-          </ul>
-          <p><code>scripts/build_model_cards_5y_10y.py</code></p>
-        </div>
-      </div>
-    </section>
-
-    <section id="raporlar">
-      <h2>Raporlar</h2>
+    <section id="akademik-gelecek">
+      <h2>Akademik Gelecek Değerlendirmesi</h2>
       <div class="card">
-        <ul>
-          <li><a href="assets/docs/istanbul_baraj_calisma_ozeti_2026_03_20.pdf">İstanbul Baraj Çalışma Özeti (2026-03-20)</a></li>
-          <li><a href="assets/docs/istanbul_baraj_sonuclar_2026_03_20.pdf">Model Sonuçları — Yorumlama Notu (2026-03-20)</a></li>
-          <li><a href="assets/docs/istanbul_baraj_guncel_durum_ozet_raporu_2026_03_18.pdf">İstanbul Baraj Güncel Durum Özet Raporu (2026-03-18)</a></li>
-          <li><a href="assets/docs/istanbul_baraj_guncel_durum_detayli_raporu.pdf">İstanbul Baraj Güncel Durum Detaylı Raporu</a></li>
-        </ul>
-      </div>
-    </section>
+        <p>Bu bölüm, 2040 ufku için tek model çıktısı yerine çoklu model dağılımını, su dengesi parametrelerini ve iklim/talep duyarlılığını birlikte raporlamak amacıyla hazırlanmıştır. Yorumlama yaklaşımı; <strong>merkezi eğilim (medyan)</strong>, <strong>saçılım (IQR)</strong> ve <strong>stres duyarlılığı</strong> eksenlerini birlikte kullanır.</p>
 
-    <section>
-      <h2>Kodlar ve Çıktılar</h2>
-      <div class="card">
-        <p><strong>Üretim scriptleri:</strong></p>
+        <div class="stat-grid">
+          <div class="stat">
+            <small>Simülasyona Entegre Model Sayısı</small>
+            <strong id="acad-model-count">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 Konsensüs Bandı (P20–P80)</small>
+            <strong id="acad-2040-minmax">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 Medyanı (Q2)</small>
+            <strong id="acad-2040-median">—</strong>
+          </div>
+          <div class="stat">
+            <small>2040 IQR (Q1–Q3)</small>
+            <strong id="acad-2040-iqr">—</strong>
+          </div>
+          <div class="stat">
+            <small>ET0 Yıllık Ortalama (2010–2024)</small>
+            <strong id="acad-et0-mean">—</strong>
+          </div>
+          <div class="stat">
+            <small>Çekiş / Buharlaşma (2023)</small>
+            <strong id="acad-loss-balance">—</strong>
+          </div>
+          <div class="stat">
+            <small>+10% Yağış Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-rain">—</strong>
+          </div>
+          <div class="stat">
+            <small>+10% ET0 Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-et0">—</strong>
+          </div>
+          <div class="stat">
+            <small>+20% Çekiş Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-use">—</strong>
+          </div>
+          <div class="stat">
+            <small>+2 puan/yıl Talep Etkisi (Ridge 2040)</small>
+            <strong id="acad-sens-growth">—</strong>
+          </div>
+        </div>
+
+        <h4>Yöntemsel Çerçeve</h4>
         <ul>
-          <li><code>scripts/build_model_cards_5y_10y.py</code></li>
-          <li><code>scripts/project_to_2040_rolling.py</code></li>
+          <li>Çekirdek denklem aylık rezerv değişimini hacim bazında hesaplar: havza akışı + göl yüzeyi yağışı − ET0 kaynaklı buharlaşma − yıllık kullanımdan türetilen aylık çekiş.</li>
+          <li>Akış katsayısı 2010–2024 doluluk değişiminden kalibre edilir; parametreler fiziksel sınırlar içinde tutulur ve aylık etki tavanı ile dengesiz salınım engellenir.</li>
+          <li>Model geçişindeki kopukluk riskini azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; ardından senaryo farkı baz projeksiyona eklenir.</li>
+          <li>GBR/HGB/RF/ETR için senaryo tepkisi, Ridge’e göre göreli oynaklığa bağlı olarak normalize edilir; böylece model aileleri arası etki büyüklüğü daha karşılaştırılabilir olur.</li>
         </ul>
-        <p class="note">Çıktılar ana proje ortamında üretilir ve burada sadece görsel/PDF olarak paylaşılır.</p>
+
+        <h4>Veri Tabanlı Bulgular</h4>
+        <ul>
+          <li>2040 min–maks aralığı bazı modellerde 0–100 sınırına dayanabilir; bu nedenle karar raporunda tek başına min–maks yerine medyan + IQR + alt/üst kuantil birlikte verilmelidir.</li>
+          <li>+10% yağış, +10% ET0 ve kullanım artışı senaryoları birlikte değerlendirildiğinde; iklim sinyali ile talep baskısı aynı düzlemde karşılaştırılabilir hale gelir.</li>
+          <li>ET0 artışı ile kullanım artışı aynı yönde negatif etki üretir; yağış artışı dengeleyici etki gösterir ancak tek başına yeterli bir güvenlik tamponu oluşturmaz.</li>
+          <li>Belirsizlik tek kaynaktan gelmez: model ailesi farkı, iklim projeksiyon saçılımı ve talep büyüme varsayımı birlikte toplam riski belirler.</li>
+        </ul>
+
+        <h4>Operasyonel Yorum</h4>
+        <ol>
+          <li>Aylık izleme notlarında asgari raporlama seti: 2040 medyanı, Q1–Q3 bandı, stres senaryosu ve eşik-altı model oranı.</li>
+          <li>ET0 eğilimi yıllık yağış toplamından ayrı değil birlikte yorumlanmalıdır; tek değişkenli açıklama karar hatası üretir.</li>
+          <li>Kritik eşik yönetiminde tek model eğrisi yerine model mutabakat oranı (kaç model eşik altında) esas alınmalıdır.</li>
+          <li>Kalibrasyon parametreleri çeyreklik döngüde güncellenmeli; kullanım profili ve iklim katsayıları yeni gözlem geldikçe yeniden fit edilmelidir.</li>
+        </ol>
+        <p class="note" id="acad-note">Bu göstergeler sayfadaki güncel model/iklim verilerinden otomatik hesaplanır; metrikler kullanıcı senaryosu değiştiğinde yeniden üretilir.</p>
       </div>
     </section>
 
@@ -682,7 +1060,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           <li><a href="https://data.ibb.gov.tr/api/3/action/datastore_search" target="_blank" rel="noopener">İBB Açık Veri API (CKAN)</a></li>
           <li><a href="https://iski.istanbul/baraj-doluluk" target="_blank" rel="noopener">İSKİ Baraj Doluluk</a></li>
           <li><a href="https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari" target="_blank" rel="noopener">İSKİ Su Kaynakları (baraj havzaları)</a></li>
-          <li><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener">Open‑Meteo Historical Weather API</a></li>
+          <li><a href="https://www.koeri.boun.edu.tr/" target="_blank" rel="noopener">Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü (Boğaziçi Üniversitesi)</a></li>
           <li><a href="https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii" target="_blank" rel="noopener">NOAA NAO indeks serisi</a></li>
           <li><a href="https://www.aa.com.tr/tr/gundem/istanbulda-gecen-yil-1-milyar-117-milyon-64-bin-116-metrekup-su-kullanildi/3104905" target="_blank" rel="noopener">AA 2023 İstanbul su kullanımı haberi</a></li>
           <li><a href="https://otexts.com/fpp3/" target="_blank" rel="noopener">Forecasting: Principles and Practice (FPP3)</a></li>
@@ -701,12 +1079,12 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     <img id="lightbox-img" alt="Görsel" />
   </div>
 
-  <script src="assets/data/projection_all_models.js?v=20260321-6"></script>
-  <script src="assets/data/evap_usage_baseline.js?v=20260321-6"></script>
+  <script src="assets/data/projection_all_models.js?v=20260341_v5finalallb"></script>
+  <script src="assets/data/evap_usage_baseline.js?v=20260327-2"></script>
   <script src="assets/data/reservoir_reference.js?v=20260321-6"></script>
-  <script src="assets/data/sim_coeffs.js?v=20260321-6"></script>
-  <script src="assets/data/usage_trend_stats.js?v=20260321-6"></script>
-  <script src="assets/data/usage_monthly_profile.js?v=20260321-6"></script>
+  <script src="assets/data/sim_coeffs.js?v=20260327-2"></script>
+  <script src="assets/data/usage_trend_stats.js?v=20260327-2"></script>
+  <script src="assets/data/usage_monthly_profile.js?v=20260327-2"></script>
   <script src="assets/data/climate_baseline.js?v=20260321-6"></script>
 
   <script>
@@ -730,6 +1108,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     let climateClim = null;
     let reservoirRef = null;
     let runoffCalibration = null;
+    let modelScenarioFactor = {};
+    let modelBaseBlend = {};
 
     function parseCSV(text) {
       const lines = text.trim().split('\n');
@@ -773,6 +1153,28 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function quantile(sortedValues, p) {
+      if (!sortedValues || !sortedValues.length) return null;
+      if (sortedValues.length === 1) return sortedValues[0];
+      const idx = (sortedValues.length - 1) * p;
+      const lo = Math.floor(idx);
+      const hi = Math.ceil(idx);
+      const t = idx - lo;
+      return sortedValues[lo] * (1 - t) + sortedValues[hi] * t;
+    }
+
+    function summarizeConsensus(values, lowQ = 0.20, highQ = 0.80) {
+      const clean = (values || []).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+      if (!clean.length) return null;
+      return {
+        min: clean[0],
+        max: clean[clean.length - 1],
+        low: quantile(clean, lowQ),
+        median: quantile(clean, 0.50),
+        high: quantile(clean, highQ),
+      };
     }
 
     function buildClimateClimatology() {
@@ -870,6 +1272,100 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       setText('et0-stat-delta', fmtSigned(s.deltaForecastVsBaseline));
     }
 
+    function renderAcademicOutlook() {
+      const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+      const fmtSigned = (v) => {
+        if (!Number.isFinite(v)) return '—';
+        return `${v >= 0 ? '+' : ''}${v.toFixed(1)}`;
+      };
+
+      const modelKeys = Object.keys(modelData || {}).filter((m) => (modelData[m] || []).some((d) => d.fill !== null && d.fill !== undefined));
+      setText('acad-model-count', `${modelKeys.length}`);
+
+      const endVals = modelKeys
+        .map((m) => (modelData[m] || []).filter((d) => d.fill !== null && d.fill !== undefined))
+        .filter((arr) => arr.length)
+        .map((arr) => arr[arr.length - 1].fill)
+        .filter((v) => Number.isFinite(v))
+        .sort((a, b) => a - b);
+
+      if (endVals.length) {
+        const consensus = summarizeConsensus(endVals, 0.20, 0.80);
+        const q1 = quantile(endVals, 0.25);
+        const q2 = quantile(endVals, 0.5);
+        const q3 = quantile(endVals, 0.75);
+        if (consensus) {
+          setText('acad-2040-minmax', `${consensus.low.toFixed(1)}% – ${consensus.high.toFixed(1)}%`);
+        } else {
+          setText('acad-2040-minmax', '—');
+        }
+        setText('acad-2040-median', `${q2.toFixed(1)}%`);
+        setText('acad-2040-iqr', `${q1.toFixed(1)}% – ${q3.toFixed(1)}%`);
+      } else {
+        setText('acad-2040-minmax', '—');
+        setText('acad-2040-median', '—');
+        setText('acad-2040-iqr', '—');
+      }
+
+      const et0Summary = computeEt0YearlySummary();
+      if (et0Summary && Number.isFinite(et0Summary.meanHist)) {
+        setText('acad-et0-mean', `${et0Summary.meanHist.toFixed(1)} mm/yıl`);
+      } else {
+        setText('acad-et0-mean', '—');
+      }
+
+      if (baseline && Number.isFinite(baseline.usage_baraj_m3) && Number.isFinite(baseline.evap_total_m3)) {
+        const useMcm = baseline.usage_baraj_m3 / 1e6;
+        const evapMcm = baseline.evap_total_m3 / 1e6;
+        setText('acad-loss-balance', `${useMcm.toFixed(1)} / ${evapMcm.toFixed(1)} milyon m³`);
+      } else {
+        setText('acad-loss-balance', '—');
+      }
+
+      const sensitivityModel = modelKeys.includes('ridge') ? 'ridge' : (modelKeys[0] || null);
+      const computeEndForSensitivityModel = (rainPct, et0Pct, useM3, useGrowth) => {
+        if (!sensitivityModel) return null;
+        const { adjusted } = getSeries(sensitivityModel, rainPct, et0Pct, useM3, useGrowth);
+        if (!adjusted || !adjusted.length) return null;
+        return adjusted[adjusted.length - 1].fill;
+      };
+
+      const baseUseM3 = baseline && Number.isFinite(baseline.usage_baraj_m3)
+        ? baseline.usage_baraj_m3 / 1e6
+        : 275;
+      const baseSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3, 0.0);
+      const rainSensitivityEnd = computeEndForSensitivityModel(10, 0, baseUseM3, 0.0);
+      const et0SensitivityEnd = computeEndForSensitivityModel(0, 10, baseUseM3, 0.0);
+      const useSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3 * 1.2, 0.0);
+      const growthSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3, 0.02);
+
+      if (Number.isFinite(baseSensitivityEnd)) {
+        setText('acad-sens-rain', `${fmtSigned(rainSensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-et0', `${fmtSigned(et0SensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-use', `${fmtSigned(useSensitivityEnd - baseSensitivityEnd)} puan`);
+        setText('acad-sens-growth', `${fmtSigned(growthSensitivityEnd - baseSensitivityEnd)} puan`);
+      } else {
+        setText('acad-sens-rain', '—');
+        setText('acad-sens-et0', '—');
+        setText('acad-sens-use', '—');
+        setText('acad-sens-growth', '—');
+      }
+
+      const trend = window.USAGE_TREND || null;
+      const noteParts = [];
+      if (trend && Number.isFinite(trend.yoy_p10) && Number.isFinite(trend.yoy_p90)) {
+        noteParts.push(`Kullanım trend aralığı (p10–p90): ${(trend.yoy_p10 * 100).toFixed(2)}% – ${(trend.yoy_p90 * 100).toFixed(2)}%/yıl`);
+      }
+      if (Number.isFinite(baseSensitivityEnd)) {
+        noteParts.push(`Kalibrasyon referansı (${(sensitivityModel || 'seçili').toUpperCase()} 2040): ${baseSensitivityEnd.toFixed(1)}%`);
+      }
+      noteParts.push(`Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+      setText('acad-note', noteParts.join(' • '));
+    }
+
     function computeRunoffCalibration(series, usageProfile, baseUseMonthlyMcm, lakeAreaKm2, catchmentKm2, kc, capacityMcm) {
       if (!series || !series.length || !catchmentKm2 || !capacityMcm) {
         return { global: null, byMonth: null };
@@ -944,8 +1440,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         cards.push(`
           <div class="model-card" data-model="all">
             <div class="model-title">Tümü (Ensemble)</div>
-            <div class="model-meta" data-field="mean">2040 (trend dahil) ortalama: —</div>
-            <div class="model-delta" data-field="range">Aralık: —</div>
+            <div class="model-meta" data-field="mean">2040 (trend dahil) medyan: —</div>
+            <div class="model-delta" data-field="range">Konsensüs bandı (P20–P80): —</div>
             <div class="model-bar"><span data-field="bar"></span></div>
           </div>
         `);
@@ -991,11 +1487,17 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const vals = models
           .map(m => (seriesMap[m][lastIdx] ? seriesMap[m][lastIdx].fill : null))
           .filter(v => v !== null && v !== undefined);
-        if (vals.length) {
-          const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-          const min = Math.min(...vals);
-          const max = Math.max(...vals);
-          ensemble = { date: lastDate, mean, min, max, spread: max - min };
+        const consensus = summarizeConsensus(vals, 0.20, 0.80);
+        if (consensus) {
+          ensemble = {
+            date: lastDate,
+            median: consensus.median,
+            low: consensus.low,
+            high: consensus.high,
+            min: consensus.min,
+            max: consensus.max,
+            spread: consensus.high - consensus.low
+          };
         }
       }
       modelSummary = { models, stats, ensemble };
@@ -1006,9 +1508,9 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           const meanEl = card.querySelector('[data-field="mean"]');
           const rangeEl = card.querySelector('[data-field="range"]');
           const barEl = card.querySelector('[data-field="bar"]');
-          if (meanEl) meanEl.textContent = `2040 (trend dahil) ortalama: ${ensemble.mean.toFixed(1)}%`;
-          if (rangeEl) rangeEl.textContent = `Aralık: ${ensemble.min.toFixed(1)}–${ensemble.max.toFixed(1)}%`;
-          if (barEl) barEl.style.width = `${Math.max(0, Math.min(100, ensemble.mean))}%`;
+          if (meanEl) meanEl.textContent = `2040 (trend dahil) medyan: ${ensemble.median.toFixed(1)}%`;
+          if (rangeEl) rangeEl.textContent = `Konsensüs bandı (P20–P80): ${ensemble.low.toFixed(1)}–${ensemble.high.toFixed(1)}%`;
+          if (barEl) barEl.style.width = `${Math.max(0, Math.min(100, ensemble.median))}%`;
         }
       }
       models.forEach(m => {
@@ -1046,7 +1548,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       if (selected === 'all') {
         if (modelSummary.ensemble) {
           const e = modelSummary.ensemble;
-          pill.textContent = `Ortalama ${e.mean.toFixed(1)}% • Aralık ${e.min.toFixed(1)}–${e.max.toFixed(1)}%`;
+          pill.textContent = `Medyan ${e.median.toFixed(1)}% • P20–P80 ${e.low.toFixed(1)}–${e.high.toFixed(1)}%`;
         } else {
           pill.textContent = '—';
         }
@@ -1084,35 +1586,154 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
       let adjScale = coeff.adjustment_cap_scale ?? 0.1;
       if (Number.isFinite(coeff.k_global) && Number.isFinite(rawRainPpPerMm) && rawRainPpPerMm > 0) {
-        // k_global maps mm-balance to fill change; 0.6 is effective routing/operation damping.
-        const kScale = (coeff.k_global / rawRainPpPerMm) * 0.6;
+        // k_global maps mm-balance to fill change; 0.95 keeps scenario response visible while preserving operational damping.
+        const kScale = (coeff.k_global / rawRainPpPerMm) * 0.95;
         if (Number.isFinite(kScale) && kScale > 0) {
           adjScale = kScale;
         }
       }
-      return clamp(adjScale, 0.05, 0.14);
+      return clamp(adjScale, 0.07, 0.33);
     }
 
     const MODEL_COLORS = {
-      ridge: '#1f77b4',
-      gbr: '#ff7f0e',
-      hgb: '#2ca02c',
-      rf: '#9467bd',
-      etr: '#d62728'
+      ensemble_median: '#1f77b4',
+      xgb: '#ff7f0e',
+      lgb_dart: '#2ca02c',
+      stack: '#9467bd',
+      etr: '#d62728',
+      ridge: '#8c564b',
+      gbr: '#e377c2',
+      hgb: '#7f7f7f',
+      rf: '#bcbd22',
+      catboost: '#17becf',
+      svr: '#8c564b',
+      bayes_ridge: '#7f7f7f',
+      elasticnet: '#bcbd22',
+      huber: '#d62728',
+      gpr: '#9467bd',
+      ngboost: '#e377c2',
+      gbm_q50: '#2ca02c',
+      arimax: '#1f77b4',
+      budyko: '#8c564b',
+      thornthwaite: '#17becf',
     };
+
+    function getAvailableModelKeys() {
+      const allowed = new Set([
+        'ensemble_median', 'xgb', 'lgb_dart', 'stack',
+        'etr', 'ridge', 'gbr', 'hgb', 'rf',
+        'catboost', 'svr', 'bayes_ridge', 'elasticnet', 'huber', 'gpr', 'ngboost', 'gbm_q50',
+        'arimax', 'budyko', 'thornthwaite'
+      ]);
+      return Object.keys(modelData || {}).filter((k) => allowed.has(k) && (modelData[k] || []).some((d) => d.fill !== null && d.fill !== undefined));
+    }
+
+    function computeModelScenarioCalibration() {
+      const focus = new Set(['gbr', 'hgb', 'rf', 'etr']);
+      const available = getAvailableModelKeys();
+      const ridgeSeries = (modelData.ridge || []).filter((d) => d.date >= '2024-03-01' && Number.isFinite(d.fill));
+      const stdOfDelta = (series) => {
+        if (!series || series.length < 3) return null;
+        const deltas = [];
+        for (let i = 1; i < series.length; i += 1) {
+          const prev = Number(series[i - 1].fill);
+          const cur = Number(series[i].fill);
+          if (Number.isFinite(prev) && Number.isFinite(cur)) deltas.push(cur - prev);
+        }
+        if (deltas.length < 2) return null;
+        const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+        const variance = deltas.reduce((a, b) => a + ((b - mean) ** 2), 0) / Math.max(1, deltas.length - 1);
+        return Math.sqrt(Math.max(0, variance));
+      };
+      const ridgeStd = stdOfDelta(ridgeSeries) || 1.0;
+
+      modelScenarioFactor = {};
+      modelBaseBlend = {};
+      available.forEach((m) => {
+        modelScenarioFactor[m] = 1.0;
+        modelBaseBlend[m] = 0.0;
+      });
+
+      available.forEach((m) => {
+        if (!focus.has(m)) return;
+        const series = (modelData[m] || []).filter((d) => d.date >= '2024-03-01' && Number.isFinite(d.fill));
+        const std = stdOfDelta(series);
+        if (!Number.isFinite(std) || std <= 0) return;
+        const ratio = std / ridgeStd;
+        // Higher volatility than Ridge gets moderated; smoother series stay closer to 1.
+        modelScenarioFactor[m] = clamp(1 / Math.sqrt(Math.max(0.25, ratio)), 0.78, 1.12);
+        modelBaseBlend[m] = clamp((ratio - 1) * 0.20, 0.0, 0.28);
+      });
+    }
+
+    function syncSimModelSelect(preferred = 'ridge') {
+      const select = document.getElementById('sim-model');
+      if (!select) return 'all';
+      const available = getAvailableModelKeys();
+
+      const groups = Array.from(select.querySelectorAll('optgroup'));
+      groups.forEach((group) => {
+        let visibleCount = 0;
+        Array.from(group.querySelectorAll('option')).forEach((opt) => {
+          if (opt.value === 'all') {
+            opt.hidden = false;
+            opt.disabled = false;
+            visibleCount += 1;
+            return;
+          }
+          const hasData = available.includes(opt.value);
+          opt.hidden = !hasData;
+          opt.disabled = !hasData;
+          if (hasData) visibleCount += 1;
+        });
+        group.hidden = visibleCount === 0;
+      });
+
+      const fallback = available.includes(preferred) ? preferred : (available[0] || 'all');
+      if (select.value !== 'all' && !available.includes(select.value)) {
+        select.value = fallback;
+      }
+      return select.value || fallback;
+    }
 
     function getSeries(model, rain, et0, useM3, useGrowth) {
       const coeff = window.SIM_COEFFS || {};
-      const base = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
+      const baseRaw = (modelData[model] || []).filter(d => d.date >= '2024-03-01');
+      if (!baseRaw.length) return { base: [], adjusted: [] };
       const usageProfile = (window.USAGE_PROFILE && window.USAGE_PROFILE.profile) ? window.USAGE_PROFILE.profile : null;
+      const ridgeBase = model === 'ridge'
+        ? null
+        : (modelData.ridge || []).filter(d => d.date >= '2024-03-01');
+      const blendWeight = modelBaseBlend[model] ?? 0;
+      const blendWithRidge = (fill, idx) => {
+        const f = Number(fill);
+        if (!Number.isFinite(f)) return null;
+        if (!ridgeBase || !blendWeight) return f;
+        const ridgeFill = ridgeBase[idx] && Number.isFinite(ridgeBase[idx].fill) ? Number(ridgeBase[idx].fill) : null;
+        if (!Number.isFinite(ridgeFill)) return f;
+        return ((1 - blendWeight) * f) + (blendWeight * ridgeFill);
+      };
+      const hist = (modelData[model] || []).filter(d => d.date < '2024-03-01' && Number.isFinite(d.fill));
+      const anchorFill = hist.length ? Number(hist[hist.length - 1].fill) : null;
+      const firstBlended = blendWithRidge(baseRaw[0].fill, 0);
+      const anchorOffset = (Number.isFinite(anchorFill) && Number.isFinite(firstBlended))
+        ? (anchorFill - firstBlended)
+        : 0;
+      const base = baseRaw.map((d, i) => {
+        const blended = blendWithRidge(d.fill, i);
+        const f = Number.isFinite(blended) ? blended + anchorOffset : null;
+        return { date: d.date, fill: Number.isFinite(f) ? clamp(f, 0, 100) : null };
+      });
       const startDate = base[0] ? new Date(base[0].date) : null;
       const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
       const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
       const catchmentKm2 = reservoirRef && reservoirRef.total_catchment_km2 ? reservoirRef.total_catchment_km2 : 3150.0;
       const capacityMcm = reservoirRef && reservoirRef.total_active_capacity_mcm ? reservoirRef.total_active_capacity_mcm : 868.683;
       const runoffFallback = coeff.runoff_coeff ?? 0.35;
+      // Reservoir mass-balance should use reservoir withdrawal (baraj cekisi), not total city supply.
       const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
       let prevAdj = base[0] && base[0].fill !== null && base[0].fill !== undefined ? base[0].fill : 0;
+      const modelFactor = modelScenarioFactor[model] ?? 1.0;
       const adjusted = base.map((d, i) => {
         const curFill = d.fill !== null && d.fill !== undefined ? d.fill : prevAdj;
         if (i === 0) {
@@ -1131,16 +1752,25 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const seasonal = usageProfile ? usageProfile[m] * 12.0 : 1.0;
         const useMonthlyMcm = (useM3 * useScale) / 12.0 * seasonal;
         const baseUseMonthlySeasonal = baseUseMonthlyMcm * seasonal;
+        const useSensGain = coeff.use_sensitivity_gain ?? 1.0;
+        const useMonthlyScenario = baseUseMonthlySeasonal + (useMonthlyMcm - baseUseMonthlySeasonal) * useSensGain;
 
         const climate = getClimateRow(d.date);
         const precipBase = climate ? climate.precip_mm_month : 0;
         const et0Base = climate ? climate.et0_mm_month : 0;
-        const precipScen = precipBase * (1 + rain / 100);
-        const et0Scen = et0Base * (1 + et0 / 100);
+        const rainSensGain = coeff.rain_sensitivity_gain ?? 1.60;
+        const et0SensGain = coeff.et0_sensitivity_gain ?? 1.25;
+        const rainAdj = (rain / 100) * rainSensGain;
+        const et0Adj = (et0 / 100) * et0SensGain;
+        const et0EffectGain = coeff.et0_effect_gain ?? 1.0;
+        const et0AdjEff = et0Adj * et0EffectGain;
+
+        const precipScen = precipBase * (1 + rainAdj);
+        const et0Scen = et0Base * (1 + et0AdjEff);
 
         const runoffCoeff = getRunoffCoeff(m, runoffFallback);
-        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.30;
-        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * (et0 / 100)), 0.2, 1.5);
+        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.55;
+        const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * et0AdjEff), 0.0, 1.5);
         const inflowBase = runoffCoeff * precipBase * catchmentKm2 * 0.001;
         const inflowScen = runoffScen * precipScen * catchmentKm2 * 0.001;
         const lakeRainBase = precipBase * lakeAreaKm2 * 0.001;
@@ -1148,20 +1778,22 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const evapBase = et0Base * kc * lakeAreaKm2 * 0.001;
         const evapScen = et0Scen * kc * lakeAreaKm2 * 0.001;
 
-        const deltaMcm = (inflowScen + lakeRainScen - evapScen - useMonthlyMcm)
+        const deltaMcm = (inflowScen + lakeRainScen - evapScen - useMonthlyScenario)
           - (inflowBase + lakeRainBase - evapBase - baseUseMonthlySeasonal);
         const deltaPct = capacityMcm ? (deltaMcm / capacityMcm) * 100 : 0;
+        
+        // Use calibrated and bounded response so sliders stay physically interpretable.
         const adjScale = getScenarioAdjScale(m);
-        const capPp = coeff.scenario_delta_cap_pp ?? 1.0;
-        const dampingFloor = coeff.scenario_damping_floor ?? 0.25;
-        const offsetCapPp = coeff.scenario_offset_cap_pp ?? 20.0;
-        const offsetFloor = coeff.scenario_offset_damping_floor ?? 0.15;
-        const headroom = clamp(Math.min(prevAdj, 100 - prevAdj) / 50, 0, 1);
-        const dynamicDamping = dampingFloor + (1 - dampingFloor) * headroom;
+        const offsetCapPp = coeff.scenario_offset_cap_pp ?? 30.0;
+        const offsetFloor = coeff.scenario_offset_damping_floor ?? 0.25;
+        const deltaCapPp = coeff.scenario_delta_cap_pp ?? 4.2;
+        const responseGain = coeff.scenario_response_gain ?? 0.62;
+        
         const offsetFromBase = prevAdj - curFill;
         const offsetDamping = clamp(1 - Math.abs(offsetFromBase) / offsetCapPp, offsetFloor, 1);
-        const deltaAdjRaw = deltaPct * adjScale * dynamicDamping * offsetDamping;
-        const deltaAdj = clamp(deltaAdjRaw, -capPp, capPp);
+        
+        const deltaAdjRaw = deltaPct * adjScale * offsetDamping * responseGain * modelFactor;
+        const deltaAdj = clamp(deltaAdjRaw, -deltaCapPp, deltaCapPp);
 
         const next = clamp(prevAdj + baseDelta + deltaAdj, 0, 100);
         prevAdj = next;
@@ -1171,7 +1803,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     }
 
     function renderSim() {
-      const model = document.getElementById('sim-model').value;
+      const model = syncSimModelSelect('ridge');
       const rain = parseFloat(document.getElementById('sim-rain').value);
       const et0 = parseFloat(document.getElementById('sim-et0').value);
       const useM3 = parseFloat(document.getElementById('sim-use-m3').value);
@@ -1194,7 +1826,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
       document.getElementById('sim-rain-val').textContent = `${rain}%`;
       document.getElementById('sim-et0-val').textContent = `${et0}%`;
-      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³ (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
+      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³/yıl kullanım (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
       document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
       document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (kayıp payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
 
@@ -1242,13 +1874,19 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       });
 
       if (models.length) {
-        const m = models[0];
         window.__lastSeries = {
-          model: m,
-          sample: {
-            base: baseSeries[m][0]?.fill,
-            adjusted: adjSeries[m][0]?.fill,
-          }
+          selectedModel: model,
+          models,
+          baseSeries,
+          adjustedSeries: adjSeries,
+          summaryAdjustedSeries: summaryAdjSeries,
+          settings: {
+            rainPct: rain,
+            et0Pct: et0,
+            useMcmYear: useM3,
+            useGrowthPctPerYear: useGrowth * 100
+          },
+          generatedAt: new Date().toISOString()
         };
       }
 
@@ -1264,29 +1902,27 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           paths += `<path d=\"${adjPath}\" fill=\"none\" stroke=\"#d55e00\" stroke-width=\"2\" opacity=\"0.95\"/>`;
         });
       } else {
-        // Ensemble mean + min/max band for clarity
+        // Ensemble median + robust consensus band (P20-P80)
         const key = models[0];
         const series = adjSeries[key] || [];
-        const meanSeries = [];
-        const minSeries = [];
-        const maxSeries = [];
+        const medianSeries = [];
+        const lowSeries = [];
+        const highSeries = [];
         for (let i = 0; i < series.length; i++) {
           const vals = models.map(m => (adjSeries[m][i] ? adjSeries[m][i].fill : null)).filter(v => v !== null);
-          if (!vals.length) continue;
-          const mean = vals.reduce((a,b) => a+b, 0) / vals.length;
-          const min = Math.min(...vals);
-          const max = Math.max(...vals);
-          meanSeries.push({ date: series[i].date, fill: mean });
-          minSeries.push({ date: series[i].date, fill: min });
-          maxSeries.push({ date: series[i].date, fill: max });
+          const consensus = summarizeConsensus(vals, 0.20, 0.80);
+          if (!consensus) continue;
+          medianSeries.push({ date: series[i].date, fill: consensus.median });
+          lowSeries.push({ date: series[i].date, fill: consensus.low });
+          highSeries.push({ date: series[i].date, fill: consensus.high });
         }
-        const meanPath = linePath(meanSeries, width, height);
-        const minPath = linePath(minSeries, width, height);
-        const maxPath = linePath(maxSeries, width, height);
-        if (minPath && maxPath) {
-          paths += `<path d=\"${minPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
-          paths += `<path d=\"${maxPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
-          paths += `<path d=\"${meanPath}\" fill=\"none\" stroke=\"#0b2a3c\" stroke-width=\"2.6\" opacity=\"0.9\"/>`;
+        const medianPath = linePath(medianSeries, width, height);
+        const lowPath = linePath(lowSeries, width, height);
+        const highPath = linePath(highSeries, width, height);
+        if (lowPath && highPath) {
+          paths += `<path d=\"${lowPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
+          paths += `<path d=\"${highPath}\" fill=\"none\" stroke=\"#999\" stroke-width=\"1\" opacity=\"0.2\"/>`;
+          paths += `<path d=\"${medianPath}\" fill=\"none\" stroke=\"#0b2a3c\" stroke-width=\"2.6\" opacity=\"0.9\"/>`;
         }
       }
       if (!paths) {
@@ -1331,9 +1967,29 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const legend = document.getElementById('model-legend');
 
       if (model === 'all') {
-        legend.innerHTML = `<span class=\"dot\" style=\"background:#0b2a3c\"></span>Model Ortalaması <span class=\"dot\" style=\"background:#999\"></span>Model Aralığı`;
+        legend.innerHTML = `<span class=\"dot\" style=\"background:#0b2a3c\"></span>Model Medyanı <span class=\"dot\" style=\"background:#999\"></span>P20–P80 Bandı`;
       } else {
         legend.innerHTML = '';
+      }
+
+      if (models.length) {
+        const refSeries = baseSeries[models[0]] || [];
+        const idx = Math.max(0, refSeries.length - 1);
+        const bLast = refSeries[idx];
+        if (bLast) {
+          metricDate.textContent = bLast.date;
+          metricBase.textContent = `${bLast.fill.toFixed(1)}%`;
+          if (model === 'all') {
+            const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => Number.isFinite(v));
+            const consensus = summarizeConsensus(vals, 0.20, 0.80);
+            if (consensus) {
+              metricAdj.textContent = `${consensus.median.toFixed(1)}%`;
+            }
+          } else {
+            const aLast = (adjSeries[models[0]] || [])[idx];
+            if (aLast) metricAdj.textContent = `${aLast.fill.toFixed(1)}%`;
+          }
+        }
       }
 
       const onMove = (evt) => {
@@ -1368,10 +2024,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
           if (model === 'all') {
             const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => v !== undefined);
-            const mean = vals.reduce((x,y)=>x+y,0)/vals.length;
-            const min = Math.min(...vals);
-            const max = Math.max(...vals);
-            tooltipText = `${b.date} • Ortalama ${mean.toFixed(1)}% (Aralık ${min.toFixed(1)}–${max.toFixed(1)})`;
+            const consensus = summarizeConsensus(vals, 0.20, 0.80);
+            if (consensus) {
+              tooltipText = `${b.date} • Medyan ${consensus.median.toFixed(1)}% (P20–P80 ${consensus.low.toFixed(1)}–${consensus.high.toFixed(1)})`;
+            }
           } else {
             tooltipText = `${b.date} • ${a.fill.toFixed(1)}%`;
           }
@@ -1399,12 +2055,14 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      modelData = window.MODEL_DATA || {};
       const simModelSelect = document.getElementById('sim-model');
       if (simModelSelect) {
-        // Force Ridge as startup model to avoid browser restoring a previous selection.
+        // Ridge varsayılan: geçersiz/önceki seçimleri güvenli şekilde normalize et.
         simModelSelect.value = 'ridge';
       }
-      modelData = window.MODEL_DATA || {};
+      syncSimModelSelect('ridge');
+      computeModelScenarioCalibration();
       baseline = window.BASELINE || null;
       reservoirRef = window.RESERVOIR_REFERENCE || null;
       climateBaseline = window.CLIMATE_BASELINE || {};
@@ -1419,11 +2077,13 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const kcEl = document.getElementById('param-kc');
       const runoffEl = document.getElementById('param-runoff');
       const adjScaleEl = document.getElementById('param-adj-scale');
+      const responseGainEl = document.getElementById('param-response-gain');
       const deltaCapEl = document.getElementById('param-delta-cap');
       const meanRainEl = document.getElementById('param-mean-rain');
       const meanEt0El = document.getElementById('param-mean-et0');
       const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
       const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
+      // Runoff calibration is done against reservoir fill, so we use reservoir withdrawal baseline.
       const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
       const modelKeys = Object.keys(modelData || {});
       const refModelKey = modelData.etr ? 'etr' : (modelKeys.length ? modelKeys[0] : null);
@@ -1475,8 +2135,12 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const scale = getScenarioAdjScale(0);
         adjScaleEl.textContent = Number(scale).toFixed(3);
       }
+      if (responseGainEl) {
+        const gain = Number.isFinite(coeff.scenario_response_gain) ? coeff.scenario_response_gain : 0.62;
+        responseGainEl.textContent = Number(gain).toFixed(2);
+      }
       if (deltaCapEl) {
-        const capPp = coeff.scenario_delta_cap_pp ?? 1.0;
+        const capPp = coeff.scenario_delta_cap_pp ?? 4.2;
         deltaCapEl.textContent = Number(capPp).toFixed(2);
       }
       if (meanRainEl && climateClim && climateClim.length) {
@@ -1512,32 +2176,42 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         sourcesEl.textContent = 'Kaynaklar: iklim verisi (2010–2024 gözlem + 2026–2040 projeksiyon, 2025 klimatolojik dolgu) ve proje içi kullanım/alan verileri.';
       }
       if (usageTrend) {
-        const minPct = Math.round((usageTrend.yoy_p10 ?? -0.01) * 100 * 4) / 4;
-        const maxPct = Math.round((usageTrend.yoy_p90 ?? 0.04) * 100 * 4) / 4;
-        const baseTrend = usageTrend.yoy_median ?? usageTrend.cagr_2019_2023 ?? 0.02;
-        const defaultPct = Math.round((baseTrend * 100) * 4) / 4;
+        const histMinPct = Math.round((usageTrend.yoy_p10 ?? -0.01) * 100 * 4) / 4;
+        const histMaxPct = Math.round((usageTrend.yoy_p90 ?? 0.04) * 100 * 4) / 4;
+        const suggestedPct = Math.round(((usageTrend.cagr_2019_2023 ?? usageTrend.yoy_median ?? 0.01) * 100) * 4) / 4;
         const slider = document.getElementById('sim-use-growth');
-        slider.min = String(minPct);
-        slider.max = String(maxPct);
+        slider.min = String(Math.min(-2, histMinPct));
+        slider.max = String(Math.max(4, histMaxPct));
         slider.step = '0.25';
-        slider.value = String(defaultPct);
+        slider.value = '0';
         const rangeEl = document.getElementById('sim-use-range');
         if (rangeEl) {
-          rangeEl.textContent = `Trend aralığı: ${usageTrend.year_min}–${usageTrend.year_max} (tam yıl), önerilen ${defaultPct.toFixed(2)}%/yıl`;
+          rangeEl.textContent = `Kullanım artışı için tarihsel bant (p10–p90): ${histMinPct.toFixed(2)}%–${histMaxPct.toFixed(2)}%/yıl. Referans büyüme (CAGR 2019–2023): ${suggestedPct.toFixed(2)}%/yıl. Varsayılan senaryo: 0.00% (nötr).`;
         }
       }
       if (usageProfile) {
         const seasonEl = document.getElementById('sim-use-season');
         if (seasonEl) {
-          seasonEl.textContent = `Mevsimsellik: ${usageProfile.year_min}–${usageProfile.year_max} aylık dağılım`;
+          const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+          const profile = Array.isArray(usageProfile.profile) ? usageProfile.profile : [];
+          let maxIdx = 0;
+          let minIdx = 0;
+          profile.forEach((v, i) => {
+            if ((profile[maxIdx] ?? 0) < v) maxIdx = i;
+            if ((profile[minIdx] ?? 1e9) > v) minIdx = i;
+          });
+          const maxPct = profile[maxIdx] ? (profile[maxIdx] * 100).toFixed(1) : '—';
+          const minPct = profile[minIdx] ? (profile[minIdx] * 100).toFixed(1) : '—';
+          seasonEl.textContent = `Mevsimsel dağılım (${usageProfile.year_min}–${usageProfile.year_max}): en yüksek ${months[maxIdx]} (%${maxPct}), en düşük ${months[minIdx]} (%${minPct}).`;
         }
       }
       if (baseline) {
         const capMcm = reservoirRef ? reservoirRef.total_active_capacity_mcm : null;
         const totalSupply = baseline.total_supply_2023_m3 || null;
-        document.getElementById('sim-use-m3').value = Math.round(baseline.usage_baraj_m3 / 1e6);
+        // Scenario slider represents annual reservoir withdrawal (baraj cekisi).
+        document.getElementById('sim-use-m3').value = Math.round((baseline.usage_baraj_m3) / 1e6);
         document.getElementById('base-evap-m3').textContent = `${Math.round(baseline.evap_total_m3/1e6)} milyon m³`;
-        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³`;
+        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³ (baraj çekişi) · şehir toplamı ${Math.round((baseline.total_supply_2023_m3||baseline.usage_baraj_m3)/1e6)} milyon m³`;
         if (capMcm) {
           document.getElementById('base-capacity').textContent = `${capMcm.toFixed(1)}`;
           const evapCapPct = (baseline.evap_total_m3 / (capMcm * 1e6)) * 100;
@@ -1563,9 +2237,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const denomNote = 'Yüzde ifadeleri farklı paydalara göre verilir (buharlaşma: aktif kapasite, kullanım: toplam arz).';
         document.getElementById('base-note').textContent = [baseline.notes || '', denomNote].filter(Boolean).join(' ');
       } else {
-        document.getElementById('sim-use-m3').value = 250;
+        document.getElementById('sim-use-m3').value = 275;
       }
       buildModelSummary();
+      renderAcademicOutlook();
       renderSim();
     });
 
@@ -1650,5 +2325,6 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       lightboxImg.src = '';
     });
   </script>
+
 </body>
 </html>

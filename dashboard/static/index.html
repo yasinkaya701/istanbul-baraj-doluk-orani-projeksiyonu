@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hackhaton Model Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-title">
+        <p class="eyebrow">Resmi Sunum Arayüzü</p>
+        <h1>İklim Tahmin Model Suite - Yönetim Paneli</h1>
+      </div>
+      <div class="topbar-actions">
+        <a href="/anomaly-news" class="btn btn-secondary btn-link">Anomali Haber Explorer</a>
+        <span id="presentationBadge" class="mode-badge">Sunum Modu Pasif</span>
+        <button id="presentationModeBtn" class="btn btn-secondary">Sunum Modu</button>
+        <button id="presentationFocusNextBtn" class="btn btn-secondary">Sonraki Odak</button>
+        <button id="presentationAutoBtn" class="btn btn-secondary">Oto Baslat</button>
+        <label class="interval-label" for="presentationIntervalSelect">Sure</label>
+        <select id="presentationIntervalSelect" class="interval-select">
+          <option value="5">5 sn</option>
+          <option value="8" selected>8 sn</option>
+          <option value="12">12 sn</option>
+        </select>
+        <span id="presentationAutoStatus" class="mode-badge">Otomatik Pasif</span>
+        <button id="refreshBtn" class="btn btn-secondary">Veriyi Yenile</button>
+      </div>
+    </header>
+    <div id="presentationProgressTrack" class="deck-progress-track">
+      <div id="presentationProgressFill" class="deck-progress-fill"></div>
+    </div>
+
+    <div class="layout">
+      <aside class="panel sidebar" id="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Koşu Arşivi</p>
+          <h2>Model Çalıştırma Geçmişi</h2>
+        </div>
+        <p class="sidebar-sub">Resmi raporlamaya uygun tek ekran görünümü.</p>
+        <div class="sidebar-tools">
+          <label class="search-label" for="runSearchInput">Koşu Ara</label>
+          <input id="runSearchInput" class="run-search" type="search" placeholder="run id, model veya durum ara" />
+          <div class="filter-chips" id="runFilterChips">
+            <button class="filter-chip active" type="button" data-filter="all">Tümü</button>
+            <button class="filter-chip" type="button" data-filter="suite">Suite</button>
+            <button class="filter-chip" type="button" data-filter="health">Sağlık</button>
+            <button class="filter-chip" type="button" data-filter="artifact">Artifact</button>
+          </div>
+          <div id="runArchiveStats" class="archive-stats"></div>
+        </div>
+        <div id="runList" class="run-list"></div>
+      </aside>
+
+      <main class="content">
+        <section class="panel hero">
+          <div>
+            <p class="eyebrow">Seçili Sunum Paketi</p>
+            <h2 id="runTitle">Yükleniyor</h2>
+            <p id="runMeta" class="muted"></p>
+          </div>
+          <div class="hero-right">
+            <p class="hero-datetime">Rapor Tarihi</p>
+            <p id="reportDate" class="hero-date"></p>
+          </div>
+        </section>
+
+        <section id="commandCenterSection" class="panel command-center">
+          <div class="command-center-head">
+            <div>
+              <p class="eyebrow">Operasyon Katmanı</p>
+              <h3>Komuta Özeti</h3>
+            </div>
+            <p id="commandCenterStatus" class="command-status">Run seçiliyor</p>
+          </div>
+          <div id="heroMetrics" class="hero-metrics"></div>
+          <div class="command-center-grid">
+            <article class="command-pane">
+              <p class="pane-title">Hızlı Bölüm Geçişi</p>
+              <div id="sectionNav" class="section-nav"></div>
+            </article>
+            <article class="command-pane">
+              <p class="pane-title">Seçili Koşu Pulse</p>
+              <div id="runPulse" class="run-pulse"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="summaryCardsSection" class="cards"></section>
+
+        <section id="liveQuantSection" class="panel">
+          <div class="feature-detail-head">
+            <h3>Canlı Quant (Gerçek Veri)</h3>
+            <button id="liveQuantRefreshBtn" class="btn btn-secondary">Canlı Yenile</button>
+          </div>
+          <p id="liveQuantMeta" class="muted"></p>
+          <div id="liveQuantCards" class="cards"></div>
+          <div id="liveQuantGallery" class="feature-gallery"></div>
+        </section>
+
+        <section id="visualBoardSection" class="panel">
+          <h3>Karar Görselleştirme Panosu</h3>
+          <div class="visual-wrap">
+            <div id="visualGaugeGrid" class="gauge-grid"></div>
+
+            <article class="visual-card">
+              <p class="visual-title">Sağlık Durum Dağılımı</p>
+              <div id="visualHealthStack" class="stack-bar"></div>
+            </article>
+
+            <article class="visual-card">
+              <p class="visual-title">En Riskli Modeller (Future Mean RR)</p>
+              <div id="visualRiskBars" class="risk-bars"></div>
+            </article>
+
+            <article class="visual-card">
+              <p class="visual-title">Model Durum Matrisi</p>
+              <div id="visualModelMatrix" class="model-matrix"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="integrationSection" class="panel executive">
+          <h3>Entegrasyon Durumu</h3>
+          <ul id="integrationList" class="executive-list"></ul>
+        </section>
+
+        <section id="executiveSection" class="panel executive">
+          <h3>Yönetici Özeti</h3>
+          <ul id="executiveList" class="executive-list"></ul>
+        </section>
+
+        <section id="presentationNoteSection" class="panel">
+          <h3>Resmi Sunum Notu</h3>
+          <div class="command-wrap">
+            <div class="note-actions">
+              <button id="presentationCopyBtn" class="btn btn-secondary">Notu Kopyala</button>
+              <button id="presentationDownloadPdfBtn" class="btn btn-secondary">PDF İndir</button>
+              <button id="presentationDownloadTxtBtn" class="btn btn-secondary">TXT İndir</button>
+              <button id="presentationDownloadMdBtn" class="btn btn-secondary">MD İndir</button>
+              <button id="presentationDownloadJsonBtn" class="btn btn-secondary">JSON İndir</button>
+              <button id="presentationDownloadPackBtn" class="btn btn-secondary">Sunum Paketi ZIP</button>
+            </div>
+            <pre id="presentationNote" class="command-box note-box"></pre>
+          </div>
+        </section>
+
+        <section id="presentationChartsSection" class="panel">
+          <h3>Sunum Grafik Seti</h3>
+          <div class="command-wrap">
+            <div class="mode-switch" id="presentationModeSwitch">
+              <button id="presentationModeBalancedBtn" class="mode-btn active" type="button">Dengeli</button>
+              <button id="presentationModeHealthBtn" class="mode-btn" type="button">Sağlık Odaklı</button>
+              <button id="presentationModePerformanceBtn" class="mode-btn" type="button">Performans Odaklı</button>
+            </div>
+            <div class="note-actions">
+              <button id="presentationChartsPackBtn" class="btn btn-secondary">Grafik ZIP İndir</button>
+            </div>
+            <p id="presentationAssetsMeta" class="muted"></p>
+            <div id="presentationAssetsGallery" class="feature-gallery"></div>
+          </div>
+        </section>
+
+        <section id="healthSection" class="panel">
+          <h3>İnsan Sağlığı Etki Özeti</h3>
+          <div id="healthSummaryCards" class="cards"></div>
+          <div class="table-wrap">
+            <table id="healthTable">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Durum</th>
+                  <th>Future Mean RR</th>
+                  <th>Future Mean HI (C)</th>
+                  <th>High-Risk Share</th>
+                  <th>Not</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="resultSection" class="panel">
+          <h3>Model Sonuçları</h3>
+          <div class="table-wrap">
+            <table id="resultTable">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Durum</th>
+                  <th>Return Code</th>
+                  <th>Çıktı Klasörü</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="technicalSection" class="panel">
+          <h3>Teknik Notlar</h3>
+          <div id="logSection" class="log-grid"></div>
+        </section>
+
+        <section id="commandSection" class="panel">
+          <h3>Tam Kapsam Çalıştırma Komutu</h3>
+          <div class="command-wrap">
+            <div class="note-actions">
+              <button id="fullRunCopyBtn" class="btn btn-secondary">Komutu Kopyala</button>
+            </div>
+            <pre id="fullRunCommand" class="command-box"></pre>
+          </div>
+        </section>
+
+        <section id="coverageSection" class="panel">
+          <h3>Tüm Modellerin Durumu</h3>
+          <div id="modelCoverage" class="model-grid"></div>
+        </section>
+
+        <section id="inventorySection" class="panel">
+          <h3>Tüm Feature Envanteri</h3>
+          <div id="featureInventory" class="feature-grid"></div>
+        </section>
+
+        <section id="featureDetailSection" class="panel">
+          <h3>Feature Detayı</h3>
+          <div class="feature-detail-head">
+            <p id="featureTitle" class="muted"></p>
+          </div>
+          <div id="featureDetail" class="feature-detail"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

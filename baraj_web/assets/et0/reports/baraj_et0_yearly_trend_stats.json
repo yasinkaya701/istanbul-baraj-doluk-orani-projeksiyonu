@@ -1,0 +1,12 @@
+{
+  "year_start": 2010.0,
+  "year_end": 2024.0,
+  "n_years": 15.0,
+  "mean_et0_mm_year": 1097.6366666666665,
+  "trend_mm_per_year": 2.453857142857135,
+  "trend_mm_per_decade": 24.538571428571352,
+  "r_squared": 0.06954730600146447,
+  "p_value": 0.3422501102677794,
+  "min_et0_mm_year": 1044.1,
+  "max_et0_mm_year": 1160.93
+}
