@@ -169,8 +169,8 @@ def build_features(df: pd.DataFrame, drop_cols: list[str]) -> pd.DataFrame:
     return out
 
 
-def split_window(df, train_end, test_start, test_end):
-    train = df[df["date"] <= train_end].copy()
+def split_window(df, train_start, train_end, test_start, test_end):
+    train = df[(df["date"] >= train_start) & (df["date"] <= train_end)].copy()
     test = df[(df["date"] >= test_start) & (df["date"] <= test_end)].copy()
     return train, test
 
@@ -257,22 +257,26 @@ def main():
     test5_start = (end_date - pd.DateOffset(months=59)).normalize()
     test5_end = end_date
     train5_end = (test5_start - pd.DateOffset(months=1)).normalize()
+    train5_start = (train5_end - pd.DateOffset(months=59)).normalize()
 
     test10_start = (end_date - pd.DateOffset(months=119)).normalize()
     test10_end = end_date
     train10_end = (test10_start - pd.DateOffset(months=1)).normalize()
+    train10_start = (train10_end - pd.DateOffset(months=119)).normalize()
 
     windows = {
-        "5y": (train5_end, test5_start, test5_end),
-        "10y": (train10_end, test10_start, test10_end),
+        "5y": (train5_start, train5_end, test5_start, test5_end),
+        "10y": (train10_start, train10_end, test10_start, test10_end),
     }
 
     models = model_catalog()
     rows = []
     per_model = {name: {} for name in models.keys()}
 
-    for wlabel, (train_end, test_start, test_end) in windows.items():
-        train, test = split_window(feat, train_end, test_start, test_end)
+    for wlabel, (train_start, train_end, test_start, test_end) in windows.items():
+        train, test = split_window(feat, train_start, train_end, test_start, test_end)
+        if train.empty or test.empty:
+            continue
         X_train = train.drop(columns=["date", "fill_pct"]).values
         y_train = train["fill_pct"].values
         X_test = test.drop(columns=["date", "fill_pct"]).values
@@ -282,10 +286,15 @@ def main():
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             metrics = eval_metrics(y_test, y_pred)
-            rows.append({"model": name, "window": f"{test_start.date()} -> {test_end.date()}", **metrics})
+            rows.append({
+                "model": name,
+                "train_window": f"{train_start.date()} -> {train_end.date()}",
+                "window": f"{test_start.date()} -> {test_end.date()}",
+                **metrics,
+            })
 
             per_model[name][wlabel] = (
-                f"{test_start.date()} -> {test_end.date()}",
+                f"Test: {test_start.date()} -> {test_end.date()} | Egitim: {train_start.date()} -> {train_end.date()}",
                 test["date"].values,
                 y_test,
                 y_pred,
