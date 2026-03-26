@@ -924,7 +924,7 @@
             <div class="assumptions">
               <p><strong>Not:</strong> ET0 etkisi iki kanaldan işlenir: açık su buharlaşması artar ve havza etkin akış katsayısı bir miktar düşer.</p>
               <p><strong>Not:</strong> Yağış ve ET0 etkileri havza/göl alanı üzerinden hacme çevrilir; senaryo farkı baz projeksiyona eklenir.</p>
-              <p><strong>Not:</strong> Kayıp payı yüzdeleri <em>kullanım+buharlaşma toplamı</em> içindir; kartlarda ayrıca aktif kapasiteye göre yıllık oran da verilir.</p>
+              <p><strong>Not:</strong> Pay yüzdeleri iki ayrı paydaya göre verilir: <em>şehir toplam arzı</em> ve <em>su dengesi çıkışı (kullanım+buharlaşma)</em>.</p>
             </div>
           </div>
         </div>
@@ -941,8 +941,8 @@
         <div class="card">
           <h4>Gerçek Hesap (2023)</h4>
           <ul>
-            <li>Buharlaşma: <strong id="base-evap-m3">—</strong> (<span id="base-evap-cap">—</span> aktif kapasite, <span id="base-evap-loss">—</span> toplam kayıp)</li>
-            <li>Kullanım: <strong id="base-use-m3">—</strong> (<span id="base-use-total">—</span> toplam arz, <span id="base-use-loss">—</span> toplam kayıp)</li>
+            <li>Buharlaşma: <strong id="base-evap-m3">—</strong> (<span id="base-evap-cap">—</span> aktif kapasite, <span id="base-evap-loss">—</span> su dengesi çıkışı payı)</li>
+            <li>Kullanım: <strong id="base-use-m3">—</strong> (<span id="base-use-total">—</span> şehir toplam arzı payı, <span id="base-use-loss">—</span> su dengesi çıkışı payı)</li>
             <li>Aktif kapasite: <strong id="base-capacity">—</strong> milyon m³</li>
             <li>Toplam baraj alanı: <strong id="base-area">—</strong> km²</li>
           </ul>
@@ -1822,13 +1822,17 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const evap = evapM3 / totalM3;
       const useCapPct = capacityMcm ? (useM3 / capacityMcm) * 100 : null;
       const evapCapPct = capacityMcm ? (evapM3 / capacityMcm) * 100 : null;
+      const totalSupplyMcm = (baseline && Number.isFinite(baseline.total_supply_2023_m3))
+        ? (baseline.total_supply_2023_m3 / 1e6)
+        : null;
+      const useSupplyPct = totalSupplyMcm ? (useM3 / totalSupplyMcm) * 100 : null;
       // use & evap already normalized by totalM3
 
       document.getElementById('sim-rain-val').textContent = `${rain}%`;
       document.getElementById('sim-et0-val').textContent = `${et0}%`;
-      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³/yıl kullanım (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
+      document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³/yıl kullanım (şehir arzı payı ${useSupplyPct !== null ? useSupplyPct.toFixed(1) : '—'}% · su dengesi çıkışı payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
       document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
-      document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (kayıp payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
+      document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (su dengesi çıkışı payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
 
       const allModels = Object.keys(modelData || {});
       const rawModels = model === 'all' ? allModels : [model];
@@ -2211,7 +2215,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         // Scenario slider represents annual reservoir withdrawal (baraj cekisi).
         document.getElementById('sim-use-m3').value = Math.round((baseline.usage_baraj_m3) / 1e6);
         document.getElementById('base-evap-m3').textContent = `${Math.round(baseline.evap_total_m3/1e6)} milyon m³`;
-        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³ (baraj çekişi) · şehir toplamı ${Math.round((baseline.total_supply_2023_m3||baseline.usage_baraj_m3)/1e6)} milyon m³`;
+        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³ (baraj çekişi, simülasyon girdisi) · şehir toplamı ${Math.round((baseline.total_supply_2023_m3||baseline.usage_baraj_m3)/1e6)} milyon m³ (bağlam)`;
         if (capMcm) {
           document.getElementById('base-capacity').textContent = `${capMcm.toFixed(1)}`;
           const evapCapPct = (baseline.evap_total_m3 / (capMcm * 1e6)) * 100;
@@ -2234,7 +2238,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           useLossEl.textContent = useLossPct !== null ? `${useLossPct.toFixed(1)}%` : '—';
         }
         document.getElementById('base-area').textContent = `${baseline.area_km2_total.toFixed(2)}`;
-        const denomNote = 'Yüzde ifadeleri farklı paydalara göre verilir (buharlaşma: aktif kapasite, kullanım: toplam arz).';
+        const totalSupplyMcm = totalSupply ? Math.round(totalSupply / 1e6) : null;
+        const denomNote = `Yüzde payları iki ayrı paydaya göre verilir: şehir toplam arzı${totalSupplyMcm ? ` (${totalSupplyMcm} milyon m³)` : ''} ve su dengesi çıkışı (kullanım+buharlaşma). Simülasyonda kullanım girdisi baraj çekişidir.`;
         document.getElementById('base-note').textContent = [baseline.notes || '', denomNote].filter(Boolean).join(' ');
       } else {
         document.getElementById('sim-use-m3').value = 275;
