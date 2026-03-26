@@ -1,114 +1,92 @@
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C6FF,50:3F51B5,100:F7971E&height=180&section=header&text=Hackhaton&fontSize=54&fontColor=FFFFFF&animation=twinkling" />
-  <h3>Su, iklim ve baraj analitiği çalışma alanı</h3>
-  <p>Araştırma, modelleme ve karar destek panelleri bir arada.</p>
-  <p><strong>Not:</strong> Bu çalışma Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü Hackhatonu için yapılmıştır.</p>
-  <p>
-    <img src="https://img.shields.io/badge/Odak-Climate%20%26%20Water-00BCD4" />
-    <img src="https://img.shields.io/badge/Stack-Python%20%2B%20JS-1E88E5" />
-    <img src="https://img.shields.io/badge/Çıktılar-Reports%20%26%20Charts-F4511E" />
-    <img src="https://img.shields.io/badge/Data-Ignored%20in%20Git-8E24AA" />
-  </p>
-</div>
+# İstanbul Baraj Doluluk ve İklim Etki Analizi
 
----
+Bu depo, İstanbul baraj doluluk dinamiklerini iklim sürücüleri, buharlaşma (ET0), kullanım baskısı ve model projeksiyonları ile birlikte inceleyen hackathon/proje çalışma alanıdır.
 
-## Hızlı harita
+Bu çalışma, Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü hackathon bağlamında geliştirilmiştir.
+
+## Canlı Site
+- Ana yayın: [https://yasinkaya701.github.io/istanbul-baraj-web/](https://yasinkaya701.github.io/istanbul-baraj-web/)
+- Elmalı sayfası: [https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html](https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html)
+
+## Kurumsal Kaynak Ayrımı
+- Operasyonel baraj/doluluk ve su arzı verileri: **İSKİ** ve **İBB Açık Veri Portalı**.
+- İklim ve ET0 sürücü serileri: Kandilli odağında derlenmiş ve proje akışında standardize edilmiş iklim zaman serileri.
+- Bu ayrım, model çıktılarının kaynak güvenilirliği ve akademik izlenebilirliği için korunur.
+
+## Proje Kapsamı
+- Baraj doluluk projeksiyonları (2000–2040 zaman ufku)
+- ET0 tabanlı buharlaşma etkisi (FAO-56 Penman-Monteith referans çerçevesi)
+- Kullanım/kayıp etkilerinin senaryo tabanlı simülasyonu
+- Çoklu model karşılaştırmaları (temel modeller + gelişmiş modeller)
+- Elmalı özelinde ayrı model ve simülasyon ekranı
+
+## Dizin Yapısı
 ```text
 Hackhaton/
-|-- dashboard/                      # Paneller için frontend + server
-|-- scripts/                        # Modelleme, veri hazırlama ve analiz akışları
-|-- research/                       # Araştırma hub, loglar ve template'ler
-|-- baraj_web/                      # Statik web sunumu
-|-- external/ArtikongrafConverter/  # Harici araç (entegre)
-|-- index.html                      # Legacy web sunumu (kök)
-|-- assets/                         # Legacy web sunumu asset'leri
-|-- styles.css                      # Legacy web sunumu stil dosyası
-|-- netlify.toml                    # Legacy web sunumu deploy ayarı
-|-- hackhaton_model_kartlari_2026_03_18/  # Model kartları (görsel)
-|-- hackhaton_projection_2040_2026_03_18/ # Projeksiyon görselleri
-|-- ADVERSARIAL_TEST/               # Test görüntüleri (git dışı)
-|-- DESKTOP_PROCESSING/             # Yerel işleme çıktıları (git dışı)
-|-- DATA/                           # Yerel veri setleri (git dışı)
-|-- new data/                       # Yerel veri setleri (git dışı)
-|-- output/                         # Üretilen çıktılar (git dışı)
-|-- tmp/                            # Geçici dosyalar (git dışı)
-|-- baraj_web/assets/data/          # Üretilen veri (git dışı)
+|-- index.html                      # Ana arayüz (kök)
+|-- baraj_web/                      # Yayınlanan web dosyaları
+|-- assets/                         # Kök arayüz için JS/CSS/görsel varlıklar
+|-- scripts/                        # Veri hazırlama, kalibrasyon, üretim scriptleri
+|-- dashboard/                      # Dashboard bileşenleri
+|-- research/                       # Araştırma notları ve çalışma dokümanları
+|-- references.html                 # Web kaynakça sayfası
+|-- REFERENCES.md                   # Detaylı kaynak listesi
+|-- output/                         # Yerel üretim çıktıları (git dışı)
+|-- DATA/                           # Ham veri klasörü (git dışı)
+|-- new data/                       # Ham/ara veri klasörü (git dışı)
 ```
 
-## İçerik özeti
-- Baraj doluluk, ET0 ve iklim sinyalleri için uçtan uca modelleme scriptleri
-- Karar destek dashboard'ları
-- Log, template ve sentez notları ile araştırma hub yapısı
-- Model kartları ve projeksiyon görselleri
+## Temel Model Seti
+- Ridge (simülasyonda varsayılan referans model)
+- GBR (Gradient Boosting Regressor)
+- HGB (HistGradientBoosting Regressor)
+- RF (Random Forest Regressor)
+- ETR (Extra Trees Regressor)
 
-## Modeller ve yöntemler (özet)
-- ET0 hesaplama: FAO-56 Penman-Monteith yaklaşımı, günlük/aylık/yıllık paketler
-- Gözetimli ML modelleri: Ridge, Random Forest (RF), Gradient Boosting (GBR), HistGradientBoosting (HGB), ExtraTrees (ETR)
-- Ensemble ve konsensus paketleri: farklı model ailelerinden stabil birleşimler
-- Su dengesi ve senaryo simülasyonları: iklim, kullanım ve buharlaşma etkileri ile hacim tabanlı güncelleme
-- Olasılıksal yaklaşım: quantile tabanlı tahminler ve belirsizlik bantları
-- Güven aralığı kalibrasyon adımları: doğruluk ve belirsizlik aralığı iyileştirme
-- Validasyon ve stres testleri: holdout, walk-forward, senaryo testleri
+Not: Model ailesi genişletmeleri ve ensemble çıktıları arayüzde ayrıca sunulur.
 
-## Web sunumu
-- Tercih edilen sunum: `baraj_web/index.html`
-- Legacy sunum (kök dizin): `index.html`
-- Basit statik sunucu için:
-```bash
-cd baraj_web
-python -m http.server 8000
-```
-Sonra `http://localhost:8000`.
+## Simülasyon Çekirdeği (Özet)
+- Aylık su dengesi mantığı kullanılır.
+- Senaryo girdileri: yağış değişimi, ET0 değişimi, yıllık kullanım ve kullanım trendi.
+- Etkiler kapasite ve kalibrasyon katsayıları ile sınırlandırılarak uygulanır.
+- Amaç tek nokta tahmin değil; karşılaştırmalı karar desteğidir.
 
-## Rapor ve ET0 yeniden üretim
-### PDF raporlar
-```bash
-python scripts/build_istanbul_current_status_pdf.py
-python scripts/build_istanbul_current_status_detailed_pdf.py
-python scripts/build_hackathon_final_pdf_report.py
-```
+## Veri Politikası (Kritik)
+Bu repoda ham veri setleri tutulmaz.
 
-### ET0 paket (iklim paneli)
-ET0 aylık serisi `assets/data/climate_baseline.js` üzerinden okunur. Özet ve grafik paketi için:
-```bash
-python scripts/build_baraj_et0_panel_package.py
-```
-
-## Veri notu
-Veri setleri bilerek git dışında tutulur. Yerel verileri şu dizinlere koy:
+Git dışında tutulanlar:
 - `DATA/`
 - `new data/`
-- `baraj_web/assets/data/`
+- `output/`
+- `tmp/`
+- büyük dosya tipleri (`*.csv`, `*.xlsx`, `*.parquet`, `*.pkl`, vb.)
 
-Yaygın veri formatları (ör. `*.csv`, `*.parquet`, `*.xlsx`, `*.pkl`) `.gitignore` ile dışarıda tutulur.
+Repoda tutulanlar:
+- Arayüzde kullanılan türetilmiş JS veri payload dosyaları (`assets/data/*.js`, `baraj_web/assets/data/*.js`)
 
-## Kaynakça (özet)
-- İBB Açık Veri API (CKAN): [data.ibb.gov.tr](https://data.ibb.gov.tr/api/3/action/datastore_search)
-- İSKİ su kaynakları (baraj havzaları): [iski.istanbul](https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari)
-- İSKİ baraj doluluk: [iski.istanbul/baraj-doluluk](https://iski.istanbul/baraj-doluluk)
-- İSKİ su kaynakları: [iski.istanbul/su-kaynaklari](https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari)
-- İSKİ su birim fiyatları: [iski.istanbul/su-birim-fiyatlari](https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/)
-- İSKİ su kayıpları raporları: [iski.istanbul/su-kayiplari](https://iski.istanbul/kurumsal/stratejik-yonetim/su-kayiplari-yillik-raporlari/)
-- FAO-56 Penman-Monteith (PDF): [fao56.pdf](https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf)
-- FAO Penman-Monteith notu: [fao.org](https://www.fao.org/4/X0490E/x0490e06.htm)
-- WMO Guide (WMO-No.8): [wmo.int](https://wmo.int/guide-instruments-and-methods-of-observation-wmo-no-8-0)
-- Open-Meteo Historical Weather API: [open-meteo.com](https://open-meteo.com/en/docs/historical-weather-api)
-- NOAA NAO indeks serisi: [cpc.ncep.noaa.gov](https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii)
-- HEC USACE Penman-Monteith yöntemi: [hec.usace.army.mil](https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/evaporation-and-transpiration/penman-monteith-method)
-- 2023 su kullanımı haber kaynağı: [aa.com.tr](https://www.aa.com.tr/tr/gundem/istanbulda-gecen-yil-1-milyar-117-milyon-64-bin-116-metrekup-su-kullanildi/3104905)
-- Forecasting: Principles and Practice (FPP3): [otexts.com/fpp3](https://otexts.com/fpp3/)
-- Detaylı ve tam bağlantı listesi: [REFERENCES.md](REFERENCES.md)
+## Lokal Çalıştırma
+```bash
+cd /Users/yasinkaya/Hackhaton/baraj_web
+python3 -m http.server 8000
+```
+Sonra tarayıcıdan `http://localhost:8000` adresini açın.
 
-## Repo notu
-- Önceki alt repolar birleştirildi. Eski git metadata yedekleri yerel olarak `.git_backup/` altında saklanır ve git dışındadır.
+## Sık Kullanılan Güncelleme Komutları
+```bash
+cd /Users/yasinkaya/Hackhaton
+python3 scripts/update_sim_inputs.py
+```
+Bu akış, kullanım trendi/profili, simülasyon katsayıları ve temel denge verilerini günceller.
 
-## Konvansiyonlar
-- Büyük binary ve üretilen çıktıları git dışında tut
-- Yeni pipeline'lar için `scripts/` altına kısa not ekle
+## Dağıtım Notu
+- `main`: geliştirme ve içerik güncellemeleri
+- `gh-pages`: canlı yayın branch'i
 
----
+Sadece dokümantasyon (`README.md`) değişiklikleri, tek başına web uygulamasının çalışma mantığını değiştirmez.
 
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=0:3F51B5,100:00C6FF&height=16&section=footer" />
-</div>
+## Kaynaklar
+- Web kaynakça: [`references.html`](references.html)
+- Detaylı kaynakça: [`REFERENCES.md`](REFERENCES.md)
+
+## Lisans ve Kullanım
+Bu depo eğitim, araştırma ve hackathon sunum amaçlıdır. Kurumsal/operasyonel kararlar için resmi kurum yayınları ve güncel doğrulama ile birlikte değerlendirilmelidir.
