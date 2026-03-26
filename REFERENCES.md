@@ -16,8 +16,7 @@ Durum kodu notu:
 - [İSKİ API — Son 10 Yıl Toplam Verilen Su (v2)](https://iskiapi.iski.istanbul/api/iski/baraj/icmeSuyuAritma/sonOnyildaVerilenToplamSu/v2) — `403` (erişim kısıtlı olabilir)
 
 ## 2) İklim ve Hidroloji Kaynakları
-- [Open‑Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api) — `200`
-- [Open‑Meteo Archive Endpoint](https://archive-api.open-meteo.com/v1/archive) — `200`
+- [Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü (Boğaziçi Üniversitesi)](https://www.koeri.boun.edu.tr/) — `200`
 - [NOAA CPC — NAO Aylık İndeks Serisi](https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii) — `200`
 - [FAO‑56 Crop Evapotranspiration (PDF)](https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf) — `200`
 - [FAO Penman‑Monteith Yöntem Notu](https://www.fao.org/4/X0490E/x0490e06.htm) — `200`
