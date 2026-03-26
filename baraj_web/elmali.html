@@ -1331,9 +1331,9 @@ const ELMALI_SCENARIO_GAIN = (() => {
   if (!Number.isFinite(med)) return 1.05;
   return hardClamp(0.95 + (med / 9), 1.0, 1.55);
 })();
-const ELMALI_ET0_RUNOFF_BETA = 0.42;
-const ELMALI_RAIN_SENS_GAIN = 1.65;
-const ELMALI_ET0_SENS_GAIN = 1.75;
+const ELMALI_ET0_RUNOFF_BETA = 0.48;
+const ELMALI_RAIN_SENS_GAIN = 1.45;
+const ELMALI_ET0_SENS_GAIN = 1.25;
 const SIM_START_UTC = new Date(Date.UTC(2026, 2, 1)); // 2026-03-01
 
 const MONTHLY_USE_WEIGHTS_RAW = (MONTHLY_USE_M3 || []).map((v) => Number(v) || 0);
@@ -2044,8 +2044,8 @@ function renderSim() {
   const useShare = useM3 / totalLoss;
   const evapShare = evapM3 / totalLoss;
 
-  document.getElementById('sim-rain-val').textContent = `${rain.toFixed(0)}%`;
-  document.getElementById('sim-et0-val').textContent = `${et0.toFixed(0)}%`;
+  document.getElementById('sim-rain-val').textContent = `${rain.toFixed(0)}% (katsayı ×${ELMALI_RAIN_SENS_GAIN.toFixed(2)})`;
+  document.getElementById('sim-et0-val').textContent = `${et0.toFixed(0)}% (katsayı ×${ELMALI_ET0_SENS_GAIN.toFixed(2)})`;
   document.getElementById('sim-use-m3-val').textContent = `${useM3.toFixed(2)} milyon m³/yıl kullanım (kayıp payı ${(useShare * 100).toFixed(1)}%)`;
   document.getElementById('sim-use-growth-val').textContent = `${(useGrowth * 100).toFixed(1)}% / yıl`;
   document.getElementById('sim-evap-m3-val').textContent = `${evapM3.toFixed(2)} milyon m³/yıl (kayıp payı ${(evapShare * 100).toFixed(1)}%)`;
