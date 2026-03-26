@@ -397,7 +397,7 @@
             <li><strong>Matematiksel Motor:</strong> Dışsal değişkenlere (sıcaklık, nem) ve geçmişin gecikmeli kopyalarına dayanır. Hareketli Ortalamalar (Moving Average) ve Entegre (I) fark denklemleri yardımıyla veri yığınlarındaki gürültüyü ayrıştırır.</li>
             <li><strong>Simülasyon Karakteristiği:</strong> Verinin "zamanla olan yapısal ilişkisi" üzerinden projeksiyon yapar. Makine öğrenmesi harmanlaması yerine saf trendi gösterir ve <em>Stochastic Residuals (Fraktal Gürültü)</em> ile iklim volatilitesini geleceğe taşır. Yüksek yaz/kış genliğine sahiptir.</li>
           </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Ani iklim şokları, mevsimsel anomali kırılmaları ve seri bağımlılığı birlikte değerlendirilirken öncelikli modeldir.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Ani iklim şokları, mevsimsel sapma kırılmaları ve seri bağımlılığı birlikte değerlendirilirken öncelikli modeldir.</p>
         </div>
 
         <div class="card">
@@ -435,7 +435,7 @@
             <li><strong>Matematiksel Motor:</strong> 2007, 2014 ve 2023 yıllarındaki şiddetli İstanbul kuraklıklarının modelli saptırmasına izin vermez. Mutlak Hata ve Karesel Hata arasında bir eşik kurarak aykırı şokları sönümler.</li>
             <li><strong>Simülasyon Karakteristiği:</strong> Ekstrem şokların merkez eğilimi bozmasını sınırlar; ana trend hattını daha dayanıklı ve dengeli biçimde korur.</li>
           </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> İklim verisindeki aşırı anomali değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> İklim verisindeki aşırı sapma değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
         </div>
 
         <div class="card">
@@ -558,7 +558,7 @@
 
     <section id="gemini-modeller">
       <h2>Gelişmiş Model Kataloğu (Sürüm 4 — 17 Model)</h2>
-      <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim sürümüdür. Bu bölümdeki terimler sade karşılıklarıyla: <strong>logit</strong> (doluluğu 0–100 aralığında tutan dönüşüm), <strong>anomali</strong> (mevsim normalinden sapma), <strong>fizik</strong> (su dengesi kısıtları), <strong>konformal</strong> (belirsizlik aralığı kalibrasyonu).</p>
+      <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim sürümüdür; tüm modeller aynı veri hazırlama, eğitim ve doğrulama protokolüyle üretilmiştir.</p>
 
       <div class="card" style="border-left: 5px solid var(--accent); background-color: rgba(67, 97, 238, 0.05); margin-bottom: 30px;">
         <h3 style="color: var(--accent); margin-top: 5px; margin-bottom: 15px;">📍 Kullanım Rehberi: Hangi Modele, Hangi Durumda Bakılmalı?</h3>
@@ -567,7 +567,7 @@
           <li><strong>Ortalama ve En Gerçekçi Gelecek Beklentisi:</strong> <span style="color: var(--accent); font-weight: bold;">ENSEMBLE_MEDIAN</span> veya <span style="font-weight: bold;">STACKING</span>. Aşırı senaryoları törpüler, en güvenli rotayı çizer.</li>
           <li><strong>En Kötü Senaryo (Şiddetli Kuraklık / Kriz) Analizi:</strong> <span style="color: #d90429; font-weight: bold;">QuantileGBM-10</span> (kesin kötümser), <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Su seviyesinin diplere vurma ihtimalini görmek için bakılmalıdır.</li>
           <li><strong>Uzun Vadeli Stabil Trend (Yönsüz):</strong> <span style="color: #2b9348; font-weight: bold;">Ridge</span>, <span style="font-weight: bold;">BayesianRidge</span> veya <span style="font-weight: bold;">ElasticNet</span>. Geçmiş su tüketim ivmesinin, gürültüden arındırılmış saf lineer gidişatını izlemek için yararlıdır.</li>
-          <li><strong>Ani İklim Şokları ve Mevsimsel Kırılmalar:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Beklenmedik dalgalanmaları ve hidrolojik anomalileri simüle etmek için kritiktir.</li>
+          <li><strong>Ani İklim Şokları ve Mevsimsel Kırılmalar:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Beklenmedik dalgalanmaları ve hidrolojik sapmaları simüle etmek için kritiktir.</li>
           <li><strong>Doğal Varyans (Tahminden Ziyade Desen):</strong> <span style="font-weight: bold;">RF (Random Forest)</span>, <span style="font-weight: bold;">ETR</span> veya <span style="font-weight: bold;">GBM_Q50</span>.</li>
         </ul>
       </div>
@@ -817,7 +817,7 @@
             <li>CV Pearson: <strong>0.734</strong> &middot; RMSE: <strong>40.48</strong>&thinsp;pp</li>
             <li>ε=1.20 — aşırı değerlere dayanıklı robust regresyon</li>
           </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim verisindeki aşırı anomali değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> İklim verisindeki aşırı sapma değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
           <img class="zoomable" src="assets/v3/huber_v3_projection.png?v=20260322" alt="Huber v3"/>
         </div>
       </div>

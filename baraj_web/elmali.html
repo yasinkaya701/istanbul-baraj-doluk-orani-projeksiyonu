@@ -583,7 +583,6 @@
     <h3>Aylık Ortalama Doluluk Oranı (%)</h3>
     <div class="legend-row">
       <span><span class="leg-dot" style="background:#1765a3;"></span>Doluluk %</span>
-      <span><span class="leg-dot" style="background:#0b2a3c; border-radius:0; height:3px; width:18px;"></span>12 Aylık Ortalama</span>
       <span><span class="leg-dot" style="background:#d65a3a; border-radius:0; height:3px; width:18px;"></span>Kritik (%20)</span>
       <span><span class="leg-dot" style="background:#f4b942; border-radius:0; height:3px; width:18px;"></span>Düşük (%40)</span>
       <span><span class="leg-dot" style="background:#2b9348; border-radius:0; height:3px; width:18px;"></span>Güvenli (%80)</span>
@@ -991,15 +990,6 @@ const YEARLY_INTERCEPT = Number.isFinite(Number(ELMALI_STATS.trend_intercept))
   ? Number(ELMALI_STATS.trend_intercept)
   : 1374.4;
 
-function movingAverage(values, win = 12) {
-  return values.map((_, i) => {
-    const a = Math.max(0, i - win + 1);
-    const part = values.slice(a, i + 1).filter((v) => Number.isFinite(v));
-    if (!part.length) return null;
-    return part.reduce((s, v) => s + v, 0) / part.length;
-  });
-}
-
 function toYYYYMM(dateStr) {
   if (!dateStr) return '';
   return String(dateStr).slice(0, 7);
@@ -1046,14 +1036,12 @@ const COLOR_SUN    = '#f4b942';
   const labels = MONTHLY_SERIES.map((d) => toYYYYMM(d.date));
   const data = MONTHLY_SERIES.map((d) => d.fill_avg_pct);
   const colors = data.map((v) => (v < 25 ? COLOR_ACCENT : v < 50 ? COLOR_SUN : v > 80 ? COLOR_OK : COLOR_SEA));
-  const ma12 = movingAverage(data, 12).map((v) => (v === null ? null : Number(v.toFixed(2))));
   new Chart(document.getElementById('chartTarihsel'),{
     type:'line',
     data:{
       labels,
       datasets:[
-        {label:'Aylık Ort. Doluluk %',data,borderColor:COLOR_SEA,backgroundColor:hexToRgba(COLOR_SEA,0.12),pointBackgroundColor:colors,pointRadius:1.7,pointHoverRadius:4,borderWidth:1.8,fill:true,tension:0.2,order:2},
-        {label:'12 Aylık Ortalama',data:ma12,type:'line',borderColor:COLOR_DEEP,borderWidth:2.1,borderDash:[6,3],pointRadius:0,fill:false,order:1}
+        {label:'Aylık Ort. Doluluk %',data,borderColor:COLOR_SEA,backgroundColor:hexToRgba(COLOR_SEA,0.12),pointBackgroundColor:colors,pointRadius:1.7,pointHoverRadius:4,borderWidth:1.8,fill:true,tension:0.2,order:2}
       ]
     },
     options:{
@@ -2531,7 +2519,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const galleryVersion = '20260326-4';
+  const galleryVersion = '20260326-5';
   const modal = document.getElementById('img-modal');
   const modalImg = document.getElementById('img-modal-image');
   const modalCap = document.getElementById('img-modal-caption');
