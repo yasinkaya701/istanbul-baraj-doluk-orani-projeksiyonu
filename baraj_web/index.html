@@ -1776,8 +1776,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const climate = getClimateRow(d.date);
         const precipBase = climate ? climate.precip_mm_month : 0;
         const et0Base = climate ? climate.et0_mm_month : 0;
-        const rainSensGain = coeff.rain_sensitivity_gain ?? 1.70;
-        const et0SensGain = coeff.et0_sensitivity_gain ?? 1.80;
+        const rainSensGain = coeff.rain_sensitivity_gain ?? 1.60;
+        const et0SensGain = coeff.et0_sensitivity_gain ?? 1.25;
         const rainAdj = (rain / 100) * rainSensGain;
         const et0Adj = (et0 / 100) * et0SensGain;
 
@@ -1785,7 +1785,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         const et0Scen = et0Base * (1 + et0Adj);
 
         const runoffCoeff = getRunoffCoeff(m, runoffFallback);
-        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.62;
+        const et0RunoffBeta = coeff.et0_runoff_beta ?? 0.55;
         const runoffScen = clamp(runoffCoeff * (1 - et0RunoffBeta * et0Adj), 0.0, 1.5);
         const inflowBase = runoffCoeff * precipBase * catchmentKm2 * 0.001;
         const inflowScen = runoffScen * precipScen * catchmentKm2 * 0.001;
@@ -1840,8 +1840,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const evapCapPct = capacityMcm ? (evapM3 / capacityMcm) * 100 : null;
       // use & evap already normalized by totalM3
 
-      document.getElementById('sim-rain-val').textContent = `${rain}%`;
-      document.getElementById('sim-et0-val').textContent = `${et0}%`;
+      const rainSensGainUi = coeffData.rain_sensitivity_gain ?? 1.60;
+      const et0SensGainUi = coeffData.et0_sensitivity_gain ?? 1.25;
+      document.getElementById('sim-rain-val').textContent = `${rain}% (katsayı ×${Number(rainSensGainUi).toFixed(2)})`;
+      document.getElementById('sim-et0-val').textContent = `${et0}% (katsayı ×${Number(et0SensGainUi).toFixed(2)})`;
       document.getElementById('sim-use-m3-val').textContent = `${Math.round(useM3)} milyon m³/yıl kullanım (kayıp payı ${(use * 100).toFixed(1)}% · aktif kapasite ${useCapPct !== null ? useCapPct.toFixed(1) : '—'}%/yıl)`;
       document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
       document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (kayıp payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
