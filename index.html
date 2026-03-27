@@ -501,7 +501,7 @@
             <div class="panel-text">
               <h3>HGB (HistGradient Boosting)</h3>
               <p><strong>Kategori:</strong> Temel Model (Gelişmiş Ansambl)</p>
-              <p><strong>Çalışma Mantığı:</strong> Kesintisiz verileri histogramlaştırarak işleyen, aykırı uçlara karşı olağanüstü dayanıklı LightGBM tarzı hiper optimize edilmiş scikit-learn modelidir.</p>
+              <p><strong>Çalışma Mantığı:</strong> Sürekli veriyi histogram kutularına dönüştürerek öğrenen, aykırı değerlere daha dayanıklı ve hesaplama açısından verimli bir gradyan artırma yaklaşımıdır.</p>
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Eksik veya sınırlı senaryo girdilerinde dayanıklı performans gerektiren değerlendirmeler için uygundur.</p>
             </div>
             <div class="panel-media">
@@ -519,7 +519,7 @@
             <div class="panel-text">
               <h3>RF (Random Forest)</h3>
               <p><strong>Kategori:</strong> Temel Model (Bagging Ağaç)</p>
-              <p><strong>Çalışma Mantığı:</strong> Rastgele seçilmiş özellik kesitleriyle oluşturulmuş yüzlerce ağacın senkronize karar vermesi sonucu elde edilen "düşük varyans" algoritmasıdır.</p>
+              <p><strong>Çalışma Mantığı:</strong> Rastgele seçilmiş örneklem ve özellik alt kümeleriyle eğitilen çok sayıda ağacın ortalamasını alarak düşük varyanslı tahmin üreten bir topluluk modelidir.</p>
               <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Aşırı dalgalanmayı sınırlayan orta bant senaryolarının izlenmesi için kullanılır.</p>
             </div>
             <div class="panel-media">
@@ -538,7 +538,7 @@
               <h3>ETR (Extremely Randomized Trees)</h3>
               <p><strong>Kategori:</strong> Temel Model (İleri Seviye Bagging)</p>
               <p><strong>Çalışma Mantığı:</strong> RF'in maksimum rastgeleleştirilmiş versiyonudur. Karar ağacı düğümlerini spesifik bir eşiğe bağlamadan rastgele kırparak aşırı öğrenmeyi engeller.</p>
-              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç modellerde görülen erken düzleşme eğilimini azaltan, yüksek genelleme kabiliyetine sahip referans ansambl modelidir.</p>
+              <p><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç tabanlı modellerde erken düzleşme eğilimini azaltan, yüksek genelleme kapasitesine sahip referans topluluk modelidir.</p>
             </div>
             <div class="panel-media">
               <img class="media-wide zoomable" src="assets/img/etr_projection_2000_2040.png?v=20260326-9" alt="ETR 2000-2040" />
@@ -723,7 +723,7 @@
             <li>CV Pearson: <strong>0.792</strong></li>
             <li>CV RMSE: <strong>40.11</strong>&thinsp;pp &middot; MAPE: <strong>87.1%</strong></li>
           </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç modellerde görülen erken düzleşme eğilimini azaltan, yüksek genelleme kabiliyetine sahip referans ansambl modelidir.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Ağaç tabanlı modellerde erken düzleşme eğilimini azaltan, yüksek genelleme kapasitesine sahip referans topluluk modelidir.</p>
           <img class="zoomable" src="assets/v3/etr_v3_projection.png?v=20260326-7" alt="ETR v3"/>
         </div>
         <div class="card">

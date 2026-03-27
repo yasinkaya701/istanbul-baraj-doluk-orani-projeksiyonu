@@ -19,6 +19,14 @@ Bu depo, İstanbul baraj sisteminde doluluk dinamiklerini iklim sürücüleri (y
 - Temel model ailesi (Ridge, GBR, HGB, RF, ETR) + gelişmiş karşılaştırma modelleri
 - Elmalı Barajı için ayrı modelleme ve simülasyon katmanı
 
+## Öne Çıkan Tahmin Sonuçları
+- Çapraz doğrulama (Purged Walk-Forward, 3 yıl) sonuçlarında en yüksek korelasyon: **XGBoost (r=0.839)**.
+- Aynı tabloda en düşük RMSE değeri: **XGBoost (RMSE=39.33 puan)**.
+- Düşük varyanslı lineer referans: **RidgeCV (r=0.685, RMSE=40.12 puan)**.
+- Toplulaştırma yaklaşımı (**Stacking** ve **Ensemble Median**) tekil model yanlılığını azaltmak için karar notlarında temel referans olarak kullanılır.
+
+Not: Bu metrikler model karşılaştırma panelindeki güncel sonuçlardan türetilmiştir ve yeni veri güncellemesiyle birlikte yenilenir.
+
 ## Kurumsal Veri Kaynakları
 - Operasyonel baraj/doluluk ve su arzı verileri: **İSKİ** ve **İBB Açık Veri Portalı**
 - İklim/ET0 sürücüleri: Proje akışında standardize edilen iklim serileri (Kandilli odaklı çalışma çerçevesi)
