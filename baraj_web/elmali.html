@@ -832,7 +832,7 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
 <!-- MODEL KATALOĞU -->
 <section id="modeller" class="sec">
   <h2 class="sec-title">Elmalı İçin İklim Regresyon Modelleri</h2>
-  <p class="note" style="margin-bottom:10px;">Model seçimini standartlaştırmak için mekanizma, grafik karakteri ve kullanım bağlamı tek matriste verildi. Simülasyon paneli bu listedeki tüm modellerle birebir entegredir.</p>
+  <p class="note" style="margin-bottom:10px;">Model seçimini standartlaştırmak için mekanizma, grafik karakteri, kullanım bağlamı ve doğruluk oranı tek matriste verildi. Simülasyon paneli bu listedeki tüm modellerle birebir entegredir.</p>
   <p class="note" style="margin-bottom:24px;"><strong>V4</strong> model adı değil; aynı veri işleme, aynı özellik mühendisliği ve aynı doğrulama protokolüyle üretilen güncel sürüm etiketidir.</p>
 
   <div class="chart-card">
@@ -1275,6 +1275,26 @@ const MODEL_USAGE_GUIDE = {
   thornthwaite: { mechanism: 'Sıcaklık temelli ET yaklaşımı', behavior: 'Kurak dönemde düşüşü belirginleştirir', use: 'Basit fiziksel kontrol senaryosu' },
   stack: { mechanism: 'Meta-öğrenici ile model birleştirme', behavior: 'Tekil model yanlılığını yumuşatır', use: 'Kompozit karar modeli' },
   ensemble: { mechanism: 'Model medyanı ile birleştirme', behavior: 'Uç değer etkisini bastıran merkezi hat', use: 'Nihai karar desteği için önerilen referans' }
+};
+const MODEL_ACCURACY_GUIDE = {
+  ridge: '%68.5',
+  elasticnet: '%67.9',
+  bayesridge: '%68.8',
+  huber: '%73.4',
+  rf: 'CV rapor dışı',
+  etr: '%79.2',
+  gbr: 'CV rapor dışı',
+  hgb: 'CV rapor dışı',
+  lgb: '%79.8',
+  catboost: '%79.2',
+  svr: '%76.4',
+  ngboost: '%68.5',
+  gpr: '%71.1',
+  arimax: '%69.6',
+  budyko: 'CV dışı (fizik)',
+  thornthwaite: 'CV dışı (fizik)',
+  stack: 'CV rapor dışı',
+  ensemble: 'CV rapor dışı',
 };
 
 const hardClamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -1725,6 +1745,7 @@ function renderModelUsageTable() {
         <td>${g.mechanism}</td>
         <td>${g.behavior}</td>
         <td>${g.use}</td>
+        <td>${MODEL_ACCURACY_GUIDE[k] || 'CV rapor dışı'}</td>
       </tr>`;
     })
     .join('');
@@ -1735,6 +1756,7 @@ function renderModelUsageTable() {
         <th>Mekanizma</th>
         <th>Grafik Karakteri</th>
         <th>Kullanım Bağlamı</th>
+        <th>Doğruluk Oranı</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>

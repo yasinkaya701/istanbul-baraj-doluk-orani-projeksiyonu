@@ -268,7 +268,7 @@
       <h2>Modellerin Kullanım Rehberi</h2>
       <p class="note">Mekanizma, grafik karakteri ve kullanım bağlamını tek tabloda topladık. Böylece model seçiminde hızlı ve tutarlı karar verebilirsiniz.</p>
       <div class="card table-wrap">
-        <p class="note" style="margin-top:0;">Tablo, model yorumunu standartlaştırır: <strong>Mekanizma</strong> modelin matematiksel çekirdeğini, <strong>Grafik Karakteri</strong> eğri davranışını, <strong>Kullanım Bağlamı</strong> karar notlarında hangi soruya daha uygun olduğunu özetler.</p>
+        <p class="note" style="margin-top:0;">Tablo, model yorumunu standartlaştırır: <strong>Mekanizma</strong> modelin matematiksel çekirdeğini, <strong>Grafik Karakteri</strong> eğri davranışını, <strong>Kullanım Bağlamı</strong> karar notlarında hangi soruya daha uygun olduğunu, <strong>Doğruluk Oranı</strong> ise çapraz doğrulamadaki Pearson uyum yüzdesini özetler.</p>
         <table class="model-guide-table">
           <thead>
             <tr>
@@ -276,32 +276,33 @@
               <th>Mekanizma</th>
               <th>Grafik Karakteri</th>
               <th>Kullanım Bağlamı</th>
+              <th>Doğruluk Oranı</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>Ridge</td><td>L2 düzenlemeli doğrusal temel model</td><td>Düzgün, düşük varyanslı, stabil</td><td>Temel referans trend</td></tr>
-            <tr><td>GBR</td><td>Ardışık hata azaltan boosting</td><td>Kırılım noktalarına duyarlı</td><td>Rejim değişimi analizi</td></tr>
-            <tr><td>HGB</td><td>Histogram tabanlı boosting</td><td>Dengeli ve hızlı tepki</td><td>Büyük veri ve hızlı değerlendirme</td></tr>
-            <tr><td>RF</td><td>Bagging tabanlı ağaç topluluğu</td><td>Orta senaryolarda yumuşak</td><td>Robust genel tahmin</td></tr>
-            <tr><td>ETR</td><td>Ekstra rastgeleleştirilmiş ağaçlar</td><td>Daha pürüzsüz, daha temkinli</td><td>Gürültüye dayanıklı öngörü</td></tr>
-            <tr><td>XGBoost</td><td>Düzenlileştirmeli gradient boosting</td><td>Şoklara yüksek duyarlılık</td><td>Kuraklık stres testleri</td></tr>
-            <tr><td>LightGBM DART</td><td>Dropout destekli leaf-wise boosting</td><td>Keskin ama kontrollü</td><td>Yüksek doğruluk / düşük gecikme</td></tr>
-            <tr><td>CatBoost</td><td>Simetrik ağaç + hedef sızıntı kontrolü</td><td>Dengeli, stabil, genellenebilir</td><td>Karma veri yapıları</td></tr>
-            <tr><td>SVR (RBF)</td><td>Çekirdek tabanlı marjinal regresyon</td><td>Kıvrımlı, doğrusal olmayan</td><td>Non-lineer ilişki yakalama</td></tr>
-            <tr><td>NGBoost</td><td>Olasılık dağılımı öğrenen boosting</td><td>Belirsizlik bandı üreten</td><td>Risk odaklı karar desteği</td></tr>
-            <tr><td>GPR</td><td>Gaussian süreç regresyonu</td><td>Yumuşak ve sürekli</td><td>Belirsizlikli kısa/orta vade</td></tr>
-            <tr><td>ARIMAX</td><td>Zaman serisi + dışsal değişken</td><td>Mevsimsellik ve otokorelasyon odaklı</td><td>Saf seri davranışı karşılaştırması</td></tr>
-                        <tr><td>GBM Quantile %50</td><td>Medyan kuantil boosting</td><td>Merkez rejim çizgisi</td><td>Nötr referans senaryo</td></tr>
-            <tr><td>Bayesian Ridge</td><td>Bayesçi doğrusal katsayı tahmini</td><td>Daha temkinli, olasılıksal</td><td>Parametre belirsizliği analizi</td></tr>
-            <tr><td>ElasticNet</td><td>L1+L2 birlikte düzenleme</td><td>Sadeleştirilmiş, dengeli</td><td>Özellik seçimi ve stabilite</td></tr>
-            <tr><td>Huber</td><td>Aykırı değerlere dayanıklı kayıp</td><td>Ekstrem noktalarda stabil</td><td>Outlier baskın dönemler</td></tr>
-            <tr><td>Budyko</td><td>Su-enerji denge yaklaşımı</td><td>Fiziksel tutarlılık odaklı</td><td>Uzun dönem hidrolojik referans</td></tr>
-            <tr><td>Thornthwaite</td><td>Sıcaklık temelli su dengesi</td><td>Kurak dönemde belirgin düşüş</td><td>Klasik iklim-su kıyaslaması</td></tr>
-                        <tr><td>Stacking</td><td>Meta-öğrenici ile model birleştirme</td><td>Tekil model sapmasını azaltan</td><td>Genel performans optimizasyonu</td></tr>
-            <tr><td>Ensemble Median</td><td>Model medyanı ile konsensüs</td><td>Uç değerlere dirençli</td><td>Karar notlarında birincil referans</td></tr>
+            <tr><td>Ridge</td><td>L2 düzenlemeli doğrusal temel model</td><td>Düzgün, düşük varyanslı, stabil</td><td>Temel referans trend</td><td>%68.5</td></tr>
+            <tr><td>GBR</td><td>Ardışık hata azaltan boosting</td><td>Kırılım noktalarına duyarlı</td><td>Rejim değişimi analizi</td><td>CV rapor dışı</td></tr>
+            <tr><td>HGB</td><td>Histogram tabanlı boosting</td><td>Dengeli ve hızlı tepki</td><td>Büyük veri ve hızlı değerlendirme</td><td>CV rapor dışı</td></tr>
+            <tr><td>RF</td><td>Bagging tabanlı ağaç topluluğu</td><td>Orta senaryolarda yumuşak</td><td>Robust genel tahmin</td><td>CV rapor dışı</td></tr>
+            <tr><td>ETR</td><td>Ekstra rastgeleleştirilmiş ağaçlar</td><td>Daha pürüzsüz, daha temkinli</td><td>Gürültüye dayanıklı öngörü</td><td>%79.2</td></tr>
+            <tr><td>XGBoost</td><td>Düzenlileştirmeli gradient boosting</td><td>Şoklara yüksek duyarlılık</td><td>Kuraklık stres testleri</td><td>%83.9</td></tr>
+            <tr><td>LightGBM DART</td><td>Dropout destekli leaf-wise boosting</td><td>Keskin ama kontrollü</td><td>Yüksek doğruluk / düşük gecikme</td><td>%79.8</td></tr>
+            <tr><td>CatBoost</td><td>Simetrik ağaç + hedef sızıntı kontrolü</td><td>Dengeli, stabil, genellenebilir</td><td>Karma veri yapıları</td><td>%79.2</td></tr>
+            <tr><td>SVR (RBF)</td><td>Çekirdek tabanlı marjinal regresyon</td><td>Kıvrımlı, doğrusal olmayan</td><td>Non-lineer ilişki yakalama</td><td>%76.4</td></tr>
+            <tr><td>NGBoost</td><td>Olasılık dağılımı öğrenen boosting</td><td>Belirsizlik bandı üreten</td><td>Risk odaklı karar desteği</td><td>%68.5</td></tr>
+            <tr><td>GPR</td><td>Gaussian süreç regresyonu</td><td>Yumuşak ve sürekli</td><td>Belirsizlikli kısa/orta vade</td><td>%71.1</td></tr>
+            <tr><td>ARIMAX</td><td>Zaman serisi + dışsal değişken</td><td>Mevsimsellik ve otokorelasyon odaklı</td><td>Saf seri davranışı karşılaştırması</td><td>%69.6</td></tr>
+                        <tr><td>GBM Quantile %50</td><td>Medyan kuantil boosting</td><td>Merkez rejim çizgisi</td><td>Nötr referans senaryo</td><td>%78.3</td></tr>
+            <tr><td>Bayesian Ridge</td><td>Bayesçi doğrusal katsayı tahmini</td><td>Daha temkinli, olasılıksal</td><td>Parametre belirsizliği analizi</td><td>%68.8</td></tr>
+            <tr><td>ElasticNet</td><td>L1+L2 birlikte düzenleme</td><td>Sadeleştirilmiş, dengeli</td><td>Özellik seçimi ve stabilite</td><td>%67.9</td></tr>
+            <tr><td>Huber</td><td>Aykırı değerlere dayanıklı kayıp</td><td>Ekstrem noktalarda stabil</td><td>Outlier baskın dönemler</td><td>%73.4</td></tr>
+            <tr><td>Budyko</td><td>Su-enerji denge yaklaşımı</td><td>Fiziksel tutarlılık odaklı</td><td>Uzun dönem hidrolojik referans</td><td>CV dışı (fizik)</td></tr>
+            <tr><td>Thornthwaite</td><td>Sıcaklık temelli su dengesi</td><td>Kurak dönemde belirgin düşüş</td><td>Klasik iklim-su kıyaslaması</td><td>CV dışı (fizik)</td></tr>
+                        <tr><td>Stacking</td><td>Meta-öğrenici ile model birleştirme</td><td>Tekil model sapmasını azaltan</td><td>Genel performans optimizasyonu</td><td>CV rapor dışı</td></tr>
+            <tr><td>Ensemble Median</td><td>Model medyanı ile konsensüs</td><td>Uç değerlere dirençli</td><td>Karar notlarında birincil referans</td><td>CV rapor dışı</td></tr>
           </tbody>
         </table>
-        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (Budyko/ARIMAX).</p>
+        <p class="note">Öneri: Karar notlarında tek model yerine en az üç model sınıfını birlikte verin: lineer referans (Ridge), ağaç/boosting (GBR-HGB-RF-ETR ailesi) ve fizik/seri tabanlı kontrol (Budyko/ARIMAX). Doğruluk oranı sütunu, CV Pearson r değerinin yüzde karşılığıdır; CV raporunda yer almayan modeller için açıklayıcı not gösterilir.</p>
       </div>
     </section>
 
@@ -806,7 +807,7 @@
         </div>
       </div>
       <div class="card" style="margin-top:14px;">
-        <h3>Çapraz Doğrulama Karşılaştırma Grafiği</h3>
+        <h3>Çapraz Doğrulama Karşılaştırma Grafiği (Modellerin farklı eğitim/test bölmelerindeki performans kıyası)</h3>
         <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260326-7" alt="V3 CV comparison"/>
         <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı; model sonuçları birlikte değerlendirilmelidir.</p>
       </div>
