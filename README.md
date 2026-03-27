@@ -1,92 +1,76 @@
-# İstanbul Baraj Doluluk ve İklim Etki Analizi
+# İstanbul Baraj Doluluk Tahmini
+## Kandilli Rasathanesi & Boğaziçi Üniversitesi Bilgisayar Mühendisliği Hackathon Projesi
 
-Bu depo, İstanbul baraj doluluk dinamiklerini iklim sürücüleri, buharlaşma (ET0), kullanım baskısı ve model projeksiyonları ile birlikte inceleyen hackathon/proje çalışma alanıdır.
+Bu depo, İstanbul baraj sisteminde doluluk dinamiklerini iklim sürücüleri (yağış, ET0), kullanım baskısı ve çoklu model yaklaşımıyla analiz etmek için hazırlanmış hackathon odaklı bir karar-destek çalışmasıdır. İçerik, teknik jüri ve alan uzmanları tarafından incelenebilecek akademik/teknik sunum standardında düzenlenmiştir.
 
-Bu çalışma, Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü hackathon bağlamında geliştirilmiştir.
+## Canlı Yayın
+- Ana sayfa: [İstanbul Baraj Projeksiyonu](https://yasinkaya701.github.io/istanbul-baraj-web/)
+- Elmalı alt modülü: [Elmalı Barajı Sayfası](https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html)
 
-## Canlı Site
-- Ana yayın: [https://yasinkaya701.github.io/istanbul-baraj-web/](https://yasinkaya701.github.io/istanbul-baraj-web/)
-- Elmalı sayfası: [https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html](https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html)
+## Hackathon Bağlamı
+- Proje türü: Uygulamalı hidro-iklim modelleme ve karar desteği
+- Kurumsal bağlam: Kandilli Rasathanesi ve Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü hackathonu
+- Hedef: 2040 ufkunda belirsizlik bandı ile birlikte açıklanabilir doluluk projeksiyonu üretmek
 
-## Kurumsal Kaynak Ayrımı
-- Operasyonel baraj/doluluk ve su arzı verileri: **İSKİ** ve **İBB Açık Veri Portalı**.
-- İklim ve ET0 sürücü serileri: Kandilli odağında derlenmiş ve proje akışında standardize edilmiş iklim zaman serileri.
-- Bu ayrım, model çıktılarının kaynak güvenilirliği ve akademik izlenebilirliği için korunur.
-
-## Proje Kapsamı
-- Baraj doluluk projeksiyonları (2000–2040 zaman ufku)
+## Kapsam
+- 2000–2040 zaman ufkunda baraj doluluk projeksiyonları
 - ET0 tabanlı buharlaşma etkisi (FAO-56 Penman-Monteith referans çerçevesi)
-- Kullanım/kayıp etkilerinin senaryo tabanlı simülasyonu
-- Çoklu model karşılaştırmaları (temel modeller + gelişmiş modeller)
-- Elmalı özelinde ayrı model ve simülasyon ekranı
+- Kullanım etkisi ve kullanım artışı senaryolarının simülasyon motoruna entegrasyonu
+- Temel model ailesi (Ridge, GBR, HGB, RF, ETR) + gelişmiş karşılaştırma modelleri
+- Elmalı Barajı için ayrı modelleme ve simülasyon katmanı
 
-## Dizin Yapısı
-```text
-Hackhaton/
-|-- index.html                      # Ana arayüz (kök)
-|-- baraj_web/                      # Yayınlanan web dosyaları
-|-- assets/                         # Kök arayüz için JS/CSS/görsel varlıklar
-|-- scripts/                        # Veri hazırlama, kalibrasyon, üretim scriptleri
-|-- dashboard/                      # Dashboard bileşenleri
-|-- research/                       # Araştırma notları ve çalışma dokümanları
-|-- references.html                 # Web kaynakça sayfası
-|-- REFERENCES.md                   # Detaylı kaynak listesi
-|-- output/                         # Yerel üretim çıktıları (git dışı)
-|-- DATA/                           # Ham veri klasörü (git dışı)
-|-- new data/                       # Ham/ara veri klasörü (git dışı)
-```
+## Kurumsal Veri Kaynakları
+- Operasyonel baraj/doluluk ve su arzı verileri: **İSKİ** ve **İBB Açık Veri Portalı**
+- İklim/ET0 sürücüleri: Proje akışında standardize edilen iklim serileri (Kandilli odaklı çalışma çerçevesi)
 
-## Temel Model Seti
-- Ridge (simülasyonda varsayılan referans model)
-- GBR (Gradient Boosting Regressor)
-- HGB (HistGradientBoosting Regressor)
-- RF (Random Forest Regressor)
-- ETR (Extra Trees Regressor)
+Not: Kaynak izlenebilirliği için web kaynakçası ve detaylı kaynakça birlikte tutulur.
 
-Not: Model ailesi genişletmeleri ve ensemble çıktıları arayüzde ayrıca sunulur.
+## Veri Politikası
+Bu repoda ham veri setleri ve büyük ara çıktılar tutulmaz.
 
-## Simülasyon Çekirdeği (Özet)
-- Aylık su dengesi mantığı kullanılır.
-- Senaryo girdileri: yağış değişimi, ET0 değişimi, yıllık kullanım ve kullanım trendi.
-- Etkiler kapasite ve kalibrasyon katsayıları ile sınırlandırılarak uygulanır.
-- Amaç tek nokta tahmin değil; karşılaştırmalı karar desteğidir.
-
-## Veri Politikası (Kritik)
-Bu repoda ham veri setleri tutulmaz.
-
-Git dışında tutulanlar:
+Git dışında bırakılan klasörler:
 - `DATA/`
 - `new data/`
 - `output/`
 - `tmp/`
-- büyük dosya tipleri (`*.csv`, `*.xlsx`, `*.parquet`, `*.pkl`, vb.)
 
-Repoda tutulanlar:
-- Arayüzde kullanılan türetilmiş JS veri payload dosyaları (`assets/data/*.js`, `baraj_web/assets/data/*.js`)
+Repoda tutulan veri tipleri:
+- Arayüzün çalışması için gerekli türetilmiş JS payload dosyaları
+- `assets/data/*.js`
+- `baraj_web/assets/data/*.js`
 
-## Lokal Çalıştırma
-```bash
-cd /Users/yasinkaya/Hackhaton/baraj_web
-python3 -m http.server 8000
+## Proje Yapısı
+```text
+.
+|-- index.html
+|-- baraj_web/
+|-- assets/
+|-- scripts/
+|-- dashboard/
+|-- research/
+|-- references.html
+|-- REFERENCES.md
 ```
-Sonra tarayıcıdan `http://localhost:8000` adresini açın.
 
-## Sık Kullanılan Güncelleme Komutları
+## Hızlı Başlangıç (Lokal)
 ```bash
-cd /Users/yasinkaya/Hackhaton
+python3 -m http.server 8000 --directory baraj_web
+```
+Ardından tarayıcıda `http://localhost:8000` adresini açın.
+
+## Güncelleme Akışı
+```bash
 python3 scripts/update_sim_inputs.py
 ```
-Bu akış, kullanım trendi/profili, simülasyon katsayıları ve temel denge verilerini günceller.
+Bu adım, simülasyon girişleri (kullanım profili, katsayılar, denge girdileri) için güncel hesapları üretir.
 
-## Dağıtım Notu
+## Branch ve Yayın
 - `main`: geliştirme ve içerik güncellemeleri
 - `gh-pages`: canlı yayın branch'i
 
-Sadece dokümantasyon (`README.md`) değişiklikleri, tek başına web uygulamasının çalışma mantığını değiştirmez.
-
-## Kaynaklar
+## Kaynakça
 - Web kaynakça: [`references.html`](references.html)
 - Detaylı kaynakça: [`REFERENCES.md`](REFERENCES.md)
 
-## Lisans ve Kullanım
-Bu depo eğitim, araştırma ve hackathon sunum amaçlıdır. Kurumsal/operasyonel kararlar için resmi kurum yayınları ve güncel doğrulama ile birlikte değerlendirilmelidir.
+## Kullanım Notu
+Bu çalışma eğitim, araştırma ve hackathon değerlendirmesi amaçlıdır. Operasyonel kararlar için resmi kurum yayınları ve güncel doğrulama çıktıları ile birlikte değerlendirilmelidir.

@@ -311,43 +311,43 @@
       <p class="note">Bu bölümdeki modeller, karar desteğinde temel referans olarak seçilen çekirdek aileyi gösterir. Her model için mekanizma, grafik karakteri ve kullanım bağlamı aynı şablonda verilmiştir.</p>
       <div class="model-summary">
         <div class="card">
-          <h3>RIDGE: Ridge Regression (L2 Düzenlemeli Doğrusal Kılavuz)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">Doğrusal Ufuk · L2 Ceza</span>
+          <h3>RIDGE: Ridge Regression (L2 Düzenlemeli Doğrusal Referans)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Doğrusal Referans · L2 Düzenleme</span>
           <ul>
-            <li><strong>Derinlemesine Mekanizma:</strong> Doğrudan iklim verilerini baraj düşüşüyle "matematiksel bir formül (y=mx+b)" halinde birbirine bağlar. Yapısındaki <em>L2 Penaltısı</em> sayesinde aşırı değerleri cezalandırarak dalgalanmaları engeller.</li>
-            <li><strong>Neden Varsayılan?:</strong> Diğer kompleks ağaç modellerine rehberlik etmesi için geliştirilmiş nihai konsensüs modelidir. Doğrusal matematiği en güvenli referanstır.</li>
+            <li><strong>Derinlemesine Mekanizma:</strong> İklim değişkenleri ile doluluk ilişkisini doğrusal bir çerçevede kurar; <em>L2 düzenlileştirme</em> katsayı oynaklığını azaltarak daha kararlı tahmin üretir.</li>
+            <li><strong>Neden Varsayılan?:</strong> Yorumlanabilirliği yüksek ve düşük varyanslı bir referans model olduğu için varsayılan seçimdir.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>GBR: Gradient Boosting Regressor (Hatadan Kendi Kendini İyileştiren Ağaç)</h3>
+          <h3>GBR: Gradient Boosting Regressor (Gradyan Artırmalı Ağaç Regresyonu)</h3>
           <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Ridge Entegreli · Ardışık Düzeltmeler</span>
           <ul>
-            <li><strong>Derinlemesine Mekanizma:</strong> Önce sığ bir tahmin ağacı kurar; ardından her adımda kalan hatayı (gradyan) azaltacak yeni ağaçlar ekler. Bu ardışık düzeltme yaklaşımı doğrusal olmayan yapıları güçlü biçimde yakalar.</li>
-            <li><strong>Sürüm 4 yaklaşımı:</strong> Yeni mimaride kendi sığ yapısının içine 'Ridge' matematiğini gömdü. Hem hatayı ağaçla düzeltiyor, hem de lineer trende yapışıyor.</li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Artık hatayı adım adım azaltan ardışık ağaçlar kurar; doğrusal olmayan iklim-doluluk ilişkilerini etkili biçimde temsil eder.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> Ridge referansı ile hizalanarak uzun vadede daha dengeli ve karşılaştırılabilir bir eğri üretir.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>HGB: Histogram-based Gradient Boosting (Sıkıştırılmış Sensör Analizörü)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Hist-Kutulama · Hızlı Kurşunlama</span>
+          <h3>HGB: Histogram-based Gradient Boosting (Histogram Tabanlı Gradyan Artırma)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Histogram Tabanlı · Verimli Öğrenme</span>
           <ul>
-            <li><strong>Derinlemesine Mekanizma:</strong> Dev veri setlerinde GBR algoritmasının şişmesini engellemek için değerleri 255 adet piksellenmiş histogram "sepetine (bin)" atar. Yıldırım hızında öğrenir ve uç noktadaki verileri sepette yakalar.</li>
-            <li><strong>Sürüm 4 yaklaşımı:</strong> L2 doğrusal referans (Ridge) ile birlikte kalibre edilmiştir; bu sayede grafik daha istikrarlı şok tepkileri üretir.</li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Sürekli değişkenleri histogram kutularına ayırarak hesaplama maliyetini düşürür; büyük veri setlerinde hızlı ve tutarlı öğrenme sağlar.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> Ridge referansı ile birlikte kalibre edilerek ani rejim değişimlerinde daha istikrarlı tepki verir.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>RF: Random Forest Regressor (Kaostan Oy Birliği Çıkaran Orman)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Bagging · Topluluk Aklı</span>
+          <h3>RF: Random Forest Regressor (Rastgele Orman Regresyonu)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Bagging · Topluluk Öğrenmesi</span>
           <ul>
-            <li><strong>Derinlemesine Mekanizma:</strong> Veriyi 500 defa rastgele karıştırır ve 500 defa kural kurar (derin karar ağaçları). Seçim günü tahminde 500 farklı ağaç oy birliği/ortalama alarak sapmaları sıfıra indirger.</li>
-            <li><strong>Sürüm 4 yaklaşımı:</strong> Random Forest'in üstüne özel bir <em>Voting Katmanı</em> yerleştirildi. Ağaçların geometrik yapısı ile Ridge modelinin doğrusal istikrarı harmanlanıyor.</li>
+            <li><strong>Derinlemesine Mekanizma:</strong> Çok sayıda karar ağacını farklı örneklemlerle eğitir ve tahminleri ortalayarak varyansı azaltır; genellenebilirliği artırır.</li>
+            <li><strong>Sürüm 4 yaklaşımı:</strong> Ridge referansı ile uyumlandırılarak orta ve uzun vadede daha dengeli bir trend davranışı sağlar.</li>
           </ul>
         </div>
         <div class="card">
-          <h3>ETR: Extra Trees Regressor (Mekanik Kuralları Yıkan Ekstra-Rastgele Algoritma)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Hyper-Random · Şok Filtresi</span>
+          <h3>ETR: Extra Trees Regressor (Ekstra Rastgele Ağaçlar)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Yüksek Rastgeleleştirme · Gürültüye Dayanıklılık</span>
           <ul>
             <li><strong>Derinlemesine Mekanizma:</strong> Random Forest’e göre daha yüksek rastgeleleştirme uygular; eşik değerlerini daha geniş bir uzayda örnekleyerek aşırı uyumu azaltır. Bu sayede ölçüm gürültüsüne karşı daha dayanıklı bir tahmin üretir.</li>
-            <li><strong>Grafik Karakteristiği:</strong> V4 güncellemesinde Voting tabanlı L2 adaptasyonu ile Ridge çizgisiyle uyumlu, daha tutarlı bir trend davranışı üretir.</li>
+            <li><strong>Grafik Karakteristiği:</strong> V4 kalibrasyonunda Ridge ile hizalanarak daha tutarlı ve karşılaştırılabilir bir eğri üretir.</li>
           </ul>
         </div>
       </div>
@@ -357,27 +357,27 @@
       <h2>Diğer Gelişmiş YZ ve Fiziksel Modeller</h2>
       <div class="model-summary">
         <div class="card">
-          <h3>CATBOOST (Categorical Boosting)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Simetrik Ağaç · V4 Ridge Harmanı</span>
+          <h3>CatBoost (Categorical Boosting)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Simetrik Ağaç · Ridge Uyumlu</span>
           <ul>
-            <li><strong>Matematiksel Motor:</strong> Yandex tarafından geliştirilen bu model, karar ağaçlarındaki "hedef sızıntısı (target leakage)" problemini çözen Oblivious (Simetrik) Ağaçlar kullanır. Karşılaştığı her iklim sapmasında, verinin kategorik özelliklerini dengeli şekilde dağıtır ve ezberlemeyi(overfitting) ciddi oranda bastırır.</li>
-            <li><strong>Simülasyon Karakteristiği:</strong> V4 güncellemesiyle Ridge modeliyle uyumlu hale getirilmiştir. Bu sayede 2040 ufku boyunca ekstrem kuraklık (veya sellere) aşırı keskin olmayan, çok daha temkinli ve simetrik bir tepki vererek en pürüzsüz grafikleri oluşturur.</li>
+            <li><strong>Matematiksel Motor:</strong> Simetrik (oblivious) ağaç yapısı ve hedef sızıntısını azaltan öğrenme düzeni sayesinde kategorik etkileri dengeli temsil eder ve aşırı uyumu sınırlar.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> V4 kalibrasyonu ile Ridge referansına hizalanmıştır; bu sayede uzun vadede aşırı dalgalanmadan kaçınan, daha dengeli bir tepki üretir.</li>
           </ul>
         </div>
         <div class="card">
           <h3>SVR (Destek Vektör Regresyonu - RBF Kernel)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">N-Boyutlu Hiperdüzlem · Radyal Tabanlı Formül</span>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Çekirdek Tabanlı Regresyon · RBF</span>
           <ul>
             <li><strong>Matematiksel Motor:</strong> RBF (Radial Basis Function) çekirdeği ile doğrusal olmayan ilişkileri epsilon-tube içinde modelleyerek küçük hataları tolere eder, büyük sapmaları ise daha güçlü ceza ile dengeler.</li>
-            <li><strong>Simülasyon Karakteristiği:</strong> Doğası gereği radyal temelli olduğundan geçmişin merkezinden uzaklaştıkça salınım yapma eğilimindedir (Grafiğin düzleşmesi). V4 mimarisinde VotingRegressor(Ridge) ile desteklendiği için artık fiziksel sınırları aşmadan, doğrusal bir eğimin üzerinde kavisli manevralar yapabilen çok isabetli bir su seviyesi projeksiyonu sunar.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> RBF çekirdek yapısı nedeniyle uzak ufukta ortalamaya yakınsama eğilimi gösterebilir; V4 kalibrasyonunda Ridge desteği ile eğri stabilitesi artırılmıştır.</li>
           </ul>
         </div>
         <div class="card">
           <h3>NGBOOST (Doğal Gradyan Olasılıksal Boosting)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · İstatistik · Stanford Mimarisi</span>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Olasılıksal Boosting · Doğal Gradyan</span>
           <ul>
             <li><strong>Matematiksel Motor:</strong> Sadece bir nokta tahmini yerine olasılık dağılımı (genellikle Gaussian veya LogNormal) üretir. Doğal gradyan düzeltmesiyle hem ortalamayı (mu) hem varyansı (sigma) birlikte öğrenen güçlü bir olasılıksal yaklaşımdır.</li>
-            <li><strong>Simülasyon Karakteristiği:</strong> İklim senaryosunu uyguladığınızda NGBoost, "suyun o an yüzde kaç olacağını" değil, "hangi aralıklarda olma senaryosunun en güçlü olduğunu" hesaplayarak en makul zirve değerini sunar ve V4 modeli sayesinde bu olasılıkları geçmiş yıllardaki doğrusal rejim trendi ile harmanlar.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Nokta tahmini yerine olasılık dağılımı üreterek belirsizlik aralığını raporlar; V4 kalibrasyonunda uzun dönem trend ile uyumlu sonuç verir.</li>
           </ul>
         </div>
         <div class="card">
@@ -385,7 +385,7 @@
           <span class="chip" style="margin-bottom:8px;display:inline-block;">Stokastik Süreçler · Bayesian Yaklaşımı</span>
           <ul>
             <li><strong>Matematiksel Motor:</strong> Matern ve Constant kernel bileşimiyle veriyi Bayesçi süreç çerçevesinde sürekli bir olasılık fonksiyonu olarak temsil eder. İşlemsel maliyeti yüksektir ancak pürüzsüz ve açıklanabilir bantlar üretir.</li>
-            <li><strong>Simülasyon Karakteristiği:</strong> GPR normalde uzun projeksiyonlarda sonsuza dek "ortalama(mean) değere" dönme eğilimindedir. RidgeRegressor (Lineer) kalibrasyonuyla bu problem çözüldü! Artık 2040'a giderken sadece ortalamaya dönmekle kalmıyor, küresel ısınma verilerini kullanarak trende sadık kalıyor.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> GPR uzun ufukta ortalamaya yakınsama eğilimindedir; V4 kalibrasyonunda Ridge referansı ile birleştirilerek trend tutarlılığı güçlendirilmiştir.</li>
           </ul>
         </div>
         <div class="card">
@@ -393,14 +393,14 @@
           <span class="chip" style="margin-bottom:8px;display:inline-block;">İstatistik · Oto-Regresif Mimarisi</span>
           <ul>
             <li><strong>Matematiksel Motor:</strong> Dışsal değişkenlere (sıcaklık, nem) ve geçmişin gecikmeli kopyalarına dayanır. Hareketli Ortalamalar (Moving Average) ve Entegre (I) fark denklemleri yardımıyla veri yığınlarındaki gürültüyü ayrıştırır.</li>
-            <li><strong>Simülasyon Karakteristiği:</strong> Verinin "zamanla olan yapısal ilişkisi" üzerinden projeksiyon yapar. Makine öğrenmesi harmanlaması yerine saf trendi gösterir ve <em>Stochastic Residuals (Fraktal Gürültü)</em> ile iklim volatilitesini geleceğe taşır. Yüksek yaz/kış genliğine sahiptir.</li>
+            <li><strong>Simülasyon Karakteristiği:</strong> Zaman bağımlı yapıyı mevsimsel bileşenlerle birlikte taşır; stokastik artık terimi üzerinden iklim oynaklığını projeksiyona yansıtır.</li>
           </ul>
           <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Ani iklim şokları, mevsimsel sapma kırılmaları ve seri bağımlılığı birlikte değerlendirilirken öncelikli modeldir.</p>
         </div>
 
         <div class="card">
           <h3>Quantile GBM (%10 ve %50 Birlikteliği)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Yüzdelik Kayıp · V4 Ekstrem</span>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Quantile Kayıp · Risk Bandı</span>
           <ul>
             <li><strong>Matematiksel Motor:</strong> "Quantile Loss" (Pinball Loss) fonksiyonu ile çalışır. %50 Quantile sistemi sistemin tam ortanca davranışını modellerken, %10 Quantile "en kötü senaryonun %10'luk ekstrem kuraklık dilimine" odaklanarak eğitilmiştir.</li>
             <li><strong>Simülasyon Karakteristiği:</strong> Özellikle %10 Quantile modeli kuraklık tarafını temsil eder. 2040 ufkunda sert düşüşleri gösterebilir; V4 kalibrasyonu ile fiziksel sınırlar içinde tutulur.</li>
@@ -417,20 +417,20 @@
         </div>
 
         <div class="card">
-          <h3>ElasticNet (Çift Katmanlı Küçültme)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · L1+L2 Harmonu · Regüler</span>
+          <h3>ElasticNet (L1+L2 Düzenlemeli Regresyon)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · L1+L2 Düzenleme · Kararlı</span>
           <ul>
-            <li><strong>Matematiksel Motor:</strong> Ridge (L2 katsayı küçültmesi) ve Lasso (L1 boyut azaltma) ağırlıklarını aynı hücrede bünyesinde eritir. İklim krizine etki etmeyen yapay faktörleri çöpe atıp sadeliği korur.</li>
+            <li><strong>Matematiksel Motor:</strong> Ridge (L2) ve Lasso (L1) düzenlemelerini birlikte kullanarak gereksiz değişken etkisini azaltır ve model sadeliğini korur.</li>
             <li><strong>Simülasyon Karakteristiği:</strong> Aşırı uçlara daha az gider ve karmaşık rejimlerde istikrar sağlar. Düşük varyanslı yapısıyla karar desteğinde dayanıklı bir referans üretir.</li>
           </ul>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Düşük etkili iklim değişkenlerini otomatik sıfırlayan L1+L2 karması sayesinde rafine edilmiş lineer gidişatlara bakarken idealdir.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> Çoklu doğrusal bağlantının güçlü olduğu veri setlerinde dengeli katsayı tahmini ve yorumlanabilirlik için uygundur.</p>
         </div>
 
         <div class="card">
-          <h3>Huber Regressor (Aykırı Düşman)</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Dayanıklı Kayıp · V4 Zırhı</span>
+          <h3>Huber Regressor (Aykırı Değere Dayanıklı Regresyon)</h3>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">ML · Dayanıklı Kayıp · Sağlam Kalibrasyon</span>
           <ul>
-            <li><strong>Matematiksel Motor:</strong> 2007, 2014 ve 2023 yıllarındaki şiddetli İstanbul kuraklıklarının modelli saptırmasına izin vermez. Mutlak Hata ve Karesel Hata arasında bir eşik kurarak aykırı şokları sönümler.</li>
+            <li><strong>Matematiksel Motor:</strong> Mutlak ve karesel kayıp arasında eşik tabanlı geçiş kullanarak aykırı gözlemlerin model üzerindeki etkisini sınırlar.</li>
             <li><strong>Simülasyon Karakteristiği:</strong> Ekstrem şokların merkez eğilimi bozmasını sınırlar; ana trend hattını daha dayanıklı ve dengeli biçimde korur.</li>
           </ul>
           <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong>Kullanım Bağlamı:</strong> İklim verisindeki aşırı sapma değerlerinden (outlier) etkilenmeyen dayanıklı (robust) trendlere bakarken yararlıdır.</p>
@@ -438,9 +438,9 @@
 
         <div class="card">
           <h3>Fiziksel Modeller: Budyko ve Thornthwaite</h3>
-          <span class="chip" style="margin-bottom:8px;display:inline-block;">Gerçek Hidroloji · Zeka Yok, Sırf Doğa Kuralları</span>
+          <span class="chip" style="margin-bottom:8px;display:inline-block;">Fizik Tabanlı Hidrolojik Yaklaşım</span>
           <ul>
-            <li><strong>Budyko Eğrisi:</strong> Yağışın ne kadarının buharlaşmaya, ne kadarının topraktan akışa geçeceğini anlatan dünyaca ünlü hidrolojik sınır eğrisi! Aşırı sıcak (aridity index) yıllarındaki kuruma çöküntüsünü bu formüller yönetir.</li>
+            <li><strong>Budyko Eğrisi:</strong> Yağış, potansiyel buharlaşma ve akış arasındaki uzun dönem su-enerji dengesini tanımlayan kuramsal hidrolojik çerçevedir.</li>
             <li><strong>Thornthwaite-Mather Su Dengesi:</strong> Toprağın su tutma kapasitesini depolama yaklaşımıyla temsil eder; toprak doygunluğunda oluşan fazla akışı (runoff) hesaplayan klasik bir yöntemdir.</li>
                       </ul>
         </div>
@@ -558,21 +558,21 @@
       <p class="note">Sürüm 4 (V4), model ailesinin güncel üretim sürümüdür; tüm modeller aynı veri hazırlama, eğitim ve doğrulama protokolüyle üretilmiştir.</p>
 
       <div class="card" style="border-left: 5px solid var(--accent); background-color: rgba(67, 97, 238, 0.05); margin-bottom: 30px;">
-        <h3 style="color: var(--accent); margin-top: 5px; margin-bottom: 15px;">📍 Kullanım Rehberi: Hangi Modele, Hangi Durumda Bakılmalı?</h3>
-        <p style="margin-bottom: 10px;">Simülasyon ekranında 22 farklı model bulunmaktadır. <strong>Neye bakarken hangisinin yararlı olacağını</strong> aşağıdan seçebilirsiniz:</p>
+        <h3 style="color: var(--accent); margin-top: 5px; margin-bottom: 15px;">Kullanım Rehberi: Model Seçim Çerçevesi</h3>
+        <p style="margin-bottom: 10px;">Simülasyon ekranında birden fazla model ailesi bulunmaktadır. <strong>Analiz amacına göre uygun model sınıfı</strong> aşağıdaki özetle seçilebilir:</p>
         <ul style="line-height: 1.6;">
-          <li><strong>Ortalama ve En Gerçekçi Gelecek Beklentisi:</strong> <span style="color: var(--accent); font-weight: bold;">ENSEMBLE_MEDIAN</span> veya <span style="font-weight: bold;">STACKING</span>. Aşırı senaryoları törpüler, en güvenli rotayı çizer.</li>
-          <li><strong>En Kötü Senaryo (Şiddetli Kuraklık / Kriz) Analizi:</strong> <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Su seviyesinin diplere vurma ihtimalini görmek için bakılmalıdır.</li>
-          <li><strong>Uzun Vadeli Stabil Trend (Yönsüz):</strong> <span style="color: #2b9348; font-weight: bold;">Ridge</span>, <span style="font-weight: bold;">BayesianRidge</span> veya <span style="font-weight: bold;">ElasticNet</span>. Geçmiş su tüketim ivmesinin, gürültüden arındırılmış saf lineer gidişatını izlemek için yararlıdır.</li>
-          <li><strong>Ani İklim Şokları ve Mevsimsel Kırılmalar:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Beklenmedik dalgalanmaları ve hidrolojik sapmaları simüle etmek için kritiktir.</li>
-          <li><strong>Doğal Varyans (Tahminden Ziyade Desen):</strong> <span style="font-weight: bold;">RF (Random Forest)</span>, <span style="font-weight: bold;">ETR</span> veya <span style="font-weight: bold;">GBM_Q50</span>.</li>
+          <li><strong>Merkez Eğilim ve Karar Notu Referansı:</strong> <span style="color: var(--accent); font-weight: bold;">ENSEMBLE_MEDIAN</span> veya <span style="font-weight: bold;">STACKING</span>. Tekil model etkisini azaltan dengeli konsensüs tahmini sağlar.</li>
+          <li><strong>Alt Risk Bandı (Kuraklık Stresi):</strong> <span style="font-weight: bold;">SVR</span> veya <span style="font-weight: bold;">Budyko_Physics</span>. Düşük doluluk rejimlerinde risk sınırını incelemek için uygundur.</li>
+          <li><strong>Uzun Dönem Kararlı Referans Trend:</strong> <span style="color: #2b9348; font-weight: bold;">Ridge</span>, <span style="font-weight: bold;">BayesianRidge</span> veya <span style="font-weight: bold;">ElasticNet</span>. Düşük varyanslı ve yorumlanabilir temel eğilim analizi sunar.</li>
+          <li><strong>Rejim Değişimi ve Mevsimsel Kırılma Analizi:</strong> <span style="color: #f77f00; font-weight: bold;">XGBoost</span>, <span style="font-weight: bold;">CatBoost</span>, <span style="font-weight: bold;">NGBoost</span> veya <span style="font-weight: bold;">ARIMAX</span>. Ani değişimlere duyarlı senaryo karşılaştırmalarında etkilidir.</li>
+          <li><strong>Doğal Varyans ve Desen Analizi:</strong> <span style="font-weight: bold;">RF (Random Forest)</span>, <span style="font-weight: bold;">ETR</span> veya <span style="font-weight: bold;">GBM_Q50</span>.</li>
         </ul>
       </div>
 
 
       <!-- ── CV Metrik Tablosu ─────────── -->
       <div class="card" style="overflow-x:auto;margin-bottom:20px;">
-        <h3>📊 Çapraz Doğrulama Karşılaştırma Tablosu (Purged Walk-Forward, 3 yıl)</h3>
+        <h3>Çapraz Doğrulama Karşılaştırma Tablosu (Purged Walk-Forward, 3 yıl)</h3>
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
           <thead>
             <tr style="background:rgba(255,160,0,0.12);">
@@ -634,11 +634,11 @@
               <td style="padding:7px 10px;">T-M 1955 — UNESCO IHP standart su bütçesi</td></tr>
           </tbody>
         </table>
-        <p class="note">🌿 Fizik tabanlı modeller geçmiş veriye overfit <em>etmez</em> — CV hatası görece yüksek ama gelecek iklim koşullarında extrapolation kapasiteleri çok daha güçlüdür.</p>
+        <p class="note">Fizik tabanlı modellerde çapraz doğrulama hatası görece yüksek olabilir; buna karşın iklim rejimi değişimlerinde fiziksel tutarlılık sağladıkları için tamamlayıcı kontrol modeli olarak kullanılır.</p>
       </div>
 
       <!-- ── Fizik Modelleri ─────────────── -->
-      <h3 style="margin:24px 0 12px;">🌍 Gerçek Fizik-Tabanlı İklim/Hidroloji Modelleri (ML Yok)</h3>
+      <h3 style="margin:24px 0 12px;">Fizik Tabanlı İklim ve Hidroloji Modelleri</h3>
       <div class="grid three">
         
         <div class="card">
@@ -669,7 +669,7 @@
       </div>
 
       <!-- ── İstatistiksel İklim Modelleri ─ -->
-      <h3 style="margin:24px 0 12px;">📡 İstatistiksel İklim Modelleri</h3>
+      <h3 style="margin:24px 0 12px;">İstatistiksel İklim Modelleri</h3>
       <div class="grid three">
         <div class="card">
           <h3>ARIMAX</h3>
@@ -697,7 +697,7 @@
       </div>
 
       <!-- ── ML Modeller ─────────────────── -->
-      <h3 style="margin:24px 0 12px;">🤖 Makine Öğrenmesi Modelleri</h3>
+      <h3 style="margin:24px 0 12px;">Makine Öğrenmesi Modelleri</h3>
       <div class="grid three">
         <div class="card">
           <h3>LightGBM DART</h3>
@@ -756,7 +756,7 @@
       </div>
 
       <!-- ── Lineer Modeller ─────────────── -->
-      <h3 style="margin:24px 0 12px;">📐 Lineer / İklim Regresyon Modelleri</h3>
+      <h3 style="margin:24px 0 12px;">Lineer ve İklim Regresyon Modelleri</h3>
       <div class="grid three">
         <div class="card">
           <h3>RidgeCV</h3>
@@ -791,12 +791,12 @@
       </div>
 
       <!-- ── Ensemble ───────────────────── -->
-      <h3 style="margin:24px 0 12px;">🔗 Ensemble Modeller</h3>
+      <h3 style="margin:24px 0 12px;">Toplulaştırma (Ensemble) Modelleri</h3>
       <div class="grid two" style="margin-top:14px;">
         <div class="card">
           <h3>Stacking Ensemble</h3>
           <p>Tüm modellerin tahminlerini girdi olarak kullanan meta-model (RidgeCV meta-learner).</p>
-          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Tüm yapay zeka sistemlerinin komite kararı sonucu süzülmüş, en yüksek güvenilirliğe sahip nihai simülasyon ivmesine bakarken başvurulmalıdır.</p>
+          <p style="font-size:0.85rem;color:var(--accent);margin-top:10px;"><strong style="color:var(--accent);">Kullanım Bağlamı:</strong> Farklı model ailelerinden gelen çıktıları birleştirerek tekil model yanlılığını azaltan nihai karar desteği için kullanılır.</p>
           <img class="zoomable" src="assets/v3/stack_v3_projection.png?v=20260326-7" alt="Stacking v3 projection"/>
         </div>
         <div class="card">
