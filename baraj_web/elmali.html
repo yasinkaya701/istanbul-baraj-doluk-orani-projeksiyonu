@@ -728,7 +728,7 @@
         </div>
         <label style="margin-top:12px;">Model</label>
         <select id="sim-model">
-          <optgroup label="Önerilen">
+          <optgroup label="Referans">
             <option value="ridge" selected>Ridge (Varsayılan)</option>
             <option value="ensemble">Ensemble Median</option>
             <option value="stack">Stacking</option>
@@ -1274,7 +1274,7 @@ const MODEL_USAGE_GUIDE = {
   budyko: { mechanism: 'Su-enerji denge bağıntısı', behavior: 'Uzun dönem fiziksel denge hattı', use: 'Hidrolojik tutarlılık kontrolü' },
   thornthwaite: { mechanism: 'Sıcaklık temelli ET yaklaşımı', behavior: 'Kurak dönemde düşüşü belirginleştirir', use: 'Basit fiziksel kontrol senaryosu' },
   stack: { mechanism: 'Meta-öğrenici ile model birleştirme', behavior: 'Tekil model yanlılığını yumuşatır', use: 'Kompozit karar modeli' },
-  ensemble: { mechanism: 'Model medyanı ile birleştirme', behavior: 'Uç değer etkisini bastıran merkezi hat', use: 'Nihai karar desteği için önerilen referans' }
+  ensemble: { mechanism: 'Model medyanı ile birleştirme', behavior: 'Uç değer etkisini bastıran merkezi hat', use: 'Nihai karar desteği için birincil referans' }
 };
 const MODEL_ACCURACY_GUIDE = {
   ridge: '%68.5',
