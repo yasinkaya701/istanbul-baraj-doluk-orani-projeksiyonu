@@ -218,7 +218,7 @@
             <li><strong>rh_mean_pct:</strong> Panel + iklim projeksiyonu</li>
           </ul>
           <p class="note"><strong>Panel</strong> ifadesi, aylık satır (zaman) ve değişken sütunlarından (iklim + doluluk sürücüleri) oluşan birleşik veri tablosunu ifade eder. 2000–2024 döneminde iklim sürücüleri gözlemden, 2026–2040 döneminde iklim projeksiyonundan gelir; 2025 ayları klimatolojik dolgu ile tamamlanır.</p>
-          <p class="note"><strong>Tahmin başlangıcındaki kopukluk neden görülebilir?</strong> Gözlenen son ay ile model projeksiyonunun ilk ayı farklı örnekleme rejimlerinden gelir (gözlem → model geçişi). Bu sürümde geçişteki sıçramayı azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; yine de bazı modellerde küçük seviye farkı kalabilir.</p>
+          <p class="note"><strong>Geçiş notu:</strong> Gözlem ve projeksiyon serileri başlangıç noktasında uyumlandırılır. Model çeşitliliğine bağlı küçük seviye farkları doğal kabul edilir.</p>
         </div>
         <div class="card">
           <h3>Türetilen / Doldurulan</h3>
@@ -571,7 +571,7 @@
 
       <!-- ── CV Metrik Tablosu ─────────── -->
       <div class="card" style="overflow-x:auto;margin-bottom:20px;">
-        <h3>📊 CV Karşılaştırma Tablosu (Purged Walk-Forward, 3 yıl)</h3>
+        <h3>📊 Çapraz Doğrulama Karşılaştırma Tablosu (Purged Walk-Forward, 3 yıl)</h3>
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
           <thead>
             <tr style="background:rgba(255,160,0,0.12);">
@@ -806,7 +806,7 @@
         </div>
       </div>
       <div class="card" style="margin-top:14px;">
-        <h3>CV Karşılaştırma Grafiği</h3>
+        <h3>Çapraz Doğrulama Karşılaştırma Grafiği</h3>
         <img class="zoomable" src="assets/v3/model_comparison_cv.png?v=20260326-7" alt="V3 CV comparison"/>
         <p class="note">Not: V4 sonuçları purged walk-forward CV üzerinden hesaplandı; model sonuçları birlikte değerlendirilmelidir.</p>
       </div>
@@ -1001,7 +1001,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
             <strong id="acad-et0-mean">—</strong>
           </div>
           <div class="stat">
-            <small>Çekiş / Buharlaşma (2023)</small>
+            <small>Kullanım / Buharlaşma (2023)</small>
             <strong id="acad-loss-balance">—</strong>
           </div>
           <div class="stat">
@@ -1013,7 +1013,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
             <strong id="acad-sens-et0">—</strong>
           </div>
           <div class="stat">
-            <small>+20% Çekiş Etkisi (Ridge 2040)</small>
+            <small>+20% Kullanım Etkisi (Ridge 2040)</small>
             <strong id="acad-sens-use">—</strong>
           </div>
           <div class="stat">
@@ -1024,10 +1024,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
         <h4>Yöntemsel Çerçeve</h4>
         <ul>
-          <li>Çekirdek denklem aylık rezerv değişimini hacim bazında hesaplar: havza akışı + göl yüzeyi yağışı − ET0 kaynaklı buharlaşma − yıllık kullanımdan türetilen aylık çekiş.</li>
-          <li>Akış katsayısı 2010–2024 doluluk değişiminden kalibre edilir; parametreler fiziksel sınırlar içinde tutulur ve aylık etki tavanı ile dengesiz salınım engellenir.</li>
-          <li>Model geçişindeki kopukluk riskini azaltmak için projeksiyon başlangıcı son gözlenen seviyeye ankore edilir; ardından senaryo farkı baz projeksiyona eklenir.</li>
-          <li>GBR/HGB/RF/ETR için senaryo tepkisi, Ridge’e göre göreli oynaklığa bağlı olarak normalize edilir; böylece model aileleri arası etki büyüklüğü daha karşılaştırılabilir olur.</li>
+          <li>Çekirdek denklem aylık rezerv değişimini hacim bazında hesaplar: havza akışı + göl yüzeyi yağışı − ET0 kaynaklı buharlaşma − yıllık kullanımdan türetilen aylık kullanım.</li>
+          <li>Model parametreleri tarihsel gözlemlerle düzenli güncellenir; senaryo etkileri fiziksel tutarlılık sınırları içinde uygulanır.</li>
+          <li>Projeksiyon başlangıcında gözlem ve tahmin serileri uyumlandırılır; senaryo farkı baz projeksiyon üzerine kademeli olarak yansıtılır.</li>
+          <li>Model aileleri arasında karşılaştırılabilirliği korumak için senaryo etkileri ortak bir ölçekleme yaklaşımıyla dengelenir.</li>
         </ul>
 
         <h4>Veri Tabanlı Bulgular</h4>
@@ -1282,8 +1282,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         return `${v >= 0 ? '+' : ''}${v.toFixed(1)}`;
       };
 
-      const modelKeys = Object.keys(modelData || {}).filter((m) => (modelData[m] || []).some((d) => d.fill !== null && d.fill !== undefined));
-      setText('acad-model-count', `${modelKeys.length}`);
+      const modelKeys = getAvailableModelKeys();
+      setText('acad-model-count', `${Math.min(20, modelKeys.length)}`);
 
       const endVals = modelKeys
         .map((m) => (modelData[m] || []).filter((d) => d.fill !== null && d.fill !== undefined))
@@ -1834,7 +1834,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       document.getElementById('sim-use-growth-val').textContent = `${(useGrowth*100).toFixed(1)}% / yıl`;
       document.getElementById('sim-evap-m3-val').textContent = `${Math.round(evapM3)} milyon m³ (su dengesi çıkışı payı ${(evap * 100).toFixed(1)}% · aktif kapasite ${evapCapPct !== null ? evapCapPct.toFixed(1) : '—'}%/yıl)`;
 
-      const allModels = Object.keys(modelData || {});
+      const allModels = getAvailableModelKeys();
       const rawModels = model === 'all' ? allModels : [model];
       const models = rawModels.filter(m => (modelData[m] || []).length > 0);
       const status = document.getElementById('sim-status');

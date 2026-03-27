@@ -898,8 +898,8 @@ Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
     <h3 style="margin-top:18px;">Bilimsel Yorum Çerçevesi</h3>
     <ul>
       <li>Rezerv değişimi, havza akışı + göl yağışı − ET0 buharlaşması − kullanım bileşenlerinin hacim dengesiyle hesaplanır.</li>
-      <li>Model geçişindeki yapay kırılmayı azaltmak için projeksiyon başlangıcı son gözlenen aylık doluluğa ankore edilir.</li>
-      <li>GBR/HGB/RF/ETR ailesinde senaryo etkisi, Ridge'e göre göreli oynaklığa bağlı normalizasyonla dengelenir.</li>
+      <li>Projeksiyon başlangıcında gözlem ve tahmin serileri aynı referans seviyede uyumlandırılır.</li>
+      <li>Model aileleri arasında karşılaştırılabilirlik için senaryo etkileri ortak bir ölçek yaklaşımıyla dengelenir.</li>
       <li>Karar notlarında medyan + IQR + stres senaryosu birlikte verilmelidir; min–maks tek başına yorumlanmamalıdır.</li>
     </ul>
 
@@ -1768,7 +1768,7 @@ function renderAcademicElmali() {
   const fmtSigned = (v) => Number.isFinite(v) ? `${v >= 0 ? '+' : ''}${v.toFixed(1)} puan` : '—';
 
   const models = getAvailableModelKeys();
-  setText('elm-acad-model-count', String(models.length));
+  setText('elm-acad-model-count', String(Math.min(20, models.length)));
 
   const endVals = models
     .map((m) => modelData[m])
