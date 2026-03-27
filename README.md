@@ -4,8 +4,8 @@
 Bu depo, İstanbul baraj sisteminde doluluk dinamiklerini iklim sürücüleri (yağış, ET0), kullanım baskısı ve çoklu model yaklaşımıyla analiz etmek için hazırlanmış hackathon odaklı bir karar-destek çalışmasıdır. İçerik, teknik jüri ve alan uzmanları tarafından incelenebilecek akademik/teknik sunum standardında düzenlenmiştir.
 
 ## Canlı Yayın
-- Ana sayfa: [İstanbul Baraj Projeksiyonu](https://yasinkaya701.github.io/istanbul-baraj-web/)
-- Elmalı alt modülü: [Elmalı Barajı Sayfası](https://yasinkaya701.github.io/istanbul-baraj-web/baraj_web/elmali.html)
+- Ana sayfa: [İstanbul Baraj Projeksiyonu](https://yasinkaya701.github.io/istanbul-baraj-doluluk-orani-projeksiyonu/)
+- Elmalı alt modülü: [Elmalı Barajı Sayfası](https://yasinkaya701.github.io/istanbul-baraj-doluluk-orani-projeksiyonu/baraj_web/elmali.html)
 
 ## Hackathon Bağlamı
 - Proje türü: Uygulamalı hidro-iklim modelleme ve karar desteği
