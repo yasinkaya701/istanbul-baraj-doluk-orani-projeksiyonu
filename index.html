@@ -908,7 +908,7 @@
           <div class="card">
             <h4>Kayıp Bileşenleri</h4>
             <label>Yıllık Kullanım (milyon m³ / yıl)</label>
-            <input type="range" id="sim-use-m3" min="180" max="500" value="275" step="5" />
+            <input type="range" id="sim-use-m3" min="180" max="1600" value="1117" step="10" />
             <div class="value" id="sim-use-m3-val">—</div>
 
             <label>Yıllık Kullanım Artışı (% / yıl)</label>
@@ -1080,11 +1080,11 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
   </div>
 
   <script src="assets/data/projection_all_models.js?v=20260341_v5finalallb"></script>
-  <script src="assets/data/evap_usage_baseline.js?v=20260327-5"></script>
+  <script src="assets/data/evap_usage_baseline.js?v=20260327-6"></script>
   <script src="assets/data/reservoir_reference.js?v=20260321-6"></script>
-  <script src="assets/data/sim_coeffs.js?v=20260327-5"></script>
-  <script src="assets/data/usage_trend_stats.js?v=20260327-5"></script>
-  <script src="assets/data/usage_monthly_profile.js?v=20260327-5"></script>
+  <script src="assets/data/sim_coeffs.js?v=20260327-6"></script>
+  <script src="assets/data/usage_trend_stats.js?v=20260327-6"></script>
+  <script src="assets/data/usage_monthly_profile.js?v=20260327-6"></script>
   <script src="assets/data/climate_baseline.js?v=20260321-6"></script>
 
   <script>
@@ -1335,7 +1335,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
 
       const baseUseM3 = baseline && Number.isFinite(baseline.usage_baraj_m3)
         ? baseline.usage_baraj_m3 / 1e6
-        : 275;
+        : 1117;
       const baseSensitivityEnd = computeEndForSensitivityModel(0, 0, baseUseM3, 0.0);
       const rainSensitivityEnd = computeEndForSensitivityModel(10, 0, baseUseM3, 0.0);
       const et0SensitivityEnd = computeEndForSensitivityModel(0, 10, baseUseM3, 0.0);
@@ -1730,8 +1730,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const catchmentKm2 = reservoirRef && reservoirRef.total_catchment_km2 ? reservoirRef.total_catchment_km2 : 3150.0;
       const capacityMcm = reservoirRef && reservoirRef.total_active_capacity_mcm ? reservoirRef.total_active_capacity_mcm : 868.683;
       const runoffFallback = coeff.runoff_coeff ?? 0.35;
-      // Reservoir mass-balance should use reservoir withdrawal (baraj cekisi), not total city supply.
-      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
+      // Scenario uses configured annual usage baseline (milyon m3/yil).
+      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 1117064116) / 1e6) / 12.0;
       let prevAdj = base[0] && base[0].fill !== null && base[0].fill !== undefined ? base[0].fill : 0;
       const modelFactor = modelScenarioFactor[model] ?? 1.0;
       const adjusted = base.map((d, i) => {
@@ -2088,7 +2088,7 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       const lakeAreaKm2 = baseline && baseline.area_km2_total ? baseline.area_km2_total : 99.69;
       const kc = baseline && baseline.kc_open_water ? baseline.kc_open_water : 1.05;
       // Runoff calibration is done against reservoir fill, so we use reservoir withdrawal baseline.
-      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 275104161) / 1e6) / 12.0;
+      const baseUseMonthlyMcm = ((baseline ? baseline.usage_baraj_m3 : 1117064116) / 1e6) / 12.0;
       const modelKeys = Object.keys(modelData || {});
       const refModelKey = modelData.etr ? 'etr' : (modelKeys.length ? modelKeys[0] : null);
       const refSeries = refModelKey ? (modelData[refModelKey] || []) : [];
@@ -2173,8 +2173,8 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
           ? `<a href=\"${src.total_supply_2023}\" target=\"_blank\" rel=\"noreferrer\">2023 toplam verilen su (İBB/İSKİ resmi veri)</a>`
           : '2023 toplam verilen su';
         const barajSupplyLink = src.baraj_supply_2023_secondary
-          ? `<a href=\"${src.baraj_supply_2023_secondary}\" target=\"_blank\" rel=\"noreferrer\">2023 baraj kullanımı (ikincil)</a>`
-          : '2023 baraj kullanımı';
+          ? `<a href=\"${src.baraj_supply_2023_secondary}\" target=\"_blank\" rel=\"noreferrer\">2023 toplam su kullanımı (ikincil)</a>`
+          : '2023 toplam su kullanımı';
         sourcesEl.innerHTML = `Kaynaklar: ${catchmentLink}, ${lakeSurfaceLink}, <a href=\"${src.kc_open_water}\" target=\"_blank\" rel=\"noreferrer\">FAO‑56</a>, ${totalSupplyLink}, ${barajSupplyLink}, iklim verisi (2010–2024 gözlem + 2026–2040 projeksiyon, 2025 klimatolojik dolgu).`;
       } else if (sourcesEl) {
         sourcesEl.textContent = 'Kaynaklar: iklim verisi (2010–2024 gözlem + 2026–2040 projeksiyon, 2025 klimatolojik dolgu) ve proje içi kullanım/alan verileri.';
@@ -2212,10 +2212,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
       if (baseline) {
         const capMcm = reservoirRef ? reservoirRef.total_active_capacity_mcm : null;
         const totalSupply = baseline.total_supply_2023_m3 || null;
-        // Scenario slider represents annual reservoir withdrawal (baraj cekisi).
+        // Scenario slider represents annual usage input (milyon m3 / yil).
         document.getElementById('sim-use-m3').value = Math.round((baseline.usage_baraj_m3) / 1e6);
         document.getElementById('base-evap-m3').textContent = `${Math.round(baseline.evap_total_m3/1e6)} milyon m³`;
-        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³ (baraj çekişi, simülasyon girdisi) · şehir toplamı ${Math.round((baseline.total_supply_2023_m3||baseline.usage_baraj_m3)/1e6)} milyon m³ (bağlam)`;
+        document.getElementById('base-use-m3').textContent = `${Math.round(baseline.usage_baraj_m3/1e6)} milyon m³ (simülasyon kullanım girdisi) · şehir toplamı ${Math.round((baseline.total_supply_2023_m3||baseline.usage_baraj_m3)/1e6)} milyon m³ (bağlam)`;
         if (capMcm) {
           document.getElementById('base-capacity').textContent = `${capMcm.toFixed(1)}`;
           const evapCapPct = (baseline.evap_total_m3 / (capMcm * 1e6)) * 100;
@@ -2239,10 +2239,10 @@ Fill′ = clip( Fill + (ΔS_scen − ΔS_base)/C )</pre>
         }
         document.getElementById('base-area').textContent = `${baseline.area_km2_total.toFixed(2)}`;
         const totalSupplyMcm = totalSupply ? Math.round(totalSupply / 1e6) : null;
-        const denomNote = `Yüzde payları iki ayrı paydaya göre verilir: şehir toplam arzı${totalSupplyMcm ? ` (${totalSupplyMcm} milyon m³)` : ''} ve su dengesi çıkışı (kullanım+buharlaşma). Simülasyonda kullanım girdisi baraj çekişidir.`;
+        const denomNote = `Yüzde payları iki ayrı paydaya göre verilir: şehir toplam arzı${totalSupplyMcm ? ` (${totalSupplyMcm} milyon m³)` : ''} ve su dengesi çıkışı (kullanım+buharlaşma). Simülasyonda kullanım girdisi seçili yıllık kullanım değeridir.`;
         document.getElementById('base-note').textContent = [baseline.notes || '', denomNote].filter(Boolean).join(' ');
       } else {
-        document.getElementById('sim-use-m3').value = 275;
+        document.getElementById('sim-use-m3').value = 1117;
       }
       buildModelSummary();
       renderAcademicOutlook();

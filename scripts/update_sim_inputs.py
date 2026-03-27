@@ -297,7 +297,7 @@ def build_baseline(climate: dict, baseline: dict) -> dict:
     year = int(baseline.get("year", 2023))
     area_km2_total = float(baseline.get("area_km2_total", 99.69))
     kc = float(baseline.get("kc_open_water", 1.05))
-    usage_m3 = float(baseline.get("usage_baraj_m3", 275_104_161))
+    usage_m3 = float(baseline.get("usage_baraj_m3", 1_117_064_116))
 
     rows = []
     for date_str, vals in climate.items():
