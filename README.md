@@ -1,20 +1,25 @@
 # İstanbul Baraj Doluluk Oranı Projeksiyonu
 
-Bu depo, İstanbul baraj doluluk oranı projeksiyonu için yayınlanan web uygulamasını içerir.
+Bu depo, İstanbul baraj doluluk oranı projeksiyonu için yayınlanan web uygulamasını ve proje çıktısı görsel/rapor paketlerini içerir.
 
 ## Canlı Yayın
-- https://yasinkaya701.github.io/istanbul-baraj-doluluk-orani-projeksiyonu/
+- Ana sayfa: https://yasinkaya701.github.io/istanbul-baraj-doluluk-orani-projeksiyonu/
+- Elmalı sayfası: https://yasinkaya701.github.io/istanbul-baraj-doluluk-orani-projeksiyonu/baraj_web/elmali.html
 
 ## Kapsam
-- İstanbul genel görünümü
-- Elmalı Barajı alt sayfası
+- İstanbul genel görünümü ve Elmalı alt modülü
 - ET0, yağış ve kullanım etkilerini birlikte değerlendiren simülasyon ekranları
-- Kurumsal kaynakça ve yöntem notları
+- Kaynakça ve yöntem notları
 
-## Veri Kaynakları
+## Proje Çıktıları
+- `hackhaton_model_kartlari_2026_03_18/`: model karşılaştırma kartları ve görsel çıktılar
+- `hackhaton_projection_2040_2026_03_18/`: 2040 ufku projeksiyon grafikleri
+- `Özetler/`: özet rapor PDF çıktı paketleri
+
+## Kurumsal Kaynaklar
 - İSKİ (İstanbul Su ve Kanalizasyon İdaresi)
 - İBB Açık Veri Portalı
-- Kandilli Rasathanesi iklim bağlamı
+- Kandilli Rasathanesi bağlamı
 
 ## Not
-Bu depoda yalnızca yayın için gerekli web dosyaları tutulur.
+Bu depoda ham veri setleri ve geliştirme amaçlı ağır çalışma dosyaları tutulmaz; yayın ve proje çıktısı odaklı içerik korunur.
