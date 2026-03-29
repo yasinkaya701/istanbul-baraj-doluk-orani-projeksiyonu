@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kaynakça</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .refs-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; }
+    .refs-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 24px; margin-bottom: 18px; }
+    .refs-card h2 { margin: 0 0 10px; font-size: 1.05rem; }
+    .refs-card ol { margin: 0; padding-left: 20px; }
+    .refs-card li { margin: 8px 0; line-height: 1.55; }
+    .refs-card a { word-break: break-all; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <div class="brand">Kaynakça</div>
+      <div class="nav-links">
+        <a href="index.html">Ana sayfa</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="refs-wrap">
+    <h1>Doğrulanmış Kaynakça</h1>
+    <p class="lead">Bu listede projede aktif kullanılan veri ve yöntem kaynakları yer alır.</p>
+    <p class="note">Son gözden geçirme tarihi: <strong>26 Mart 2026</strong>.</p>
+
+    <section class="refs-card">
+      <h2>Kurumsal Veri Kaynakları</h2>
+      <ol>
+        <li><a href="https://iski.istanbul/baraj-doluluk" target="_blank" rel="noopener">İSKİ Baraj Doluluk Verileri</a> — İstanbul baraj doluluk oranlarının resmi günlük/yıllık izleme sayfası.</li>
+        <li><a href="https://iski.istanbul/kurumsal/hakkimizda/su-kaynaklari" target="_blank" rel="noopener">İSKİ Su Kaynakları</a> — Havza, kapasite ve işletme kapsamına ilişkin resmi referans sayfası.</li>
+        <li><a href="https://iski.istanbul/kurumsal/stratejik-yonetim/su-kayiplari-yillik-raporlari/" target="_blank" rel="noopener">İSKİ Su Kayıpları Yıllık Raporları</a> — talep ve dağıtım bağlamı için kullanılan kurumsal rapor dizisi.</li>
+        <li><a href="https://data.ibb.gov.tr/dataset/96fde959-3d0b-46d6-8b1d-78a7ba879fc6/resource/27bdb043-0051-49df-bd7c-b68f60f31247/download/istanbula-verilen-temiz-su-miktarlar-tr-en.xlsx" target="_blank" rel="noopener">İBB/İSKİ İstanbul'a Verilen Temiz Su Miktarı (XLSX)</a> — yıllık/aylık kullanım kalibrasyonunda kullanılan resmi tablo.</li>
+        <li><a href="https://data.ibb.gov.tr/api/3/action/datastore_search" target="_blank" rel="noopener">İBB Açık Veri CKAN API</a> — açık veri erişim altyapısı ve doğrulama endpoint'i.</li>
+      </ol>
+    </section>
+
+    <section class="refs-card">
+      <h2>İklim, ET0 ve Hidroloji Kaynakları</h2>
+      <ol>
+        <li><a href="https://www.koeri.boun.edu.tr/" target="_blank" rel="noopener">Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü (Boğaziçi Üniversitesi)</a> — projede kullanılan iklim sürücü serilerinin kurumsal referansı.</li>
+        <li><a href="https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf" target="_blank" rel="noopener">FAO-56 Crop Evapotranspiration</a> — Penman-Monteith referans metodolojisinin temel dokümanı.</li>
+        <li><a href="https://www.fao.org/4/X0490E/x0490e06.htm" target="_blank" rel="noopener">FAO Penman-Monteith Yöntemi (Web Bölümü)</a> — denklem bileşenleri ve uygulama çerçevesi.</li>
+        <li><a href="https://www.hec.usace.army.mil/confluence/hmsdocs/hmstrm/evaporation-and-transpiration/penman-monteith-method" target="_blank" rel="noopener">USACE HEC-HMS Penman-Monteith</a> — hidrolojik modelleme uygulaması için yöntem eşleştirmesi.</li>
+        <li><a href="https://wmo.int/guide-instruments-and-methods-of-observation-wmo-no-8-0" target="_blank" rel="noopener">WMO No.8 Gözlem Rehberi</a> — meteorolojik ölçüm standartları için referans.</li>
+        <li><a href="https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii" target="_blank" rel="noopener">NOAA CPC NAO Aylık İndeks Serisi</a> — iklim rejimi bağlamı kontrol değişkeni.</li>
+      </ol>
+    </section>
+
+    <section class="refs-card">
+      <h2>Modelleme ve Akademik Yöntem Kaynakları</h2>
+      <ol>
+        <li><a href="https://otexts.com/fpp3/" target="_blank" rel="noopener">Forecasting: Principles and Practice (FPP3)</a> — zaman serisi tahminleme ve model değerlendirme yaklaşımı.</li>
+        <li><a href="https://www.aa.com.tr/tr/gundem/istanbulda-gecen-yil-1-milyar-117-milyon-64-bin-116-metrekup-su-kullanildi/3104905" target="_blank" rel="noopener">AA 2023 İstanbul Su Kullanımı Haberi</a> — resmi kaynaklarla birlikte kullanılan kamuya açık doğrulama notu.</li>
+      </ol>
+    </section>
+
+  </main>
+</body>
+</html>

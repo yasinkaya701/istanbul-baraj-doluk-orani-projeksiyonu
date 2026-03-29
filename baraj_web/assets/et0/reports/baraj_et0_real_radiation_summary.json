@@ -1,0 +1,37 @@
+{
+  "coverage": {
+    "history_rows_daily": 0,
+    "history_rows_monthly": 180,
+    "history_rows_yearly": 15,
+    "daily_start": "2010-01-01",
+    "daily_end": "2024-12-01",
+    "model_start": "2010-01-01",
+    "model_end": "2040-12-01"
+  },
+  "radiation_input": {
+    "file": "assets/data/climate_baseline.js",
+    "real_extracted_days": 0,
+    "synthetic_days": 0,
+    "days_clipped_to_rso": 0,
+    "note": "ET0 aylik degerleri iklim panelinden alinmistir; ham radyasyon dosyasi bu repoda yoktur."
+  },
+  "historical_stats": {
+    "et0_mm_year_mean": 1097.6366666666665,
+    "et0_mm_year_min": 1044.1,
+    "et0_mm_year_max": 1160.93,
+    "trend_mm_per_decade": 24.538571428571352
+  },
+  "forecast_stats": {
+    "baseline_year_range": "2015-2024",
+    "baseline_mm_year": 1099.5790000000002,
+    "forecast_2031_2035_mm_year": 1155.7220443086321,
+    "delta_2031_2035_vs_baseline_mm_year": 56.14304430863194,
+    "delta_definition": "2031-2035 ortalama yillik ET0 - 2015-2024 ortalama yillik ET0",
+    "delta_interpretation": "Seviye farki (trend egimi degil)"
+  },
+  "assumptions": {
+    "et0_source": "Iklim paneli aylik ET0 (2010-2024 gozlem, 2026-2040 projeksiyon)",
+    "monthly_coverage_rule": "Tumu aylik panelden alinmistir",
+    "forecast_method": "Panelde verilen projeksiyon kullanildi"
+  }
+}

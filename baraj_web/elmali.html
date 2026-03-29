@@ -1,0 +1,2606 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Elmalı Barajı — Analiz & Simülasyon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --ink: #0f1418;
+      --muted: #5b6168;
+      --card: #ffffff;
+      --accent: #d65a3a;
+      --line: #e2ded6;
+      --deep: #0b2a3c;
+      --sea: #1765a3;
+      --sun: #f4b942;
+      --sky: #c7e3ff;
+      --el: #1765a3;
+      --el2: #0b2a3c;
+      --warn: #d65a3a;
+      --ok: #2b9348;
+    }
+    *{box-sizing:border-box;}
+    body{
+      background: radial-gradient(1200px 600px at 85% -10%, #fff 0%, rgba(255,255,255,0) 60%), linear-gradient(180deg, #f8f7f2, #f2f0e8);
+      color: var(--ink);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    
+    /* NAV */
+    .e-nav{background:rgba(248, 247, 242, 0.9); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); padding:0; position:sticky; top:0; z-index:200;}
+    .e-nav .inner{max-width:1300px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:8px; height:52px;}
+    .e-nav .brand{font-weight:700; color:var(--deep); font-size:.95rem; margin-right:12px; white-space:nowrap;}
+    .e-nav a{color:var(--muted); text-decoration:none; font-size:.85rem; padding:6px 12px; border-radius:999px; transition:.15s; border: 1px solid transparent;}
+    .e-nav a:hover{color:var(--ink); background:#fff; border-color:var(--line);}
+    .e-nav .back{margin-left:auto; background:#fff; border:1px solid var(--line); color:var(--deep); padding:6px 14px; font-weight:600;}
+
+    /* HERO */
+    .e-hero{
+      background: radial-gradient(1200px 420px at 8% -10%, #fff4e6 0%, rgba(255,255,255,0.4) 55%, transparent 100%), linear-gradient(120deg, rgba(23,101,163,0.12), rgba(214,90,58,0.10));
+      padding:72px 20px 56px; text-align:center; border-bottom:1px solid var(--line);
+    }
+    .kicker{font-size:.85rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block;}
+    .e-hero h1{font-size:clamp(2.2rem,5vw,3.1rem); font-weight:700; color:var(--deep); margin:0 0 10px;}
+    .e-hero .sub{color:#333; font-size:1.1rem; max-width:700px; margin:0 auto 28px; line-height:1.6;}
+    
+    .stat-row{display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:28px;}
+    .stat-box{background:#f7f5f0; border:1px solid var(--line); border-radius:12px; padding:16px 24px; text-align:center; min-width:160px;}
+    .stat-box .v{font-size:1.6rem; font-weight:700; color:var(--deep);}
+    .stat-box .l{font-size:.8rem; color:var(--muted); margin-top:4px;}
+
+    /* LAYOUT */
+    .sec{max-width:1300px; margin:0 auto; padding:48px 20px;}
+    .sec-title{font-size:1.8rem; font-weight:700; margin:0 0 12px; position:relative; padding-bottom:6px; color:var(--deep);}
+    .sec-title::after{content:""; position:absolute; left:0; bottom:0; width:56px; height:3px; background:var(--accent); border-radius:999px;}
+    .note{color:var(--muted); font-size:.95rem; margin:0 0 24px;}
+    
+    /* CHART CARD */
+    .chart-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; margin-bottom:24px; box-shadow:0 6px 16px rgba(0,0,0,0.05);}
+    .chart-card h3{font-size:1.05rem; color:var(--deep); margin:0 0 16px;}
+    
+    /* GRID */
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-bottom:24px;}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; box-shadow:0 6px 16px rgba(0,0,0,0.05);}
+    .card h3{font-size:1rem; color:var(--deep); margin:0 0 8px;}
+    .card p{font-size:.9rem; color:var(--ink); margin:0; line-height:1.6;}
+    #modeller .model-gallery{
+      grid-template-columns:repeat(2,minmax(320px,1fr));
+      gap:20px;
+      max-width:1200px;
+      margin:0 auto 24px;
+    }
+    #modeller .model-gallery .card{
+      background:#ffffff;
+      border:1px solid #d1c9bb;
+      box-shadow:0 14px 26px rgba(11,42,60,0.11);
+      padding:18px 18px 14px;
+    }
+    #modeller .model-gallery .card h3{
+      font-size:1.03rem;
+      margin-bottom:6px;
+      color:#0b2a3c;
+    }
+    #modeller .model-gallery .card p{
+      color:#2a3238;
+      font-size:0.89rem;
+    }
+    #modeller img.zoomable{
+      display:block;
+      width:100%;
+      background:#ffffff;
+      border:1px solid #bdb4a6 !important;
+      border-radius:10px;
+      box-shadow:0 8px 18px rgba(11,42,60,0.18);
+      filter:contrast(1.06) saturate(1.03) brightness(0.99);
+      cursor:zoom-in;
+      image-rendering:auto;
+    }
+    .img-open-link{
+      display:inline-block;
+      margin-top:10px;
+      color:var(--sea);
+      text-decoration:none;
+      font-size:0.82rem;
+      font-weight:700;
+    }
+    .img-open-link:hover{
+      text-decoration:underline;
+    }
+    .img-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(8,18,28,0.88);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:700;
+      padding:18px;
+    }
+    .img-modal.open{
+      display:flex;
+    }
+    .img-modal figure{
+      margin:0;
+      max-width:min(95vw,1400px);
+      max-height:92vh;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .img-modal img{
+      width:100%;
+      max-height:84vh;
+      object-fit:contain;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.4);
+      background:#fff;
+      box-shadow:0 16px 40px rgba(0,0,0,0.35);
+    }
+    .img-modal figcaption{
+      color:#e6edf2;
+      font-size:0.88rem;
+      text-align:center;
+    }
+    .img-modal-close{
+      position:absolute;
+      top:14px;
+      right:16px;
+      border:1px solid rgba(255,255,255,0.45);
+      background:rgba(255,255,255,0.08);
+      color:#fff;
+      border-radius:999px;
+      width:38px;
+      height:38px;
+      font-size:1.25rem;
+      line-height:1;
+      cursor:pointer;
+    }
+
+    /* BADGES */
+    .badge{display:inline-block; padding:4px 12px; border-radius:999px; font-size:.78rem; font-weight:600; margin-top:8px;}
+    .bw{background:#fff4e6; color:var(--accent); border:1px solid rgba(214,90,58,0.3);}
+    .bg{background:#eefaf2; color:var(--ok); border:1px solid rgba(43,147,72,0.3);}
+    .bi{background:#f0f7ff; color:var(--sea); border:1px solid rgba(23,101,163,0.3);}
+
+    /* SIMULATION CSS UPDATE FOR LAYOUT */
+    .sim-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
+    .sim-grid { display: grid; gap: 16px; align-content: flex-start; }
+    @media (max-width:900px) { .sim-layout { grid-template-columns: 1fr; } }
+    @media (max-width:900px) { #modeller .model-gallery { grid-template-columns:1fr; max-width:100%; } }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip-group .sbtn { flex: 1 1 calc(50% - 8px); text-align:center; padding:8px 6px; font-size:0.8rem; background:rgba(255,255,255,0.05); color:#c7d2da; border:1px solid rgba(255,255,255,0.1); border-radius:999px; cursor:pointer;}
+    .chip-group .sbtn:hover, .chip-group .sbtn.active { background:rgba(214,90,58,0.2); border-color:var(--accent); color:#fff; }
+    .card.dark { background: #0f1f2b; color: #f4f7f9; border-color: #1b2c3a; padding: 20px; border-radius: 14px; }
+    .pad-lg { padding: 20px; border:1px solid var(--line); border-radius:14px; background:var(--card); }
+    
+    .sim-wrap{background:#fffaf1; border:1px solid var(--line); border-radius:18px; padding:24px; margin-bottom:24px;}
+    .sim-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:18px;}
+    .sim-head h3{font-size:1.1rem; color:var(--deep); margin:0;}
+    .model-sel-wrap{display:flex; align-items:center; gap:10px;}
+    .model-sel-wrap label{font-size:.85rem; color:var(--ink); font-weight:600; white-space:nowrap;}
+    select{background:var(--card); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:.9rem; cursor:pointer; font-family:inherit;}
+    select:focus{outline:none; border-color:var(--accent);}
+    
+    .scen-btns{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+    .sbtn{background:var(--card); border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:8px 16px; font-size:.85rem; cursor:pointer; font-weight:600; transition:.15s;}
+    .sbtn:hover, .sbtn.active{border-color:var(--accent); color:var(--accent); background:rgba(214,90,58,0.08);}
+    
+    .sim-controls{margin-bottom:24px;}
+    .sim-ctrl label{display:block; font-size:.85rem; color:var(--muted); font-weight:600; margin-bottom:6px; margin-top:12px;}
+    .sim-ctrl input[type=range]{width:100%; accent-color:var(--accent);}
+    .sim-ctrl .vd{text-align:right; font-size:.85rem; color:var(--sea); font-weight:700; margin-top:4px;}
+    
+    .sim-metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-top:20px;}
+    .sim-m{background:#f7f5f0; border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
+    .sim-m .sv{font-size:1.3rem; font-weight:700;}    
+    .sim-m .sl{font-size:.75rem; color:var(--muted); margin-top:4px; font-weight:600;}
+    
+    /* MODEL TABLE */
+    .mtable{width:100%; border-collapse:collapse; font-size:.88rem;}
+    .mtable th{background:#f7f5f0; color:var(--muted); font-weight:600; padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
+    .mtable td{padding:10px 12px; border-bottom:1px solid var(--line); color:var(--ink);}
+    .mtable tr:hover td{background:rgba(0,0,0,0.015);}
+    .mtable .best{background:rgba(214,90,58,0.05); font-weight:500;}
+    .mtable tbody tr:nth-child(even) td{background:#fcfbf8;}
+    .mtable th{position:sticky; top:0; z-index:1;}
+
+    .elmali-tabs{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 14px;}
+    .elmali-tab{border:1px solid var(--line); background:#f7f5f0; color:var(--deep); border-radius:999px; padding:8px 14px; font-weight:700; cursor:pointer;}
+    .elmali-tab.active{background:var(--deep); color:#fff; border-color:var(--deep);}
+    .elmali-model-panel{display:none;}
+    .elmali-model-panel.active{display:block;}
+    .elmali-stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:12px 0 16px;}
+    .elmali-stat{background:#f7f5f0; border:1px solid var(--line); border-radius:10px; padding:10px 12px;}
+    .elmali-stat small{display:block; color:var(--muted); font-size:.74rem; line-height:1.3;}
+    .elmali-stat strong{display:block; margin-top:4px; font-size:1.08rem; color:var(--deep);}
+
+    /* LEGEND */
+    .legend-row{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:.85rem; font-weight:600; color:var(--muted);}
+    .legend-row span{display:flex; align-items:center; gap:6px;}
+    .leg-dot{width:12px; height:12px; border-radius:50%; display:inline-block;}
+
+    /* SECTION DIVIDER */
+    .sdiv{border:none; border-top:1px solid var(--line); margin:0;}
+    .tneg{color:var(--accent); font-weight:600;} .tpos{color:var(--ok); font-weight:600;} .tblue{color:var(--sea); font-weight:600;}
+    
+    /* Sim canvas fix to be visible and clear */
+    #chartSim { width:100%; height: 100% !important; max-height: 100%; }
+    
+    /* YENİ MODEL GRID TASARIMI */
+    .model-focus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+    .model-card { background: #f8f7f3; border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; position:relative; overflow:hidden;}
+    .model-card:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(0,0,0,0.06); border-color: #d8d2c7; }
+    .model-card.active { background: #fff; border-color: var(--accent); box-shadow: 0 12px 20px rgba(0,0,0,0.2); }
+    .model-card.active::before { content:''; position:absolute; left:0; top:0; height:100%; width:4px; background:var(--accent); }
+    .model-title { font-weight: 700; font-size:0.95rem; color:var(--deep); }
+    .model-meta { margin-top: 4px; font-size: 0.82rem; color: var(--muted); }
+    .model-delta { margin-top: 6px; font-size: 0.85rem; color: var(--deep); }
+    .model-bar { margin-top: 8px; height: 8px; border-radius: 999px; background: #e5e0d8; overflow: hidden; }
+    .model-bar span { display: block; height: 100%; }
+
+  
+
+    /* Main-page-aligned simulation visuals */
+    .sim-chart {
+      position: relative;
+      height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .sim-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      top: 8px;
+      left: 8px;
+      background: rgba(11, 42, 60, 0.94);
+      color: #fff;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      padding: 8px 10px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translate(-50%, -110%);
+      transition: opacity 0.12s ease;
+      white-space: nowrap;
+      max-width: min(88vw, 320px);
+      overflow-wrap: anywhere;
+      text-align: left;
+      z-index: 15;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.83rem;
+      align-items: center;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .dot.base { background: #343b43; }
+    .dot.adj { background: #d65a3a; }
+    .loss-bar {
+      display: flex;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #ede9df;
+      margin-top: 12px;
+    }
+    .loss-bar > div {
+      font-size: 0.68rem;
+      line-height: 12px;
+      color: #fff;
+      text-align: center;
+      transition: width 0.2s ease;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #loss-use { background: #1765a3; width: 50%; }
+    #loss-evap { background: #d65a3a; width: 50%; }
+    .sim-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fbfaf6;
+      min-width: 0;
+    }
+    .metric small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+    .metric strong {
+      color: var(--deep);
+      font-size: 0.95rem;
+      overflow-wrap: anywhere;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      min-width: 0;
+    }
+    .sim-grid .card {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .sim-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip-group .chip-btn,
+    .chip-group .btn {
+      flex: 1 1 calc(50% - 8px);
+      min-width: 120px;
+    }
+    .btn {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--deep);
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn.ghost {
+      background: transparent;
+      border-color: rgba(255,255,255,0.32);
+      color: #f3f1eb;
+    }
+    .chip-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.32);
+      background: transparent;
+      color: #f3f1eb;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+    }
+    .chip-btn.active,
+    .chip-btn:hover {
+      border-color: #f6c7b8;
+      color: #fff;
+      background: rgba(214,90,58,0.24);
+    }
+    .sim-grid .card.dark label,
+    .sim-grid .card.dark .sim-cta {
+      color: #f3f1eb;
+    }
+    .sim-grid .card.dark select {
+      width: 100%;
+      margin-top: 6px;
+      background: rgba(255,255,255,0.95);
+      color: #172733;
+      border-color: rgba(255,255,255,0.72);
+    }
+    .sim-controls label,
+    .sim-grid label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .value {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--sea);
+      margin-top: 4px;
+      margin-bottom: 2px;
+      overflow-wrap: anywhere;
+    }
+    .assumptions {
+      margin-top: 10px;
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+    }
+    .assumptions p {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--deep);
+      font-size: 0.78rem;
+      background: #faf8f2;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    .model-focus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .model-card {
+      min-width: 0;
+    }
+    .model-card .model-meta,
+    .model-card .model-delta {
+      overflow-wrap: anywhere;
+    }
+    .sim-params {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1040px) {
+      .e-nav .inner {
+        flex-wrap: wrap;
+        height: auto;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .e-nav .back {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sim-layout {
+        grid-template-columns: 1fr;
+      }
+      .sim-chart {
+        height: 320px;
+      }
+      .sim-metrics {
+        grid-template-columns: 1fr;
+      }
+      .sim-params {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .e-nav .inner a {
+        font-size: 0.8rem;
+        padding: 5px 9px;
+      }
+      .chip-group .chip-btn,
+      .chip-group .btn {
+        flex: 1 1 100%;
+      }
+      .tooltip {
+        white-space: normal;
+      }
+      .stat-box {
+        min-width: 130px;
+      }
+      .card,
+      .chart-card,
+      .sim-wrap,
+      .pad-lg {
+        padding: 14px;
+      }
+    }
+
+  </style>
+  <!-- Python tarafından üretilen model projeksiyon serileri -->
+  <script src="assets/elmali_models_data.js?v=4"></script>
+  <script src="assets/data/elmali_observed_monthly.js?v=20260326-1"></script>
+  <script src="assets/data/climate_baseline.js?v=20260326-1"></script>
+</head>
+<body>
+<nav class="e-nav">
+  <div class="inner">
+    <span class="brand">Elmalı Barajı Analizi</span>
+    <a href="#tarihsel">Tarihsel</a>
+    <a href="#trend">Trend</a>
+    <a href="#mevsim">Mevsimsellik</a>
+    <a href="#yagis">Yağış</a>
+    <a href="#modeller">Modeller</a>
+    <a href="#simulasyon">Simülasyon</a>
+    <a href="index.html" class="back">← Ana Sayfa</a>
+  </div>
+</nav>
+
+<div class="e-hero">
+  <span class="kicker">İstanbul · Elmalı Havzası · 2002–2026</span>
+  <h1>Elmalı Barajı</h1>
+  <p class="sub">İSKİ ölçüm verileriyle (2002–2026) aylık doluluk, yağış ve su kullanımı analizi; ana menüyle uyumlu etkileşimli simülasyon.</p>
+  <figure style="margin:18px auto 0; max-width:860px;">
+    <img src="assets/img/elmali_baraji.jpg?v=20260326-1" alt="Elmalı Barajı görünümü" style="width:100%; border-radius:14px; border:1px solid var(--line); box-shadow:0 12px 28px rgba(0,0,0,0.12); object-fit:cover;">
+    <figcaption style="font-size:0.82rem; color:var(--muted); margin-top:8px;">Elmalı Barajı görünümü.</figcaption>
+  </figure>
+  <div class="stat-row">
+    <div class="stat-box"><div class="v" id="hero-n-daily">—</div><div class="l">Günlük ölçüm</div></div>
+    <div class="stat-box"><div class="v" id="hero-mean-fill" style="color:var(--sea);">—</div><div class="l">Ort. doluluk</div></div>
+    <div class="stat-box"><div class="v" id="hero-min-fill" style="color:var(--accent);">—</div><div class="l">Tarihsel minimum</div></div>
+    <div class="stat-box"><div class="v" id="hero-max-fill" style="color:var(--ok);">—</div><div class="l">Tarihsel maksimum</div></div>
+    <div class="stat-box"><div class="v">9,6 milyon m³</div><div class="l">Toplam kapasite</div></div>
+    <div class="stat-box"><div class="v" id="hero-trend" style="color:var(--accent);">—</div><div class="l">puan/yıl trend</div></div>
+  </div>
+</div>
+
+<!-- TARIHSEL -->
+<section class="sec" id="tarihsel">
+  <h2 class="sec-title">Tarihsel Doluluk Serisi</h2>
+  <p class="note">Aylık doluluk ortalaması (2002–2026). Ham günlük ölçümler aylık frekansta özetlenmiştir.</p>
+  <div class="chart-card">
+    <h3>Aylık Ortalama Doluluk Oranı (%)</h3>
+    <div class="legend-row">
+      <span><span class="leg-dot" style="background:#1765a3;"></span>Doluluk %</span>
+      <span><span class="leg-dot" style="background:#d65a3a; border-radius:0; height:3px; width:18px;"></span>Kritik (%20)</span>
+      <span><span class="leg-dot" style="background:#f4b942; border-radius:0; height:3px; width:18px;"></span>Düşük (%40)</span>
+      <span><span class="leg-dot" style="background:#2b9348; border-radius:0; height:3px; width:18px;"></span>Güvenli (%80)</span>
+    </div>
+    <canvas id="chartTarihsel" height="90"></canvas>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>En Kritik Dönem</h3>
+      <p id="insight-critical">En düşük gözlenen doluluk seviyesi ve ilgili dönem özetlenir.</p>
+      <span class="badge bw">KRİZ</span>
+    </div>
+    <div class="card">
+      <h3>En Yüksek Doluluk Dönemi</h3>
+      <p id="insight-high">Maksimum doluluk gözlemleri ve yüksek rejim dönemleri.</p>
+      <span class="badge bg">ZİRVE</span>
+    </div>
+    <div class="card">
+      <h3>Düşük Doluluk Rejimleri</h3>
+      <p id="insight-lows">Uzun dönem boyunca düşük doluluk yılları ayrı bir rejim olarak izlenir.</p>
+      <span class="badge bw" id="insight-low-years">—</span>
+    </div>
+    <div class="card">
+      <h3>Güncel Durum</h3>
+      <p id="insight-current">En güncel ölçüm tarihindeki doluluk oranı gösterilir.</p>
+      <span class="badge bi" id="insight-current-badge">GÜNCEL</span>
+    </div>
+  </div>
+</section>
+<hr class="sdiv">
+
+<!-- TREND -->
+<section class="sec" id="trend">
+  <h2 class="sec-title">Uzun Vadeli Trend Analizi</h2>
+  <p class="note">Yıllık ortalama doluluk ve OLS trend çizgisi birlikte gösterilir.</p>
+  <div class="chart-card">
+    <h3>Yıllık Ortalama Doluluk % + Trend Çizgisi (OLS)</h3>
+    <canvas id="chartTrend" height="100"></canvas>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Trend Eğimi</h3>
+      <p id="trend-summary">Trend özeti hesaplanan yıllık seri üzerinden otomatik güncellenir.</p>
+    </div>
+    <div class="card">
+      <h3>Döngüsellik</h3>
+      <p>Düşük doluluk dönemleri yıllara göre kümelenme eğilimi gösterir; kesin periyot kararı yerine gözlemsel sınıflama kullanılmıştır.</p>
+      <span class="badge bi">Yıllık rejim analizi</span>
+    </div>
+    <div class="card" style="grid-column:span 2;">
+      <h3>Yıllık Veri Tablosu</h3>
+      <div style="overflow-x:auto;max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;">
+        <table class="mtable" id="yilTable"></table>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="sdiv">
+
+<!-- MEVSİMSELLİK -->
+<section class="sec" id="mevsim">
+  <h2 class="sec-title">Mevsimsel Örüntüler</h2>
+  <p class="note">2002–2026 dönemindeki tam aylardan hesaplanan aylık ortalamalar gösterilir.</p>
+  <div class="chart-card">
+    <h3>Aylık Ortalama Doluluk Oranı (%) — 2002–2026 Ortalaması</h3>
+    <canvas id="chartSezDol" height="70"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Yağış Mevsimselliği — Aylık Toplam Yağış Ortalaması (mm)</h3>
+    <canvas id="chartSezYag" height="70"></canvas>
+  </div>
+</section>
+<hr class="sdiv">
+
+<!-- YAĞIŞ KORELASYONU -->
+<section class="sec" id="yagis">
+  <h2 class="sec-title">Yağış ve Doluluk İlişkisi</h2>
+  <p class="note">Yıllık yağış ve yıllık ortalama doluluk serileri çift eksende birlikte gösterilir; eşzamanlı rejim değişimleri daha okunur hale getirilmiştir.</p>
+  <div class="chart-card">
+    <h3>Yıllık Yağış (mm) ve Ortalama Doluluk (%) — Çift Eksen Karşılaştırma</h3>
+    <canvas id="chartCorr" height="70"></canvas>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Temel Bulgular</h3>
+      <p id="rain-insights">Yağış ile doluluk arasındaki ilişki yıllık düzeyde yorumlanır.</p>
+    </div>
+    <div class="card">
+      <h3>Yağış İstatistikleri</h3>
+      <p id="rain-stats" style="white-space:pre-line;">Yıllık yağış istatistikleri otomatik güncellenir.</p>
+    </div>
+  </div>
+</section>
+<hr class="sdiv">
+
+<!-- SİMÜLASYON -->
+<section class="sec" id="simulasyon">
+  <h2 class="sec-title">Etkileşimli Senaryo Simülasyonu</h2>
+  <p class="note">Elmalı Barajı için model baz projeksiyonları, yağış, ET0 ve kullanım parametreleriyle aynı su dengesi matematiği altında yeniden hesaplanır. Görsel ve etkileşim altyapısı ana sayfadaki simülasyon yapısıyla eşlenmiştir.</p>
+
+  <div class="sim-layout">
+    <div class="card pad-lg">
+      <div class="sim-chart">
+        <div class="tooltip" id="sim-tooltip"></div>
+        <svg class="sim-svg" id="sim-svg" viewBox="0 0 900 360" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="legend">
+        <span><span class="dot base"></span>Referans projeksiyon</span>
+        <span><span class="dot adj"></span>Senaryo projeksiyonu</span>
+      </div>
+      <p class="note" id="sim-status">Veri hazır</p>
+      <div class="legend" id="model-legend"></div>
+      <div class="loss-bar">
+        <div id="loss-use">Kullanım</div>
+        <div id="loss-evap">Buharlaşma</div>
+      </div>
+      <div class="sim-metrics">
+        <div class="metric">
+          <small>Seçilen Tarih</small>
+          <strong id="metric-date">—</strong>
+        </div>
+        <div class="metric">
+          <small>Referans Doluluk</small>
+          <strong id="metric-base">—</strong>
+        </div>
+        <div class="metric">
+          <small>Senaryo Doluluk</small>
+          <strong id="metric-adj">—</strong>
+        </div>
+      </div>
+      <div class="note" id="sim-range" style="margin-top:8px;">Tarih aralığı: —</div>
+    </div>
+
+    <div class="sim-grid">
+      <div class="card dark">
+        <div class="sim-cta">Hızlı Senaryolar</div>
+        <div class="chip-group" style="margin-top:10px;">
+          <button class="btn primary" id="sim-reset">Referans Değerler</button>
+          <button class="btn ghost" id="sim-zero">Sıfırla</button>
+          <button class="chip-btn" data-scenario="dry">Kurak Senaryo</button>
+          <button class="chip-btn" data-scenario="wet">Yağış Artışı</button>
+          <button class="chip-btn" data-scenario="heat">Sıcak/Yüksek ET0</button>
+        </div>
+        <label style="margin-top:12px;">Model</label>
+        <select id="sim-model">
+          <optgroup label="Referans">
+            <option value="ridge" selected>Ridge (Varsayılan)</option>
+            <option value="ensemble">Ensemble Median</option>
+            <option value="stack">Stacking</option>
+            <option value="all">Tümü (Karşılaştır)</option>
+          </optgroup>
+          <optgroup label="Ağaç Tabanlı">
+            <option value="lgb">LightGBM DART</option>
+            <option value="catboost">CatBoost</option>
+            <option value="etr">Extra Trees</option>
+            <option value="rf">Random Forest</option>
+            <option value="gbr">Gradient Boosting</option>
+            <option value="hgb">HistGradientBoosting</option>
+          </optgroup>
+          <optgroup label="Regresyon/Olasılıksal">
+            <option value="bayesridge">Bayesian Ridge</option>
+            <option value="elasticnet">ElasticNet</option>
+            <option value="huber">Huber Regressor</option>
+            <option value="svr">SVR (RBF)</option>
+            <option value="ngboost">NGBoost</option>
+            <option value="gpr">Gaussian Process</option>
+            <option value="arimax">ARIMAX</option>
+          </optgroup>
+          <optgroup label="Fizik Tabanlı">
+            <option value="budyko">Budyko</option>
+            <option value="thornthwaite">Thornthwaite</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 8px; color:var(--deep);">İklim Senaryosu</h4>
+        <label>Yağış Değişimi (%)</label>
+        <input type="range" id="sim-rain" min="-30" max="30" value="0" step="1" />
+        <div class="value" id="sim-rain-val">0%</div>
+
+        <label>ET0 Değişimi (%)</label>
+        <input type="range" id="sim-et0" min="-20" max="25" value="0" step="1" />
+        <div class="value" id="sim-et0-val">0%</div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 8px; color:var(--deep);">Kullanım ve Kayıplar</h4>
+        <label>Yıllık Kullanım (milyon m³ / yıl)</label>
+        <input type="range" id="sim-use-m3" min="1.5" max="9.0" value="3.6" step="0.1" />
+        <div class="value" id="sim-use-m3-val">—</div>
+
+        <label>Yıllık Kullanım Artışı (% / yıl)</label>
+        <input type="range" id="sim-use-growth" min="-1.0" max="3.0" value="0.0" step="0.1" />
+        <div class="value" id="sim-use-growth-val">0.0% / yıl</div>
+        <div class="note">2040 tahmini kullanım (seçili artış hızına göre): <strong id="sim-use-2040">—</strong></div>
+        <div class="note" id="sim-use-range">Kullanım artış bandı: —</div>
+        <div class="note" id="sim-use-season">Mevsimsel dağılım: —</div>
+
+        <label>Buharlaşma (ET0 ile bağlı)</label>
+        <div class="value" id="sim-evap-m3-val">—</div>
+
+        <div class="assumptions">
+          <p><strong>Not:</strong> ET0 artışı açık su buharlaşmasını artırır ve etkin akış katsayısını azaltır.</p>
+          <p><strong>Not:</strong> Yağış ve ET0 etkileri havza/göl alanı üzerinden hacme dönüştürülerek baz projeksiyona eklenir.</p>
+          <p><strong>Not:</strong> Kayıp payları kullanım+buharlaşma toplamı üzerinden normalize edilir; doluluk↔rezerv ve seviye↔alan dönüşümleri doğrudan gözlenen seriyle kalibre edilir.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <h4>Model Karşılaştırma (2040 Sonu)</h4>
+          <span class="pill" id="model-spread-pill">—</span>
+        </div>
+        <div class="model-focus-grid" id="model-focus-grid"></div>
+        <p class="note">Kart seçimi simülasyon grafiğini anında günceller.</p>
+      </div>
+
+      <div class="card">
+        <h4>Yöntem Özeti</h4>
+        <p class="note">Güncellenmiş senaryo hattı, her modelin referans aylık doluluk serisini su dengesi farkı ile düzeltir. Hesapta havza yağışı, göl üzerine yağış, ET0 tabanlı buharlaşma ve kullanım bileşenleri birlikte değerlendirilir.</p>
+        <pre class="formula">ΔS_mcm = R_m·P_m·A_catch·0.001 + P_m·A_lake(fill)·0.001 − Kc·ET0_m·A_lake(fill)·0.001 − U_m
+Reserve′ = clip(Reserve_base + k·(ΔS_scen − ΔS_base), Reserve_min, Reserve_max)
+Fill′ = f⁻¹(Reserve′)  (f: gözlenen doluluk→rezerv eğrisi)</pre>
+        <div class="sim-params">
+          <div>Havza alanı: <strong id="param-catchment">—</strong> km²</div>
+          <div>Aktif kapasite: <strong id="param-capacity">—</strong> milyon m³</div>
+          <div>Göl yüzey alanı: <strong id="param-lake-area">—</strong> km²</div>
+          <div>Kc (açık su): <strong id="param-kc">—</strong></div>
+          <div>Akış katsayısı: <strong id="param-runoff">—</strong></div>
+          <div>Senaryo ölçek katsayısı: <strong id="param-adj-scale">—</strong></div>
+          <div>Senaryo güç katsayısı: <strong id="param-scenario-gain">—</strong></div>
+          <div>Aylık etki tavanı: <strong id="param-delta-cap">—</strong> puan/ay</div>
+          <div>Doluluk→rezerv eğimi: <strong id="param-fr-slope">—</strong> milyon m³/puan</div>
+          <div>Ortalama yağış: <strong id="param-mean-rain">—</strong> mm/ay</div>
+          <div>Ortalama ET0: <strong id="param-mean-et0">—</strong> mm/ay</div>
+          <div>Ortalama seviye: <strong id="param-mean-level">—</strong> m</div>
+          <div>Ortalama rezerv: <strong id="param-mean-reserve">—</strong> m³/ay</div>
+        </div>
+        <p class="note" id="sim-sources"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- MODEL KATALOĞU -->
+<section id="modeller" class="sec">
+  <h2 class="sec-title">Elmalı İçin İklim Regresyon Modelleri</h2>
+  <p class="note" style="margin-bottom:10px;">Model seçimini standartlaştırmak için mekanizma, grafik karakteri, kullanım bağlamı ve doğruluk oranı tek matriste verildi. Simülasyon paneli bu listedeki tüm modellerle birebir entegredir.</p>
+  <p class="note" style="margin-bottom:24px;"><strong>V4</strong> model adı değil; aynı veri işleme, aynı özellik mühendisliği ve aynı doğrulama protokolüyle üretilen güncel sürüm etiketidir.</p>
+
+  <div class="chart-card">
+    <h3>Modellerin Kullanım Rehberi</h3>
+    <div style="overflow-x:auto;">
+      <table class="mtable" id="model-usage-table"></table>
+    </div>
+  </div>
+
+  <div class="elmali-tabs" data-elmali-tabs>
+    <button class="elmali-tab active" data-elmali-tab="temel">Temel Modeller</button>
+    <button class="elmali-tab" data-elmali-tab="v4">V4 Gelişmiş Modeller</button>
+  </div>
+
+  <div class="elmali-model-panel active" id="elmali-panel-temel">
+    <p class="note" style="margin-bottom:14px;">Temel set (Ridge, GBR, HGB, RF, ETR) günlük operasyon ve hızlı senaryo karşılaştırması için birincil referans gruptur.</p>
+    <div class="grid model-gallery">
+      <div class="card"><h3 style="margin-top:0;">Ridge</h3><p class="note">Düşük varyanslı lineer referans model.</p><img class="zoomable" src="assets/elmali_models/ridge_elmali_projection.png?v=20260326-7" alt="Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GBR</h3><p class="note">Kırılım noktalarına duyarlı boosting modeli.</p><img class="zoomable" src="assets/elmali_models/gbr_elmali_projection.png?v=20260326-7" alt="GBR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">HGB</h3><p class="note">Histogram tabanlı, dengeli ve hızlı boosting.</p><img class="zoomable" src="assets/elmali_models/hgb_elmali_projection.png?v=20260326-7" alt="HGB Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Random Forest</h3><p class="note">Orta rejimde yumuşak, robust topluluk model.</p><img class="zoomable" src="assets/elmali_models/rf_elmali_projection.png?v=20260326-7" alt="RF Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Extra Trees</h3><p class="note">Yüksek rastgeleleştirme ile gürültüye dayanıklı model.</p><img class="zoomable" src="assets/elmali_models/etr_elmali_projection.png?v=20260326-7" alt="ETR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+    </div>
+  </div>
+
+  <div class="elmali-model-panel" id="elmali-panel-v4">
+    <p class="note" style="margin-bottom:14px;">V4 panelinde gelişmiş boosting, olasılıksal, zaman serisi ve fizik tabanlı modeller birlikte izlenir; stres testi ve belirsizlik raporlarında tamamlayıcı set olarak kullanılır.</p>
+    <div class="grid model-gallery">
+      <div class="card"><h3 style="margin-top:0;">ElasticNet</h3><img class="zoomable" src="assets/elmali_models/elasticnet_elmali_projection.png?v=20260326-7" alt="ElasticNet Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Bayesian Ridge</h3><img class="zoomable" src="assets/elmali_models/bayes_ridge_elmali_projection.png?v=20260326-7" alt="Bayesian Ridge Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Huber</h3><img class="zoomable" src="assets/elmali_models/huber_elmali_projection.png?v=20260326-7" alt="Huber Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">LightGBM DART</h3><img class="zoomable" src="assets/elmali_models/lgb_elmali_projection.png?v=20260326-7" alt="LightGBM Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">CatBoost</h3><img class="zoomable" src="assets/elmali_models/catboost_elmali_projection.png?v=20260326-7" alt="CatBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">SVR (RBF)</h3><img class="zoomable" src="assets/elmali_models/svr_elmali_projection.png?v=20260326-7" alt="SVR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">NGBoost</h3><img class="zoomable" src="assets/elmali_models/ngboost_elmali_projection.png?v=20260326-7" alt="NGBoost Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">GPR</h3><img class="zoomable" src="assets/elmali_models/gpr_elmali_projection.png?v=20260326-7" alt="GPR Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">ARIMAX</h3><img class="zoomable" src="assets/elmali_models/arimax_elmali_projection.png?v=20260326-7" alt="ARIMAX Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Budyko</h3><img class="zoomable" src="assets/elmali_models/budyko_elmali_projection.png?v=20260326-7" alt="Budyko Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Thornthwaite</h3><img class="zoomable" src="assets/elmali_models/thornthwaite_elmali_projection.png?v=20260326-7" alt="Thornthwaite Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Stacking Ensemble</h3><img class="zoomable" src="assets/elmali_models/stack_elmali_projection.png?v=20260326-7" alt="Stacking Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+      <div class="card"><h3 style="margin-top:0;">Ensemble Median</h3><img class="zoomable" src="assets/elmali_models/ensemble_median_elmali_projection.png?v=20260326-7" alt="Ensemble Median Elmalı" style="width:100%; border-radius:8px; border:1px solid var(--line);"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="akademik-yorum">
+  <h2 class="sec-title">Akademik Gelecek Değerlendirmesi</h2>
+  <div class="card">
+    <p>Elmalı Barajı için değerlendirme çerçevesi; model saçılımı, fizik tabanlı su dengesi ve talep baskısını tek tabloda birleştirir. Amaç, tek model eğrisi yerine açıklanabilir risk aralığı üretmektir.</p>
+    <div class="elmali-stat-grid">
+      <div class="elmali-stat"><small>Simülasyona Entegre Model</small><strong id="elm-acad-model-count">—</strong></div>
+      <div class="elmali-stat"><small>2040 Konsensüs Bandı (P20–P80)</small><strong id="elm-acad-2040-minmax">—</strong></div>
+      <div class="elmali-stat"><small>2040 Medyanı</small><strong id="elm-acad-2040-median">—</strong></div>
+      <div class="elmali-stat"><small>2040 IQR (Q1–Q3)</small><strong id="elm-acad-2040-iqr">—</strong></div>
+      <div class="elmali-stat"><small>Tarihsel Ortalama Doluluk</small><strong id="elm-acad-hist-mean">—</strong></div>
+      <div class="elmali-stat"><small>Kullanım / Buharlaşma (baz)</small><strong id="elm-acad-loss-balance">—</strong></div>
+      <div class="elmali-stat"><small>+10% Yağış (Ridge 2040)</small><strong id="elm-acad-sens-rain">—</strong></div>
+      <div class="elmali-stat"><small>+10% ET0 (Ridge 2040)</small><strong id="elm-acad-sens-et0">—</strong></div>
+      <div class="elmali-stat"><small>+20% Kullanım (Ridge 2040)</small><strong id="elm-acad-sens-use">—</strong></div>
+      <div class="elmali-stat"><small>+1 puan/yıl Talep Artışı</small><strong id="elm-acad-sens-growth">—</strong></div>
+    </div>
+
+    <h3 style="margin-top:18px;">Bilimsel Yorum Çerçevesi</h3>
+    <ul>
+      <li>Rezerv değişimi, havza akışı + göl yağışı − ET0 buharlaşması − kullanım bileşenlerinin hacim dengesiyle hesaplanır.</li>
+      <li>Projeksiyon başlangıcında gözlem ve tahmin serileri aynı referans seviyede uyumlandırılır.</li>
+      <li>Model aileleri arasında karşılaştırılabilirlik için senaryo etkileri ortak bir ölçek yaklaşımıyla dengelenir.</li>
+      <li>Karar notlarında medyan + IQR + stres senaryosu birlikte verilmelidir; min–maks tek başına yorumlanmamalıdır.</li>
+    </ul>
+
+    <h3>Operasyonel Sonuçlar</h3>
+    <ol>
+      <li>Aylık takip notlarında eşik-altı model oranı (ör. %30 altı) raporlanmalıdır.</li>
+      <li>Yağış ve ET0 birlikte değerlendirilmelidir; tek değişkenli yorum Elmalı gibi küçük hacimli barajlarda yanıltıcı olur.</li>
+      <li>Kalibrasyon parametreleri çeyreklik olarak güncellenmeli ve kullanım dağılımı yeni ölçümle yeniden fit edilmelidir.</li>
+    </ol>
+    <p class="note" id="elm-acad-note">Bu özet, sayfadaki güncel veri ve model setinden otomatik hesaplanır.</p>
+  </div>
+</section>
+
+<div class="img-modal" id="img-modal" aria-hidden="true">
+  <button class="img-modal-close" id="img-modal-close" aria-label="Kapat">×</button>
+  <figure>
+    <img id="img-modal-image" alt="Model grafiği tam boyut"/>
+    <figcaption id="img-modal-caption">Model görseli</figcaption>
+  </figure>
+</div>
+
+<footer style="background:#f7f5f0;border-top:1px solid var(--line);text-align:center;padding:28px 20px;color:var(--muted);font-size:.85rem;margin-top:40px;">
+  <p>Elmalı Barajı Doluluk Analizi — Kaynak: İSKİ 2002–2026</p>
+  <p>Boğaziçi Üniversitesi Bilgisayar Mühendisliği Bölümü ve Kandilli Rasathanesi hackathonu kapsamında hazırlanmıştır · <a href="index.html" style="color:var(--sea); font-weight:600;">İstanbul Baraj Projeksiyonu Ana Sayfa</a></p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════ VERİ
+const AY = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const ELMALI_OBS = (typeof window.ELMALI_OBSERVED_MONTHLY !== 'undefined' && window.ELMALI_OBSERVED_MONTHLY)
+  ? window.ELMALI_OBSERVED_MONTHLY
+  : null;
+
+const MONTHLY_SERIES = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
+  ? ELMALI_OBS.monthly.filter((d) => (
+      d
+      && d.is_full_month
+      && Number(d.month_days || 0) >= 28
+      && Number(d.obs_days || 0) >= 28
+    )).map((d) => ({
+      date: d.date,
+      fill_avg_pct: Number(d.fill_avg_pct),
+      rain_total_mm: Number(d.rain_total_mm),
+      use_total_m3: Number(d.use_total_m3),
+    }))
+  : [];
+
+const YEARLY = (ELMALI_OBS && Array.isArray(ELMALI_OBS.yearly))
+  ? ELMALI_OBS.yearly.map((d) => ({
+      y: Number(d.y),
+      avg: Number(d.avg),
+      min: Number(d.min),
+      max: Number(d.max),
+      rain: Number(d.rain),
+      use_m3: Number(d.use_m3 || 0),
+    }))
+  : [];
+
+const MONTHLY_AVG = (ELMALI_OBS && ELMALI_OBS.monthly_climatology && Array.isArray(ELMALI_OBS.monthly_climatology.fill_avg_pct))
+  ? ELMALI_OBS.monthly_climatology.fill_avg_pct.map(Number)
+  : Array.from({ length: 12 }, () => 0);
+
+const MONTHLY_RAIN = (ELMALI_OBS && ELMALI_OBS.monthly_climatology && Array.isArray(ELMALI_OBS.monthly_climatology.rain_total_mm))
+  ? ELMALI_OBS.monthly_climatology.rain_total_mm.map(Number)
+  : Array.from({ length: 12 }, () => 0);
+
+const MONTHLY_USE_M3 = (ELMALI_OBS && ELMALI_OBS.monthly_climatology && Array.isArray(ELMALI_OBS.monthly_climatology.use_total_m3))
+  ? ELMALI_OBS.monthly_climatology.use_total_m3.map(Number)
+  : Array.from({ length: 12 }, () => 0);
+const MONTHLY_LEVEL_M = (ELMALI_OBS && ELMALI_OBS.monthly_climatology && Array.isArray(ELMALI_OBS.monthly_climatology.level_avg_m))
+  ? ELMALI_OBS.monthly_climatology.level_avg_m.map(Number)
+  : Array.from({ length: 12 }, () => NaN);
+const MONTHLY_RESERVE_M3 = (ELMALI_OBS && ELMALI_OBS.monthly_climatology && Array.isArray(ELMALI_OBS.monthly_climatology.reserve_avg_m3))
+  ? ELMALI_OBS.monthly_climatology.reserve_avg_m3.map(Number)
+  : Array.from({ length: 12 }, () => NaN);
+
+const ELMALI_STATS = (ELMALI_OBS && ELMALI_OBS.stats) ? ELMALI_OBS.stats : {};
+const YEARLY_SLOPE = Number.isFinite(Number(ELMALI_STATS.trend_slope_pp_per_year))
+  ? Number(ELMALI_STATS.trend_slope_pp_per_year)
+  : -0.65;
+const YEARLY_INTERCEPT = Number.isFinite(Number(ELMALI_STATS.trend_intercept))
+  ? Number(ELMALI_STATS.trend_intercept)
+  : 1374.4;
+
+function toYYYYMM(dateStr) {
+  if (!dateStr) return '';
+  return String(dateStr).slice(0, 7);
+}
+
+function buildEt0MonthlyClimatology() {
+  if (!(window.CLIMATE_BASELINE && typeof window.CLIMATE_BASELINE === 'object')) {
+    return [39, 48, 74, 95, 129, 152, 171, 160, 120, 85, 52, 39];
+  }
+  const bucket = Array.from({ length: 12 }, () => []);
+  Object.entries(window.CLIMATE_BASELINE).forEach(([dateStr, vals]) => {
+    if (!vals || !Number.isFinite(Number(vals.et0_mm_month))) return;
+    const d = new Date(dateStr);
+    const y = d.getUTCFullYear();
+    if (y < 2010 || y > 2024) return;
+    const m = d.getUTCMonth();
+    bucket[m].push(Number(vals.et0_mm_month));
+  });
+  return bucket.map((arr, i) => {
+    if (arr.length) {
+      return arr.reduce((s, v) => s + v, 0) / arr.length;
+    }
+    return [39, 48, 74, 95, 129, 152, 171, 160, 120, 85, 52, 39][i];
+  });
+}
+
+const BASE_ET0_MONTHLY = buildEt0MonthlyClimatology();
+
+// ═══════════════════════════════════════════════════════════ CHART.JS DEFAULTS (LIGHT THEME)
+Chart.defaults.color = '#5b6168'; // muted
+Chart.defaults.borderColor = '#e2ded6'; // line
+Chart.defaults.font.family = "'Space Grotesk', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+
+// LIGHT THEME COLORS
+const COLOR_ACCENT = '#d65a3a';
+const COLOR_SEA    = '#1765a3';
+const COLOR_DEEP   = '#0b2a3c';
+const COLOR_OK     = '#2b9348';
+const COLOR_SUN    = '#f4b942';
+
+// ═══════════════════════════════════════════════════════════ TARIHSEL
+(function(){
+  const labels = MONTHLY_SERIES.map((d) => toYYYYMM(d.date));
+  const data = MONTHLY_SERIES.map((d) => d.fill_avg_pct);
+  const colors = data.map((v) => (v < 25 ? COLOR_ACCENT : v < 50 ? COLOR_SUN : v > 80 ? COLOR_OK : COLOR_SEA));
+  new Chart(document.getElementById('chartTarihsel'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Aylık Ort. Doluluk %',data,borderColor:COLOR_SEA,backgroundColor:hexToRgba(COLOR_SEA,0.12),pointBackgroundColor:colors,pointRadius:1.7,pointHoverRadius:4,borderWidth:1.8,fill:true,tension:0.2,order:2}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`}}
+      },
+      scales:{
+        x:{
+          grid:{display:false},
+          ticks:{
+            maxTicksLimit:12,
+            callback(value, index) {
+              const label = this.getLabelForValue(value);
+              if (!label) return '';
+              return index % 12 === 0 ? label.slice(0, 4) : '';
+            }
+          }
+        },
+        y:{min:0,max:105,ticks:{callback:v=>v+'%'},
+           afterSetDimensions(scale){scale.min=0; scale.max=105;}
+        }
+      },
+      animation:{duration:600}
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════ TREND
+(function(){
+  const labels = YEARLY.map(d=>d.y);
+  const data = YEARLY.map(d=>d.avg);
+  const trend = YEARLY.map(d=>+(YEARLY_SLOPE * d.y + YEARLY_INTERCEPT).toFixed(1));
+  new Chart(document.getElementById('chartTrend'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Yıllık Ort. %',data,borderColor:COLOR_SEA,backgroundColor:hexToRgba(COLOR_SEA,0.08),pointBackgroundColor:data.map(v=>v<30?COLOR_ACCENT:v>80?COLOR_OK:COLOR_SEA),pointRadius:4,pointHoverRadius:6,borderWidth:2.2,fill:true,tension:0.3,order:2},
+        {label:'OLS Trend',data:trend,type:'line',borderColor:COLOR_ACCENT,borderWidth:2.5,borderDash:[7,4],pointRadius:0,fill:false,tension:0.3,order:1}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{color:Chart.defaults.color}},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}
+      },
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:0,max:105,ticks:{callback:v=>v+'%'},
+           afterSetDimensions(scale){scale.min=0; scale.max=105;}}
+      }
+    }
+  });
+
+  // Yıllık tablo
+  const t = document.getElementById('yilTable');
+  t.innerHTML = '<thead><tr><th>Yıl</th><th>Ort.%</th><th>Min%</th><th>Max%</th><th>Yağış</th><th>Durum</th></tr></thead>';
+  const tb = document.createElement('tbody');
+  [...YEARLY].reverse().forEach(d=>{
+    const cls = d.avg < 30 ? 'tneg' : d.avg > 80 ? 'tpos' : 'tblue';
+    const st = d.avg < 30 ? 'Kritik' : d.avg > 80 ? 'Yüksek' : 'Orta';
+    tb.innerHTML+=`<tr><td>${d.y}</td><td class="${cls}">${d.avg.toFixed(1)}</td><td>${d.min.toFixed(1)}</td><td>${d.max.toFixed(1)}</td><td>${d.rain.toFixed(1)} mm</td><td>${st}</td></tr>`;
+  });
+  t.appendChild(tb);
+})();
+
+// ═══════════════════════════════════════════════════════════ MEVSİMSELLİK
+(function(){
+  new Chart(document.getElementById('chartSezDol'),{
+    type:'line',
+    data:{
+      labels:AY,
+      datasets:[{
+        label:'Aylık Ort. Doluluk %',
+        data:MONTHLY_AVG,
+        backgroundColor:hexToRgba(COLOR_SEA,0.12),
+        borderColor:COLOR_SEA,
+        borderWidth:2.1,
+        pointBackgroundColor:COLOR_SEA,
+        pointRadius:3.5,
+        fill:true,
+        tension:0.25
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+'%'}}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:50,max:85,ticks:{callback:v=>v+'%'}}
+      }
+    }
+  });
+  new Chart(document.getElementById('chartSezYag'),{
+    type:'line',
+    data:{
+      labels:AY,
+      datasets:[{
+        label:'Aylık Ort. Yağış (mm)',
+        data:MONTHLY_RAIN,
+        backgroundColor:hexToRgba(COLOR_DEEP,0.12),
+        borderColor:COLOR_DEEP,
+        borderWidth:2.0,
+        pointBackgroundColor:MONTHLY_RAIN.map(v=>v>80?COLOR_DEEP:v>50?COLOR_SEA:hexToRgba(COLOR_SEA,0.8)),
+        pointRadius:3.4,
+        fill:true,
+        tension:0.22
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'mm'}}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{ticks:{callback:v=>v+'mm'}}
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════ YAĞIŞ-DOLULUK (ÇİFT EKSEN)
+(function(){
+  const labels = YEARLY.map(d => d.y);
+  const rain = YEARLY.map(d => d.rain);
+  const fill = YEARLY.map(d => d.avg);
+  new Chart(document.getElementById('chartCorr'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {
+          type:'bar',
+          label:'Yıllık Yağış (mm)',
+          data:rain,
+          yAxisID:'yRain',
+          backgroundColor:'rgba(23,101,163,0.30)',
+          borderColor:'rgba(23,101,163,0.75)',
+          borderWidth:1.1,
+          borderRadius:4,
+          order:2
+        },
+        {
+          type:'line',
+          label:'Yıllık Ortalama Doluluk (%)',
+          data:fill,
+          yAxisID:'yFill',
+          borderColor:COLOR_ACCENT,
+          backgroundColor:hexToRgba(COLOR_ACCENT,0.14),
+          pointBackgroundColor:fill.map(v=>v<30?COLOR_ACCENT:v>80?COLOR_OK:COLOR_DEEP),
+          pointRadius:3.3,
+          pointHoverRadius:5.5,
+          borderWidth:2.2,
+          tension:0.25,
+          fill:false,
+          order:1
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{color:Chart.defaults.color}},
+        tooltip:{callbacks:{
+          label(ctx){
+            const y = labels[ctx.dataIndex];
+            if (ctx.dataset.yAxisID === 'yRain') return `${y}: ${ctx.parsed.y.toFixed(1)} mm yağış`;
+            return `${y}: ${ctx.parsed.y.toFixed(1)}% ortalama doluluk`;
+          }
+        }}
+      },
+      scales:{
+        x:{grid:{display:false}},
+        yRain:{
+          position:'left',
+          title:{display:true,text:'Yağış (mm)',color:COLOR_DEEP},
+          ticks:{color:COLOR_SEA}
+        },
+        yFill:{
+          position:'right',
+          min:0,
+          max:105,
+          grid:{drawOnChartArea:false},
+          title:{display:true,text:'Doluluk (%)',color:COLOR_DEEP},
+          ticks:{callback:v=>`${v}%`,color:COLOR_ACCENT}
+        }
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════ SİMÜLASYON
+const MODEL_META = {
+  ensemble:     { label: 'Ensemble Median', col: '#0b2a3c' },
+  stack:        { label: 'Stacking Ensemble', col: '#2b9348' },
+  ridge:        { label: 'Ridge', col: '#1765a3' },
+  lgb:          { label: 'LightGBM DART', col: '#1f7bb6' },
+  catboost:     { label: 'CatBoost', col: '#4f9dd3' },
+  etr:          { label: 'Extra Trees', col: '#58a2cb' },
+  rf:           { label: 'Random Forest', col: '#2f9159' },
+  gbr:          { label: 'Gradient Boosting', col: '#af6d2a' },
+  hgb:          { label: 'HistGradientBoosting', col: '#7ea8cc' },
+  bayesridge:   { label: 'Bayesian Ridge', col: '#709ecb' },
+  elasticnet:   { label: 'ElasticNet', col: '#7ea8d1' },
+  huber:        { label: 'Huber Regressor', col: '#86acd0' },
+  svr:          { label: 'SVR (RBF)', col: '#86a7ca' },
+  ngboost:      { label: 'NGBoost', col: '#c58334' },
+  gpr:          { label: 'Gaussian Process', col: '#88aed2' },
+  arimax:       { label: 'ARIMAX', col: '#1f77b4' },
+  budyko:       { label: 'Budyko', col: '#3a9763' },
+  thornthwaite: { label: 'Thornthwaite', col: '#519b77' },
+};
+
+const MODEL_ALIASES = {
+  ensemble_median: 'ensemble',
+  lgb_dart: 'lgb',
+  bayes_ridge: 'bayesridge',
+};
+const MODEL_USAGE_GUIDE = {
+  ridge: { mechanism: 'L2 düzenlileştirmeli doğrusal regresyon', behavior: 'Düşük varyanslı, kararlı trend hattı', use: 'Temel referans ve senaryo karşılaştırması' },
+  elasticnet: { mechanism: 'L1+L2 düzenlileştirme', behavior: 'Seyrekleşen katsayılarla dengeli eğri', use: 'Değişken seçiminin önemli olduğu durumlar' },
+  bayesridge: { mechanism: 'Olasılıksal doğrusal regresyon', behavior: 'Orta bantta tutarlı, belirsizlik duyarlı', use: 'Parametre belirsizliği yorumlarında' },
+  huber: { mechanism: 'Aykırı değerlere dayanıklı kayıp', behavior: 'Uç noktalarda yumuşatılmış tepki', use: 'Kuraklık şoklarının etkisini dengeli izleme' },
+  rf: { mechanism: 'Bagging tabanlı ağaç topluluğu', behavior: 'Dengeli fakat parçalı geçişler', use: 'Genellenebilir orta vadeli tahmin' },
+  etr: { mechanism: 'Ekstra rastgele ağaç topluluğu', behavior: 'Daha hızlı rejim kırılımı tepkisi', use: 'Ani rejim değişimlerini yakalama' },
+  gbr: { mechanism: 'Art arda hata azaltan boosting', behavior: 'İvme değişimlerine duyarlı eğri', use: 'Doğrusal olmayan trend dönüşümleri' },
+  hgb: { mechanism: 'Histogram tabanlı boosting', behavior: 'Hızlı ve pürüzsüz yakınsama', use: 'Büyük özellik setlerinde verimli tahmin' },
+  lgb: { mechanism: 'DART dropout destekli boosting', behavior: 'Aşırı öğrenmeyi bastıran dengeli eğri', use: 'Uzun ufukta kararlılık gereksinimi' },
+  catboost: { mechanism: 'Sıralı boosting + kategorik işleme', behavior: 'Dengeli ve genellenebilir geçiş', use: 'Karışık dağılımlı özellik setleri' },
+  svr: { mechanism: 'RBF çekirdekli destek vektör regresyonu', behavior: 'Yerel eğriliklere duyarlı yumuşak hat', use: 'Sınırlı veride doğrusal olmayan ilişki' },
+  ngboost: { mechanism: 'Dağılım parametresi üreten boosting', behavior: 'Olasılık odaklı merkez eğri', use: 'Belirsizlik aralığı yorumu' },
+  gpr: { mechanism: 'Gauss süreci çekirdek regresyonu', behavior: 'Pürüzsüz fakat ekstrapolasyona hassas', use: 'Sürekli eğri ve güven aralığı analizi' },
+  arimax: { mechanism: 'Otoregresif + dışsal iklim değişkenleri', behavior: 'Zaman bağımlılığı belirgin çizgi', use: 'Seri bağımlılığı yüksek dönemler' },
+  budyko: { mechanism: 'Su-enerji denge bağıntısı', behavior: 'Uzun dönem fiziksel denge hattı', use: 'Hidrolojik tutarlılık kontrolü' },
+  thornthwaite: { mechanism: 'Sıcaklık temelli ET yaklaşımı', behavior: 'Kurak dönemde düşüşü belirginleştirir', use: 'Basit fiziksel kontrol senaryosu' },
+  stack: { mechanism: 'Meta-öğrenici ile model birleştirme', behavior: 'Tekil model yanlılığını yumuşatır', use: 'Kompozit karar modeli' },
+  ensemble: { mechanism: 'Model medyanı ile birleştirme', behavior: 'Uç değer etkisini bastıran merkezi hat', use: 'Nihai karar desteği için birincil referans' }
+};
+const MODEL_ACCURACY_GUIDE = {
+  ridge: '%68.5',
+  elasticnet: '%67.9',
+  bayesridge: '%68.8',
+  huber: '%73.4',
+  rf: 'CV rapor dışı',
+  etr: '%79.2',
+  gbr: 'CV rapor dışı',
+  hgb: 'CV rapor dışı',
+  lgb: '%79.8',
+  catboost: '%79.2',
+  svr: '%76.4',
+  ngboost: '%68.5',
+  gpr: '%71.1',
+  arimax: '%69.6',
+  budyko: 'CV dışı (fizik)',
+  thornthwaite: 'CV dışı (fizik)',
+  stack: 'CV rapor dışı',
+  ensemble: 'CV rapor dışı',
+};
+
+const hardClamp = (v, min, max) => Math.max(min, Math.min(max, v));
+function quantile(arr, q) {
+  const vals = (arr || []).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  if (!vals.length) return null;
+  if (vals.length === 1) return vals[0];
+  const pos = (vals.length - 1) * q;
+  const lo = Math.floor(pos);
+  const hi = Math.ceil(pos);
+  if (lo === hi) return vals[lo];
+  const w = pos - lo;
+  return vals[lo] * (1 - w) + vals[hi] * w;
+}
+const median = (arr) => quantile(arr, 0.5);
+function summarizeConsensus(values, lowQ = 0.20, highQ = 0.80) {
+  const vals = (values || []).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  if (!vals.length) return null;
+  return {
+    min: vals[0],
+    max: vals[vals.length - 1],
+    low: quantile(vals, lowQ),
+    median: quantile(vals, 0.5),
+    high: quantile(vals, highQ),
+  };
+}
+
+const ELMALI_META = (ELMALI_OBS && ELMALI_OBS.meta) ? ELMALI_OBS.meta : {};
+const ELMALI_SIM_CAL = (ELMALI_OBS && ELMALI_OBS.sim_calibration) ? ELMALI_OBS.sim_calibration : {};
+
+const ELMALI_CAPACITY_MCM = Number(ELMALI_META.capacity_mcm) || 9.6;
+const ELMALI_LAKE_AREA_KM2 = Number(ELMALI_META.lake_area_km2) || 1.0;
+const ELMALI_CATCHMENT_KM2 = Number(ELMALI_META.catchment_km2) || 81.0;
+const ELMALI_KC = 1.05;
+const ELMALI_BASE_USAGE_MCM_YEAR = Math.max(
+  1.5,
+  ((Number(ELMALI_STATS.mean_use_m3_month) || 520000) * 12) / 1e6
+);
+const ELMALI_BASE_USAGE_MCM_YEAR_UI = Number(ELMALI_BASE_USAGE_MCM_YEAR.toFixed(1));
+const ELMALI_ADJ_SCALE = (() => {
+  const p75 = Number(ELMALI_SIM_CAL.delta_abs_p75_pp);
+  if (!Number.isFinite(p75)) return 0.18;
+  return hardClamp(p75 / 55, 0.10, 0.28);
+})();
+const ELMALI_DELTA_CAP_PP = (() => {
+  const p90 = Number(ELMALI_SIM_CAL.delta_abs_p90_pp);
+  if (!Number.isFinite(p90)) return 1.5;
+  return hardClamp(p90 * 0.14, 0.7, 2.1);
+})();
+const ELMALI_SCENARIO_GAIN = (() => {
+  const med = Number(ELMALI_SIM_CAL.delta_abs_median_pp);
+  if (!Number.isFinite(med)) return 1.05;
+  return hardClamp(0.95 + (med / 9), 1.0, 1.55);
+})();
+const ELMALI_ET0_RUNOFF_BETA = 0.48;
+const ELMALI_RAIN_SENS_GAIN = 1.45;
+const ELMALI_ET0_SENS_GAIN = 1.25;
+const SIM_START_UTC = new Date(Date.UTC(2026, 2, 1)); // 2026-03-01
+
+const MONTHLY_USE_WEIGHTS_RAW = (MONTHLY_USE_M3 || []).map((v) => Number(v) || 0);
+const MONTHLY_USE_WEIGHT_SUM = MONTHLY_USE_WEIGHTS_RAW.reduce((a, b) => a + b, 0);
+const MONTHLY_USE_WEIGHTS = MONTHLY_USE_WEIGHTS_RAW.map((v) => (
+  MONTHLY_USE_WEIGHT_SUM > 0 ? (v / MONTHLY_USE_WEIGHT_SUM) : (1 / 12)
+));
+
+function buildHistoricalEt0Map() {
+  const map = new Map();
+  if (!(window.CLIMATE_BASELINE && typeof window.CLIMATE_BASELINE === 'object')) return map;
+  Object.entries(window.CLIMATE_BASELINE).forEach(([d, vals]) => {
+    const et0 = Number(vals && vals.et0_mm_month);
+    if (!Number.isFinite(et0)) return;
+    map.set(String(d).slice(0, 7), et0);
+  });
+  return map;
+}
+const HIST_ET0_MAP = buildHistoricalEt0Map();
+function et0ForMonth(dateStr) {
+  const key = String(dateStr || '').slice(0, 7);
+  if (HIST_ET0_MAP.has(key)) return HIST_ET0_MAP.get(key);
+  const d = new Date(`${key || '2010-01'}-01T00:00:00Z`);
+  const m = Number.isFinite(d.getUTCMonth()) ? d.getUTCMonth() : 0;
+  return BASE_ET0_MONTHLY[m] ?? BASE_ET0_MONTHLY[0] ?? 75;
+}
+function buildMonotonicCurve(src, xKey, yKey) {
+  const points = (src || [])
+    .map((d) => ({ x: Number(d?.[xKey]), y: Number(d?.[yKey]) }))
+    .filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y))
+    .sort((a, b) => a.x - b.x);
+  if (!points.length) return [];
+  const out = [];
+  let i = 0;
+  while (i < points.length) {
+    const x = points[i].x;
+    let j = i;
+    let sum = 0;
+    let n = 0;
+    while (j < points.length && Math.abs(points[j].x - x) < 0.05) {
+      sum += points[j].y;
+      n += 1;
+      j += 1;
+    }
+    out.push({ x, y: sum / Math.max(1, n) });
+    i = j;
+  }
+  let last = -Infinity;
+  return out.map((p) => {
+    const y = Number.isFinite(last) ? Math.max(last, p.y) : p.y;
+    last = y;
+    return { x: p.x, y };
+  });
+}
+function interpByX(curve, x, fallback = NaN) {
+  if (!curve.length || !Number.isFinite(x)) return fallback;
+  if (x <= curve[0].x) return curve[0].y;
+  if (x >= curve[curve.length - 1].x) return curve[curve.length - 1].y;
+  for (let i = 1; i < curve.length; i += 1) {
+    const a = curve[i - 1];
+    const b = curve[i];
+    if (x <= b.x) {
+      const t = (x - a.x) / Math.max(1e-9, (b.x - a.x));
+      return a.y + t * (b.y - a.y);
+    }
+  }
+  return fallback;
+}
+function interpByY(curve, y, fallback = NaN) {
+  if (!curve.length || !Number.isFinite(y)) return fallback;
+  if (y <= curve[0].y) return curve[0].x;
+  if (y >= curve[curve.length - 1].y) return curve[curve.length - 1].x;
+  for (let i = 1; i < curve.length; i += 1) {
+    const a = curve[i - 1];
+    const b = curve[i];
+    if (y <= b.y) {
+      const t = (y - a.y) / Math.max(1e-9, (b.y - a.y));
+      return a.x + t * (b.x - a.x);
+    }
+  }
+  return fallback;
+}
+
+const ELMALI_MONTHLY_FULL = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
+  ? ELMALI_OBS.monthly.filter((d) => (
+      d
+      && d.is_full_month
+      && Number(d.month_days || 0) >= 28
+      && Number(d.obs_days || 0) >= 28
+    ))
+  : [];
+const ELMALI_FILL_RESERVE_CURVE = buildMonotonicCurve(ELMALI_MONTHLY_FULL, 'fill_avg_pct', 'reserve_avg_m3');
+const ELMALI_FILL_LEVEL_CURVE = buildMonotonicCurve(ELMALI_MONTHLY_FULL, 'fill_avg_pct', 'level_avg_m');
+const ELMALI_RESERVE_MIN_M3 = ELMALI_FILL_RESERVE_CURVE.length
+  ? ELMALI_FILL_RESERVE_CURVE[0].y
+  : 0;
+const ELMALI_RESERVE_MAX_M3 = ELMALI_FILL_RESERVE_CURVE.length
+  ? ELMALI_FILL_RESERVE_CURVE[ELMALI_FILL_RESERVE_CURVE.length - 1].y
+  : (ELMALI_CAPACITY_MCM * 1e6);
+const ELMALI_LEVEL_MIN_M = Number(ELMALI_META.level_min_m) || 38.0;
+const ELMALI_LEVEL_MAX_M = Number(ELMALI_META.level_max_m) || 67.5;
+const ELMALI_RESERVE_PER_PP_MCM = (() => {
+  const r45 = interpByX(ELMALI_FILL_RESERVE_CURVE, 45, NaN);
+  const r55 = interpByX(ELMALI_FILL_RESERVE_CURVE, 55, NaN);
+  if (Number.isFinite(r45) && Number.isFinite(r55) && r55 > r45) {
+    return (r55 - r45) / 1e6 / 10;
+  }
+  return ELMALI_CAPACITY_MCM / 100;
+})();
+const ELMALI_DELTA_CAP_MCM = ELMALI_DELTA_CAP_PP * ELMALI_RESERVE_PER_PP_MCM;
+
+function reserveFromFill(fillPct) {
+  const f = clamp(Number(fillPct), 0, 100);
+  const v = interpByX(ELMALI_FILL_RESERVE_CURVE, f, NaN);
+  if (Number.isFinite(v)) return v;
+  return (f / 100) * ELMALI_CAPACITY_MCM * 1e6;
+}
+function fillFromReserve(reserveM3) {
+  const r = clamp(Number(reserveM3), ELMALI_RESERVE_MIN_M3, ELMALI_RESERVE_MAX_M3);
+  const f = interpByY(ELMALI_FILL_RESERVE_CURVE, r, NaN);
+  if (Number.isFinite(f)) return clamp(f, 0, 100);
+  return clamp((r / (ELMALI_CAPACITY_MCM * 1e6)) * 100, 0, 100);
+}
+function levelFromFill(fillPct) {
+  const f = clamp(Number(fillPct), 0, 100);
+  const l = interpByX(ELMALI_FILL_LEVEL_CURVE, f, NaN);
+  if (Number.isFinite(l)) return l;
+  return ELMALI_LEVEL_MIN_M + (ELMALI_LEVEL_MAX_M - ELMALI_LEVEL_MIN_M) * (f / 100);
+}
+function lakeAreaFromFill(fillPct) {
+  const lvl = levelFromFill(fillPct);
+  const norm = clamp((lvl - ELMALI_LEVEL_MIN_M) / Math.max(1e-6, (ELMALI_LEVEL_MAX_M - ELMALI_LEVEL_MIN_M)), 0.08, 1.05);
+  const factor = 0.32 + 0.68 * Math.pow(norm, 0.85);
+  return ELMALI_LAKE_AREA_KM2 * factor;
+}
+function runoffFromEt0AndStorage(et0Pct, fillPct) {
+  const lvl = levelFromFill(fillPct);
+  const sat = clamp((lvl - ELMALI_LEVEL_MIN_M) / Math.max(1e-6, (ELMALI_LEVEL_MAX_M - ELMALI_LEVEL_MIN_M)), 0.05, 1.05);
+  const satFactor = 0.78 + (0.42 * sat);
+  const etFactor = 1 - ELMALI_ET0_RUNOFF_BETA * (et0Pct / 100);
+  return clamp(ELMALI_RUNOFF * satFactor * etFactor, 0.08, 0.88);
+}
+
+const ELMALI_RUNOFF = (() => {
+  const src = (ELMALI_OBS && Array.isArray(ELMALI_OBS.monthly))
+    ? ELMALI_OBS.monthly.filter((d) => (
+        d
+        && d.is_full_month
+        && Number(d.month_days || 0) >= 28
+        && Number(d.obs_days || 0) >= 28
+        && Number.isFinite(Number(d.fill_avg_pct))
+      ))
+    : [];
+  if (src.length < 24) return 0.28;
+  const cands = [];
+  for (let i = 1; i < src.length; i += 1) {
+    const prev = src[i - 1];
+    const cur = src[i];
+    const dFill = Number(cur.fill_avg_pct) - Number(prev.fill_avg_pct);
+    if (!Number.isFinite(dFill)) continue;
+    const p = Number(cur.rain_total_mm) || 0;
+    const uMcm = (Number(cur.use_total_m3) || 0) / 1e6;
+    const et0 = et0ForMonth(cur.date);
+    const etMcm = et0 * ELMALI_KC * ELMALI_LAKE_AREA_KM2 * 0.001;
+    const lakeRainMcm = p * ELMALI_LAKE_AREA_KM2 * 0.001;
+    const dVMcm = ELMALI_CAPACITY_MCM * (dFill / 100);
+    const denom = p * ELMALI_CATCHMENT_KM2 * 0.001;
+    if (denom <= 0.01) continue;
+    const r = (dVMcm + etMcm + uMcm - lakeRainMcm) / denom;
+    if (Number.isFinite(r)) cands.push(r);
+  }
+  const med = median(cands);
+  if (!Number.isFinite(med)) return 0.28;
+  return hardClamp(med, 0.10, 0.70);
+})();
+
+let modelData = {};
+let modelSummary = null;
+let modelScenarioFactor = {};
+let modelBaseBlend = {};
+
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function normalizeModelKey(raw) {
+  const key = MODEL_ALIASES[raw] || raw;
+  if (key === 'all') return key;
+  if (modelData[key] && modelData[key].length) return key;
+  return 'ridge';
+}
+
+function buildModelDataFromDaily() {
+  const src = (typeof MODEL_BASE_DATA !== 'undefined' && MODEL_BASE_DATA) ? MODEL_BASE_DATA : {};
+  const out = {};
+  Object.keys(src).forEach((k) => {
+    const arr = src[k];
+    if (!Array.isArray(arr) || !arr.length) return;
+    const bucket = new Map();
+    arr.forEach((fill, i) => {
+      const d = new Date(SIM_START_UTC);
+      d.setUTCDate(d.getUTCDate() + i);
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const key = `${y}-${m}-01`;
+      const v = clamp(Number(fill), 0, 100);
+      if (!bucket.has(key)) bucket.set(key, []);
+      bucket.get(key).push(v);
+    });
+    out[k] = Array.from(bucket.entries()).map(([date, vals]) => ({
+      date,
+      fill: vals.reduce((s, v) => s + v, 0) / vals.length,
+    }));
+  });
+  return out;
+}
+
+function getAvailableModelKeys() {
+  const allowed = new Set([
+    'ridge', 'ensemble', 'stack',
+    'lgb', 'catboost', 'etr', 'rf', 'gbr', 'hgb',
+    'bayesridge', 'elasticnet', 'huber', 'svr', 'ngboost', 'gpr', 'arimax',
+    'budyko', 'thornthwaite'
+  ]);
+  return Object.keys(modelData || {}).filter((k) => allowed.has(k) && (modelData[k] || []).length > 0);
+}
+
+function computeModelScenarioCalibration() {
+  const focus = new Set(['gbr', 'hgb', 'rf', 'etr']);
+  const available = getAvailableModelKeys();
+  const ridgeSeries = modelData.ridge || [];
+  const stdOfDelta = (series) => {
+    if (!series || series.length < 3) return null;
+    const deltas = [];
+    for (let i = 1; i < series.length; i += 1) {
+      const prev = Number(series[i - 1].fill);
+      const cur = Number(series[i].fill);
+      if (Number.isFinite(prev) && Number.isFinite(cur)) deltas.push(cur - prev);
+    }
+    if (deltas.length < 2) return null;
+    const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+    const variance = deltas.reduce((a, b) => a + ((b - mean) ** 2), 0) / Math.max(1, deltas.length - 1);
+    return Math.sqrt(Math.max(0, variance));
+  };
+
+  const ridgeStd = stdOfDelta(ridgeSeries) || 1.0;
+  modelScenarioFactor = {};
+  modelBaseBlend = {};
+  available.forEach((m) => {
+    modelScenarioFactor[m] = 1.0;
+    modelBaseBlend[m] = 0.0;
+  });
+  available.forEach((m) => {
+    if (!focus.has(m)) return;
+    const std = stdOfDelta(modelData[m] || []);
+    if (!Number.isFinite(std) || std <= 0) return;
+    const ratio = std / ridgeStd;
+    modelScenarioFactor[m] = clamp(1 / Math.sqrt(Math.max(0.25, ratio)), 0.78, 1.12);
+    modelBaseBlend[m] = clamp((ratio - 1) * 0.20, 0.0, 0.28);
+  });
+}
+
+function syncSimModelSelect(preferred = 'ridge') {
+  const select = document.getElementById('sim-model');
+  if (!select) return preferred;
+  const available = getAvailableModelKeys();
+  const groups = Array.from(select.querySelectorAll('optgroup'));
+  groups.forEach((group) => {
+    let visibleCount = 0;
+    Array.from(group.querySelectorAll('option')).forEach((opt) => {
+      if (opt.value === 'all') {
+        opt.hidden = false;
+        opt.disabled = false;
+        visibleCount += 1;
+        return;
+      }
+      const ok = available.includes(opt.value);
+      opt.hidden = !ok;
+      opt.disabled = !ok;
+      if (ok) visibleCount += 1;
+    });
+    group.hidden = visibleCount === 0;
+  });
+  const fallback = available.includes(preferred) ? preferred : (available[0] || 'all');
+  if (select.value !== 'all' && !available.includes(select.value)) {
+    select.value = fallback;
+  }
+  return normalizeModelKey(select.value || fallback);
+}
+
+function linePath(data, width, height, pad = 24) {
+  if (!data || data.length < 2) return '';
+  const xMax = data.length - 1;
+  const yMin = 0;
+  const yMax = 100;
+  const xScale = (i) => pad + (i / Math.max(1, xMax)) * (width - (2 * pad));
+  const yScale = (v) => height - pad - ((v - yMin) / (yMax - yMin)) * (height - (2 * pad));
+  let d = '';
+  data.forEach((p, i) => {
+    const x = xScale(i);
+    const y = yScale(p.fill);
+    d += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+  });
+  return d;
+}
+
+function nearestIndex(mouseX, width, pad, len) {
+  const usable = width - (2 * pad);
+  const raw = (mouseX - pad) / Math.max(1, usable);
+  const idx = Math.round(raw * Math.max(0, len - 1));
+  return clamp(idx, 0, Math.max(0, len - 1));
+}
+
+function computeModelStats(series) {
+  const clean = (series || []).filter(d => d && Number.isFinite(d.fill));
+  if (!clean.length) return null;
+  const fills = clean.map(d => d.fill);
+  const min = Math.min(...fills);
+  const max = Math.max(...fills);
+  const first = clean[0];
+  const last = clean[clean.length - 1];
+  return {
+    start: first.date,
+    end: last.date,
+    startFill: first.fill,
+    endFill: last.fill,
+    min,
+    max,
+    delta: last.fill - first.fill
+  };
+}
+
+function buildModelSummary() {
+  const grid = document.getElementById('model-focus-grid');
+  if (!grid) return;
+  const models = getAvailableModelKeys();
+  if (!models.length) {
+    grid.innerHTML = '<p class="note">Model verisi bulunamadı.</p>';
+    return;
+  }
+  const cards = [];
+  cards.push(`
+    <div class="model-card" data-model="all">
+      <div class="model-title">Tümü (Karşılaştırmalı)</div>
+      <div class="model-meta" data-field="mean">2040 medyan: —</div>
+      <div class="model-delta" data-field="range">Konsensüs bandı (P20–P80): —</div>
+      <div class="model-bar"><span data-field="bar" style="background:#0b2a3c;width:0%"></span></div>
+    </div>
+  `);
+  models.forEach((m) => {
+    const meta = MODEL_META[m] || { label: m.toUpperCase(), col: '#1765a3' };
+    cards.push(`
+      <div class="model-card" data-model="${m}">
+        <div class="model-title">${meta.label}</div>
+        <div class="model-meta" data-field="end">2040 senaryo: —</div>
+        <div class="model-delta" data-field="delta">Δ —</div>
+        <div class="model-bar"><span data-field="bar" style="background:${meta.col};width:0%"></span></div>
+      </div>
+    `);
+  });
+  grid.innerHTML = cards.join('');
+  grid.querySelectorAll('.model-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      const select = document.getElementById('sim-model');
+      if (!select) return;
+      select.value = card.dataset.model;
+      renderSim();
+    });
+  });
+  updateModelSummarySelection('ridge');
+}
+
+function renderModelUsageTable() {
+  const table = document.getElementById('model-usage-table');
+  if (!table) return;
+  const order = [
+    'ridge','elasticnet','bayesridge','huber',
+    'rf','etr','gbr','hgb',
+    'lgb','catboost',
+    'svr','ngboost','gpr','arimax',
+    'budyko','thornthwaite',
+    'stack','ensemble'
+  ];
+  const rows = order
+    .filter((k) => MODEL_USAGE_GUIDE[k])
+    .map((k) => {
+      const meta = MODEL_META[k] || { label: k.toUpperCase() };
+      const g = MODEL_USAGE_GUIDE[k];
+      return `<tr>
+        <td><strong>${meta.label}</strong></td>
+        <td>${g.mechanism}</td>
+        <td>${g.behavior}</td>
+        <td>${g.use}</td>
+        <td>${MODEL_ACCURACY_GUIDE[k] || 'CV rapor dışı'}</td>
+      </tr>`;
+    })
+    .join('');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Mekanizma</th>
+        <th>Grafik Karakteri</th>
+        <th>Kullanım Bağlamı</th>
+        <th>Doğruluk Oranı</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  `;
+}
+
+function initElmaliModelTabs() {
+  const tabWrap = document.querySelector('[data-elmali-tabs]');
+  if (!tabWrap) return;
+  const tabs = Array.from(tabWrap.querySelectorAll('[data-elmali-tab]'));
+  const panels = {
+    temel: document.getElementById('elmali-panel-temel'),
+    v4: document.getElementById('elmali-panel-v4')
+  };
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-elmali-tab');
+      tabs.forEach((t) => t.classList.remove('active'));
+      Object.values(panels).forEach((p) => p && p.classList.remove('active'));
+      btn.classList.add('active');
+      if (panels[key]) panels[key].classList.add('active');
+    });
+  });
+}
+
+function renderAcademicElmali() {
+  const setText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+  const fmtSigned = (v) => Number.isFinite(v) ? `${v >= 0 ? '+' : ''}${v.toFixed(1)} puan` : '—';
+
+  const models = getAvailableModelKeys();
+  setText('elm-acad-model-count', String(Math.min(20, models.length)));
+
+  const endVals = models
+    .map((m) => modelData[m])
+    .filter((arr) => arr && arr.length)
+    .map((arr) => arr[arr.length - 1].fill)
+    .filter((v) => Number.isFinite(v))
+    .sort((a, b) => a - b);
+  if (endVals.length) {
+    const consensus = summarizeConsensus(endVals, 0.20, 0.80);
+    const q1 = quantile(endVals, 0.25);
+    const q2 = quantile(endVals, 0.5);
+    const q3 = quantile(endVals, 0.75);
+    if (consensus) {
+      setText('elm-acad-2040-minmax', `${consensus.low.toFixed(1)}% – ${consensus.high.toFixed(1)}%`);
+    } else {
+      setText('elm-acad-2040-minmax', '—');
+    }
+    setText('elm-acad-2040-median', `${q2.toFixed(1)}%`);
+    setText('elm-acad-2040-iqr', `${q1.toFixed(1)}% – ${q3.toFixed(1)}%`);
+  } else {
+    setText('elm-acad-2040-minmax', '—');
+    setText('elm-acad-2040-median', '—');
+    setText('elm-acad-2040-iqr', '—');
+  }
+
+  const histMean = MONTHLY_SERIES.length
+    ? (MONTHLY_SERIES.reduce((a, b) => a + Number(b.fill_avg_pct || 0), 0) / MONTHLY_SERIES.length)
+    : null;
+  setText('elm-acad-hist-mean', Number.isFinite(histMean) ? `${histMean.toFixed(1)}%` : '—');
+
+  const baseEvapMcm = BASE_ET0_MONTHLY.reduce((sum, mm, i) => {
+    const seasonalFill = Number.isFinite(MONTHLY_AVG[i]) ? MONTHLY_AVG[i] : 50;
+    const area = lakeAreaFromFill(seasonalFill);
+    return sum + (mm * ELMALI_KC * area * 0.001);
+  }, 0);
+  setText('elm-acad-loss-balance', `${ELMALI_BASE_USAGE_MCM_YEAR_UI.toFixed(2)} / ${baseEvapMcm.toFixed(2)} milyon m³`);
+
+  const sensitivityModel = models.includes('ridge') ? 'ridge' : (models[0] || null);
+  if (sensitivityModel) {
+    const b = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const r = getSeries(sensitivityModel, 10, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const e = getSeries(sensitivityModel, 0, 10, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0).adjusted;
+    const u = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI * 1.2, 0).adjusted;
+    const g = getSeries(sensitivityModel, 0, 0, ELMALI_BASE_USAGE_MCM_YEAR_UI, 0.01).adjusted;
+    const baseEnd = b.length ? b[b.length - 1].fill : null;
+    const rainEnd = r.length ? r[r.length - 1].fill : null;
+    const et0End = e.length ? e[e.length - 1].fill : null;
+    const useEnd = u.length ? u[u.length - 1].fill : null;
+    const growthEnd = g.length ? g[g.length - 1].fill : null;
+    setText('elm-acad-sens-rain', fmtSigned(rainEnd - baseEnd));
+    setText('elm-acad-sens-et0', fmtSigned(et0End - baseEnd));
+    setText('elm-acad-sens-use', fmtSigned(useEnd - baseEnd));
+    setText('elm-acad-sens-growth', fmtSigned(growthEnd - baseEnd));
+  } else {
+    setText('elm-acad-sens-rain', '—');
+    setText('elm-acad-sens-et0', '—');
+    setText('elm-acad-sens-use', '—');
+    setText('elm-acad-sens-growth', '—');
+  }
+
+  const yearlyUse = YEARLY.map((d) => Number(d.use_m3)).filter((v) => Number.isFinite(v) && v > 0);
+  const yoy = [];
+  for (let i = 1; i < yearlyUse.length; i += 1) {
+    yoy.push((yearlyUse[i] - yearlyUse[i - 1]) / yearlyUse[i - 1]);
+  }
+  const p10 = quantile(yoy, 0.10);
+  const p90 = quantile(yoy, 0.90);
+  const firstUse = yearlyUse.length ? yearlyUse[0] : null;
+  const lastUse = yearlyUse.length ? yearlyUse[yearlyUse.length - 1] : null;
+  const cagr = (Number.isFinite(firstUse) && Number.isFinite(lastUse) && yearlyUse.length > 1)
+    ? (Math.pow(lastUse / firstUse, 1 / (yearlyUse.length - 1)) - 1)
+    : null;
+
+  const note = [];
+  if (Number.isFinite(p10) && Number.isFinite(p90)) {
+    note.push(`Kullanım artış bandı (p10–p90): ${(p10 * 100).toFixed(2)}%–${(p90 * 100).toFixed(2)}%/yıl`);
+  }
+  if (Number.isFinite(cagr)) {
+    note.push(`Referans CAGR: ${(cagr * 100).toFixed(2)}%/yıl`);
+  }
+  note.push(`Güncelleme: ${new Date().toLocaleString('tr-TR')}`);
+  setText('elm-acad-note', note.join(' • '));
+}
+
+function updateModelSummarySelection(selected) {
+  const grid = document.getElementById('model-focus-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.model-card').forEach((card) => {
+    card.classList.toggle('active', card.dataset.model === selected);
+  });
+  const pill = document.getElementById('model-spread-pill');
+  if (!pill) return;
+  if (!modelSummary) {
+    pill.textContent = '—';
+    return;
+  }
+  if (selected === 'all' && modelSummary.ensemble) {
+    const e = modelSummary.ensemble;
+    pill.textContent = `Medyan ${e.median.toFixed(1)}% • P20–P80 ${e.low.toFixed(1)}–${e.high.toFixed(1)}%`;
+    return;
+  }
+  const s = modelSummary.stats ? modelSummary.stats[selected] : null;
+  if (s) {
+    const delta = s.delta >= 0 ? `+${s.delta.toFixed(1)}` : s.delta.toFixed(1);
+    pill.textContent = `2040: ${s.endFill.toFixed(1)}% • Δ ${delta} puan`;
+  } else {
+    pill.textContent = '—';
+  }
+}
+
+function updateModelSummaryFromSeries(seriesMap) {
+  const grid = document.getElementById('model-focus-grid');
+  if (!grid) return;
+  const models = Object.keys(seriesMap || {});
+  if (!models.length) return;
+
+  const stats = {};
+  models.forEach((m) => {
+    stats[m] = computeModelStats(seriesMap[m]);
+  });
+
+  const lengths = models.map(m => (seriesMap[m] || []).length).filter(n => n > 0);
+  const minLen = lengths.length ? Math.min(...lengths) : 0;
+  let ensemble = null;
+  if (minLen > 0) {
+    const idx = minLen - 1;
+    const vals = models.map(m => (seriesMap[m][idx] ? seriesMap[m][idx].fill : null)).filter(v => Number.isFinite(v));
+    const consensus = summarizeConsensus(vals, 0.20, 0.80);
+    if (consensus) {
+      ensemble = {
+        median: consensus.median,
+        low: consensus.low,
+        high: consensus.high,
+        min: consensus.min,
+        max: consensus.max
+      };
+    }
+  }
+
+  modelSummary = { models, stats, ensemble };
+
+  const allCard = grid.querySelector('.model-card[data-model="all"]');
+  if (allCard && ensemble) {
+    const meanEl = allCard.querySelector('[data-field="mean"]');
+    const rangeEl = allCard.querySelector('[data-field="range"]');
+    const barEl = allCard.querySelector('[data-field="bar"]');
+    if (meanEl) meanEl.textContent = `2040 medyan: ${ensemble.median.toFixed(1)}%`;
+    if (rangeEl) rangeEl.textContent = `Konsensüs bandı (P20–P80): ${ensemble.low.toFixed(1)}–${ensemble.high.toFixed(1)}%`;
+    if (barEl) barEl.style.width = `${clamp(ensemble.median, 0, 100)}%`;
+  }
+
+  models.forEach((m) => {
+    const s = stats[m];
+    const card = grid.querySelector(`.model-card[data-model="${m}"]`);
+    if (!card || !s) return;
+    const delta = s.delta >= 0 ? `+${s.delta.toFixed(1)}` : s.delta.toFixed(1);
+    const endEl = card.querySelector('[data-field="end"]');
+    const deltaEl = card.querySelector('[data-field="delta"]');
+    const barEl = card.querySelector('[data-field="bar"]');
+    if (endEl) endEl.textContent = `2040 senaryo: ${s.endFill.toFixed(1)}%`;
+    if (deltaEl) deltaEl.textContent = `Δ ${delta} puan`;
+    if (barEl) barEl.style.width = `${clamp(s.endFill, 0, 100)}%`;
+  });
+
+  updateModelSummarySelection(document.getElementById('sim-model')?.value || 'ridge');
+}
+
+function getSeries(model, rain, et0, useM3, useGrowth) {
+  const baseRaw = (modelData[model] || []).slice();
+  if (!baseRaw.length) return { base: [], adjusted: [] };
+  const ridgeBase = model === 'ridge' ? null : (modelData.ridge || []);
+  const blendWeight = modelBaseBlend[model] ?? 0;
+  const blendWithRidge = (fill, idx) => {
+    const f = Number(fill);
+    if (!Number.isFinite(f)) return null;
+    if (!ridgeBase || !blendWeight) return f;
+    const ridgeFill = ridgeBase[idx] && Number.isFinite(ridgeBase[idx].fill) ? Number(ridgeBase[idx].fill) : null;
+    if (!Number.isFinite(ridgeFill)) return f;
+    return ((1 - blendWeight) * f) + (blendWeight * ridgeFill);
+  };
+  const obsAnchorFill = MONTHLY_SERIES.length
+    ? Number(MONTHLY_SERIES[MONTHLY_SERIES.length - 1].fill_avg_pct)
+    : null;
+  const firstBlended = blendWithRidge(baseRaw[0].fill, 0);
+  const anchorOffset = (Number.isFinite(obsAnchorFill) && Number.isFinite(firstBlended))
+    ? (obsAnchorFill - firstBlended)
+    : 0;
+  const base = baseRaw.map((d, i) => {
+    const blended = blendWithRidge(d.fill, i);
+    const f = Number.isFinite(blended) ? (blended + anchorOffset) : null;
+    return { date: d.date, fill: Number.isFinite(f) ? clamp(f, 0, 100) : null };
+  });
+
+  const startDate = new Date(base[0].date);
+  const baseUseMcmYear = ELMALI_BASE_USAGE_MCM_YEAR_UI;
+  const adjusted = [];
+  let prevAdjFill = clamp(base[0].fill, 0, 100);
+  let prevAdjReserveM3 = reserveFromFill(prevAdjFill);
+  const modelFactor = modelScenarioFactor[model] ?? 1.0;
+
+  base.forEach((d, i) => {
+    if (i === 0) {
+      adjusted.push({ date: d.date, fill: prevAdjFill });
+      return;
+    }
+
+    const curDate = new Date(d.date);
+    const month = curDate.getMonth();
+    const years = (curDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
+
+    const prevBase = base[i - 1];
+    const baseFill = clamp(d.fill, 0, 100);
+    const prevBaseFill = clamp(prevBase.fill, 0, 100);
+    const baseReserveM3 = reserveFromFill(baseFill);
+    const prevBaseReserveM3 = reserveFromFill(prevBaseFill);
+    const baseDeltaReserveMcm = (baseReserveM3 - prevBaseReserveM3) / 1e6;
+
+    const precipBase = MONTHLY_RAIN[month] ?? 0;
+    const et0Base = BASE_ET0_MONTHLY[month] ?? 0;
+    const rainAdj = (rain / 100) * ELMALI_RAIN_SENS_GAIN;
+    const et0AdjPct = et0 * ELMALI_ET0_SENS_GAIN;
+    const et0Adj = et0AdjPct / 100;
+    const precipScen = precipBase * (1 + rainAdj);
+    const et0Scen = et0Base * (1 + et0Adj);
+
+    const runoffBase = runoffFromEt0AndStorage(0, prevBaseFill);
+    const runoffScen = runoffFromEt0AndStorage(et0AdjPct, prevAdjFill);
+
+    const areaBaseKm2 = lakeAreaFromFill(prevBaseFill);
+    const areaScenKm2 = lakeAreaFromFill(prevAdjFill);
+
+    const inflowBase = runoffBase * precipBase * ELMALI_CATCHMENT_KM2 * 0.001;
+    const inflowScen = runoffScen * precipScen * ELMALI_CATCHMENT_KM2 * 0.001;
+
+    const lakeRainBase = precipBase * areaBaseKm2 * 0.001;
+    const lakeRainScen = precipScen * areaScenKm2 * 0.001;
+
+    const evapBase = et0Base * ELMALI_KC * areaBaseKm2 * 0.001;
+    const evapScen = et0Scen * ELMALI_KC * areaScenKm2 * 0.001;
+
+    const seasonWeight = MONTHLY_USE_WEIGHTS[month] || (1 / 12);
+    const useScale = Math.pow(1 + useGrowth, years);
+    const useBaseMcm = baseUseMcmYear * seasonWeight;
+    const useScenMcm = useM3 * useScale * seasonWeight;
+
+    const deltaMcm = (inflowScen + lakeRainScen - evapScen - useScenMcm)
+      - (inflowBase + lakeRainBase - evapBase - useBaseMcm);
+
+    const offsetFromBase = prevAdjFill - baseFill;
+    const damping = clamp(1 - Math.abs(offsetFromBase) / 30, 0.18, 1.0);
+    const deltaAdjMcm = clamp(
+      deltaMcm * ELMALI_ADJ_SCALE * ELMALI_SCENARIO_GAIN * damping * modelFactor,
+      -ELMALI_DELTA_CAP_MCM,
+      ELMALI_DELTA_CAP_MCM
+    );
+
+    const nextReserveM3 = clamp(
+      prevAdjReserveM3 + ((baseDeltaReserveMcm + deltaAdjMcm) * 1e6),
+      ELMALI_RESERVE_MIN_M3,
+      ELMALI_RESERVE_MAX_M3
+    );
+    const nextFill = fillFromReserve(nextReserveM3);
+    prevAdjReserveM3 = nextReserveM3;
+    prevAdjFill = nextFill;
+    adjusted.push({ date: d.date, fill: nextFill });
+  });
+
+  return { base, adjusted };
+}
+
+function renderSim() {
+  const model = syncSimModelSelect('ridge');
+  const rain = parseFloat(document.getElementById('sim-rain').value);
+  const et0 = parseFloat(document.getElementById('sim-et0').value);
+  const useM3 = parseFloat(document.getElementById('sim-use-m3').value);
+  const useGrowth = parseFloat(document.getElementById('sim-use-growth').value) / 100;
+
+  const baseEvapM3 = BASE_ET0_MONTHLY.reduce((sum, mm, i) => {
+    const seasonalFill = Number.isFinite(MONTHLY_AVG[i]) ? MONTHLY_AVG[i] : 60;
+    const area = lakeAreaFromFill(seasonalFill);
+    return sum + (mm * ELMALI_KC * area * 0.001);
+  }, 0);
+  const evapM3 = Math.max(0.01, baseEvapM3 * (1 + et0 / 100));
+  const totalLoss = Math.max(0.01, useM3 + evapM3);
+  const useShare = useM3 / totalLoss;
+  const evapShare = evapM3 / totalLoss;
+
+  document.getElementById('sim-rain-val').textContent = `${rain.toFixed(0)}%`;
+  document.getElementById('sim-et0-val').textContent = `${et0.toFixed(0)}%`;
+  document.getElementById('sim-use-m3-val').textContent = `${useM3.toFixed(2)} milyon m³/yıl kullanım (kayıp payı ${(useShare * 100).toFixed(1)}%)`;
+  document.getElementById('sim-use-growth-val').textContent = `${(useGrowth * 100).toFixed(1)}% / yıl`;
+  document.getElementById('sim-evap-m3-val').textContent = `${evapM3.toFixed(2)} milyon m³/yıl (kayıp payı ${(evapShare * 100).toFixed(1)}%)`;
+
+  const allModels = getAvailableModelKeys();
+  const models = model === 'all' ? allModels : [model];
+  const baseSeries = {};
+  const adjSeries = {};
+
+  models.forEach((m) => {
+    const out = getSeries(m, rain, et0, useM3, useGrowth);
+    baseSeries[m] = out.base;
+    adjSeries[m] = out.adjusted;
+  });
+
+  const summaryAdjSeries = {};
+  allModels.forEach((m) => {
+    if (adjSeries[m]) {
+      summaryAdjSeries[m] = adjSeries[m];
+      return;
+    }
+    summaryAdjSeries[m] = getSeries(m, rain, et0, useM3, useGrowth).adjusted;
+  });
+
+  const svg = document.getElementById('sim-svg');
+  const status = document.getElementById('sim-status');
+  const range = document.getElementById('sim-range');
+
+  const width = 900;
+  const height = 360;
+  const pad = 24;
+  let paths = '';
+
+  if (!models.length || !baseSeries[models[0]] || !baseSeries[models[0]].length) {
+    svg.innerHTML = `<text x="50" y="180" fill="#666">Grafik üretilemedi (model verisi eksik).</text>`;
+    if (status) status.textContent = 'Model verisi bulunamadı.';
+    return;
+  }
+
+  if (model !== 'all') {
+    const m = models[0];
+    const basePath = linePath(baseSeries[m], width, height, pad);
+    const adjPath = linePath(adjSeries[m], width, height, pad);
+    if (basePath && adjPath) {
+      paths += `<path d="${basePath}" fill="none" stroke="#343b43" stroke-width="1.9" opacity="0.44"/>`;
+      paths += `<path d="${adjPath}" fill="none" stroke="#d65a3a" stroke-width="2.4" opacity="0.96"/>`;
+    }
+  } else {
+    const ref = adjSeries[models[0]] || [];
+    const medianSeries = [];
+    const lowSeries = [];
+    const highSeries = [];
+    for (let i = 0; i < ref.length; i += 1) {
+      const vals = models.map((m) => (adjSeries[m][i] ? adjSeries[m][i].fill : null)).filter(v => Number.isFinite(v));
+      const consensus = summarizeConsensus(vals, 0.20, 0.80);
+      if (!consensus) continue;
+      medianSeries.push({ date: ref[i].date, fill: consensus.median });
+      lowSeries.push({ date: ref[i].date, fill: consensus.low });
+      highSeries.push({ date: ref[i].date, fill: consensus.high });
+    }
+    const medianPath = linePath(medianSeries, width, height, pad);
+    const lowPath = linePath(lowSeries, width, height, pad);
+    const highPath = linePath(highSeries, width, height, pad);
+    if (lowPath && highPath && medianPath) {
+      paths += `<path d="${lowPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
+      paths += `<path d="${highPath}" fill="none" stroke="#9aa0a7" stroke-width="1" opacity="0.25"/>`;
+      paths += `<path d="${medianPath}" fill="none" stroke="#0b2a3c" stroke-width="2.7" opacity="0.92"/>`;
+    }
+  }
+
+  if (!paths) {
+    svg.innerHTML = `<text x="50" y="180" fill="#666">Grafik üretilemedi (hesap sonucu boş).</text>`;
+    return;
+  }
+
+  const axis = `
+    <g stroke="#dcd7ce" stroke-width="1">
+      <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" />
+      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" />
+    </g>
+    <g fill="#8a8680" font-size="11">
+      <text x="${pad - 6}" y="${height - pad + 14}" text-anchor="end">0</text>
+      <text x="${pad - 6}" y="${height - pad - (height - 2 * pad) * 0.25 + 4}" text-anchor="end">25</text>
+      <text x="${pad - 6}" y="${height - pad - (height - 2 * pad) * 0.5 + 4}" text-anchor="end">50</text>
+      <text x="${pad - 6}" y="${height - pad - (height - 2 * pad) * 0.75 + 4}" text-anchor="end">75</text>
+      <text x="${pad - 6}" y="${pad + 4}" text-anchor="end">100</text>
+    </g>
+  `;
+
+  svg.innerHTML = `
+    <rect x="${pad}" y="${pad}" width="${width - 2 * pad}" height="${height - 2 * pad}" fill="transparent" />
+    <g stroke="#e6e1d8" stroke-width="1">
+      <line x1="${pad}" y1="${pad + (height - 2 * pad) / 4}" x2="${width - pad}" y2="${pad + (height - 2 * pad) / 4}" />
+      <line x1="${pad}" y1="${pad + (height - 2 * pad) / 2}" x2="${width - pad}" y2="${pad + (height - 2 * pad) / 2}" />
+      <line x1="${pad}" y1="${pad + 3 * (height - 2 * pad) / 4}" x2="${width - pad}" y2="${pad + 3 * (height - 2 * pad) / 4}" />
+    </g>
+    ${axis}
+    ${paths}
+    <line id="hover-line" x1="0" y1="${pad}" x2="0" y2="${height - pad}" stroke="#0b2a3c" stroke-width="1" opacity="0" />
+    <circle id="hover-dot" cx="0" cy="0" r="4.5" fill="#d65a3a" opacity="0" />
+  `;
+
+  document.getElementById('loss-use').style.width = `${useShare * 100}%`;
+  document.getElementById('loss-evap').style.width = `${evapShare * 100}%`;
+
+  const anyModel = models[0];
+  const anySeries = baseSeries[anyModel] || [];
+  const firstDate = anySeries[0]?.date || '—';
+  const lastDate = anySeries[anySeries.length - 1]?.date || '—';
+  if (status) {
+    status.textContent = `Veri: ${allModels.length} model • Aralık: ${firstDate} → ${lastDate} • Seçili: ${model === 'all' ? 'Tümü' : (MODEL_META[model]?.label || model)}`;
+  }
+  if (range) {
+    range.textContent = `Tarih aralığı: ${firstDate} → ${lastDate}`;
+  }
+
+  const first = anySeries[0] ? new Date(anySeries[0].date) : null;
+  const last = anySeries[anySeries.length - 1] ? new Date(anySeries[anySeries.length - 1].date) : null;
+  const simYears = (first && last) ? ((last - first) / (1000 * 60 * 60 * 24 * 365.25)) : 14.0;
+  const simUse2040 = useM3 * Math.pow(1 + useGrowth, Math.max(0, simYears));
+  const use2040El = document.getElementById('sim-use-2040');
+  if (use2040El) use2040El.textContent = `${simUse2040.toFixed(2)} milyon m³/yıl`;
+
+  const legend = document.getElementById('model-legend');
+  if (legend) {
+    if (model === 'all') {
+      legend.innerHTML = `<span class="dot" style="background:#0b2a3c"></span>Model Medyanı <span class="dot" style="background:#9aa0a7"></span>P20–P80 Bandı`;
+    } else {
+      legend.textContent = MODEL_META[model]?.label ? `Aktif model: ${MODEL_META[model].label}` : '';
+    }
+  }
+
+  window.__lastSeries = {
+    selectedModel: model,
+    models,
+    baseSeries,
+    adjustedSeries: adjSeries,
+    summaryAdjustedSeries: summaryAdjSeries,
+    settings: {
+      rainPct: rain,
+      et0Pct: et0,
+      useMcmYear: useM3,
+      useGrowthPctPerYear: useGrowth * 100,
+      runoffBase: ELMALI_RUNOFF,
+      scenarioGain: ELMALI_SCENARIO_GAIN,
+      areaAt50PctKm2: Number(lakeAreaFromFill(50).toFixed(3)),
+      reservePerPointMcm: Number(ELMALI_RESERVE_PER_PP_MCM.toFixed(4))
+    },
+    generatedAt: new Date().toISOString()
+  };
+
+  const tooltip = document.getElementById('sim-tooltip');
+  const metricDate = document.getElementById('metric-date');
+  const metricBase = document.getElementById('metric-base');
+  const metricAdj = document.getElementById('metric-adj');
+  const hoverDot = document.getElementById('hover-dot');
+  const hoverLine = document.getElementById('hover-line');
+
+  if (anySeries.length) {
+    const idx = anySeries.length - 1;
+    const baseLast = (baseSeries[anyModel] || [])[idx];
+    if (baseLast) {
+      metricDate.textContent = baseLast.date;
+      metricBase.textContent = `${baseLast.fill.toFixed(1)}%`;
+      if (model === 'all') {
+        const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => Number.isFinite(v));
+        const consensus = summarizeConsensus(vals, 0.20, 0.80);
+        if (consensus) {
+          metricAdj.textContent = `${consensus.median.toFixed(1)}%`;
+        }
+      } else {
+        const adjLast = (adjSeries[anyModel] || [])[idx];
+        if (adjLast) metricAdj.textContent = `${adjLast.fill.toFixed(1)}%`;
+      }
+    }
+  }
+
+  const onMove = (evt) => {
+    const rect = svg.getBoundingClientRect();
+    const widthPx = rect.width;
+    const heightPx = rect.height;
+    const padPx = (pad / width) * widthPx;
+    const x = evt.clientX - rect.left;
+
+    const idx = nearestIndex(x, widthPx, padPx, anySeries.length);
+    const basePoint = (baseSeries[anyModel] || [])[idx];
+    const adjPoint = (adjSeries[anyModel] || [])[idx];
+    if (!basePoint || !adjPoint) return;
+
+    const xPos = pad + (idx / Math.max(1, anySeries.length - 1)) * (width - 2 * pad);
+    const yPos = height - pad - ((adjPoint.fill / 100) * (height - 2 * pad));
+    const xPx = (xPos / width) * widthPx;
+    const yPx = (yPos / height) * heightPx;
+
+    hoverDot.setAttribute('cx', xPos);
+    hoverDot.setAttribute('cy', yPos);
+    hoverDot.setAttribute('opacity', '1');
+    hoverLine.setAttribute('x1', xPos);
+    hoverLine.setAttribute('x2', xPos);
+    hoverLine.setAttribute('opacity', '0.68');
+
+    let tip = '';
+    if (model === 'all') {
+      const vals = models.map(m => (adjSeries[m] || [])[idx]?.fill).filter(v => Number.isFinite(v));
+      const consensus = summarizeConsensus(vals, 0.20, 0.80);
+      if (consensus) {
+        tip = `${basePoint.date} • Medyan ${consensus.median.toFixed(1)}% (P20–P80 ${consensus.low.toFixed(1)}–${consensus.high.toFixed(1)})`;
+        metricAdj.textContent = `${consensus.median.toFixed(1)}%`;
+      }
+    } else {
+      tip = `${basePoint.date} • ${adjPoint.fill.toFixed(1)}%`;
+      metricAdj.textContent = `${adjPoint.fill.toFixed(1)}%`;
+    }
+
+    metricDate.textContent = basePoint.date;
+    metricBase.textContent = `${basePoint.fill.toFixed(1)}%`;
+    tooltip.textContent = tip;
+
+    const tipHalf = Math.min(160, Math.max(60, (tooltip.offsetWidth || 120) / 2));
+    const safeX = clamp(xPx, tipHalf + 6, widthPx - tipHalf - 6);
+    const safeY = clamp(yPx, 36, heightPx - 10);
+    tooltip.style.opacity = '1';
+    tooltip.style.left = `${safeX}px`;
+    tooltip.style.top = `${safeY}px`;
+  };
+
+  const onLeave = () => {
+    tooltip.style.opacity = '0';
+    hoverDot.setAttribute('opacity', '0');
+    hoverLine.setAttribute('opacity', '0');
+  };
+
+  svg.onmousemove = onMove;
+  svg.onmouseleave = onLeave;
+
+  updateModelSummaryFromSeries(summaryAdjSeries);
+  updateModelSummarySelection(model);
+}
+
+function setScenarioValues(type) {
+  const rainEl = document.getElementById('sim-rain');
+  const et0El = document.getElementById('sim-et0');
+  const useEl = document.getElementById('sim-use-m3');
+  const growthEl = document.getElementById('sim-use-growth');
+  const baseUse = ELMALI_BASE_USAGE_MCM_YEAR_UI;
+
+  if (type === 'dry') {
+    rainEl.value = '-15';
+    et0El.value = '10';
+    useEl.value = String(clamp(baseUse * 1.08, 1.5, 9.0).toFixed(1));
+    growthEl.value = '1.0';
+  } else if (type === 'wet') {
+    rainEl.value = '12';
+    et0El.value = '-5';
+    useEl.value = String(clamp(baseUse * 0.95, 1.5, 9.0).toFixed(1));
+    growthEl.value = '0.4';
+  } else if (type === 'heat') {
+    rainEl.value = '-8';
+    et0El.value = '15';
+    useEl.value = String(clamp(baseUse * 1.12, 1.5, 9.0).toFixed(1));
+    growthEl.value = '1.2';
+  }
+}
+
+function resetScenario() {
+  document.getElementById('sim-rain').value = '0';
+  document.getElementById('sim-et0').value = '0';
+  document.getElementById('sim-use-m3').value = String(ELMALI_BASE_USAGE_MCM_YEAR_UI.toFixed(1));
+  document.getElementById('sim-use-growth').value = '0.0';
+}
+
+function hexToRgba(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function renderObservedInsights() {
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
+  const nDaily = Number(ELMALI_STATS.n_daily_fill || 0);
+  const mean = Number(ELMALI_STATS.mean_fill_pct || 0);
+  const minV = Number(ELMALI_STATS.min_fill_pct || 0);
+  const maxV = Number(ELMALI_STATS.max_fill_pct || 0);
+  const slope = Number(YEARLY_SLOPE || 0);
+
+  setText('hero-n-daily', nDaily ? nDaily.toLocaleString('tr-TR') : '—');
+  setText('hero-mean-fill', `${mean.toFixed(1)}%`);
+  setText('hero-min-fill', `${minV.toFixed(2)}%`);
+  setText('hero-max-fill', `${maxV.toFixed(1)}%`);
+  setText('hero-trend', `${slope >= 0 ? '+' : ''}${slope.toFixed(2)}`);
+
+  if (!YEARLY.length) return;
+
+  const worst = YEARLY.reduce((a, b) => (b.avg < a.avg ? b : a), YEARLY[0]);
+  const best = YEARLY.reduce((a, b) => (b.avg > a.avg ? b : a), YEARLY[0]);
+  const lowYears = YEARLY.filter((d) => d.avg < 35).map((d) => d.y);
+  const latestMonthly = MONTHLY_SERIES.length ? MONTHLY_SERIES[MONTHLY_SERIES.length - 1] : null;
+  const lastFillDate = ELMALI_STATS.last_fill_date || null;
+  const lastFillPct = Number(ELMALI_STATS.last_fill_pct || NaN);
+
+  setText(
+    'insight-critical',
+    `${worst.y} yılında yıllık ortalama doluluk ${worst.avg.toFixed(1)}% ile en düşük seviyededir (minimum ${worst.min.toFixed(1)}%).`
+  );
+  setText(
+    'insight-high',
+    `${best.y} yılında yıllık ortalama doluluk ${best.avg.toFixed(1)}% ile en yüksek seviyededir (maksimum ${best.max.toFixed(1)}%).`
+  );
+  setText(
+    'insight-lows',
+    lowYears.length
+      ? `Düşük doluluk rejimi (${lowYears.map(String).join(', ')}) yıllarında yıllık ortalama %35'in altında gerçekleşmiştir.`
+      : 'Yıllık ortalamada %35 altında kalıcı bir rejim gözlenmemiştir.'
+  );
+  setText('insight-low-years', lowYears.length ? lowYears.join(' · ') : 'Belirgin düşük rejim yok');
+  if (latestMonthly || Number.isFinite(lastFillPct)) {
+    const badge = document.getElementById('insight-current-badge');
+    if (lastFillDate && Number.isFinite(lastFillPct)) {
+      setText(
+        'insight-current',
+        `${lastFillDate} tarihinde günlük doluluk ${lastFillPct.toFixed(1)}% olarak ölçülmüştür.`
+      );
+    } else {
+      setText(
+        'insight-current',
+        `${toYYYYMM(latestMonthly.date)} döneminde aylık ortalama doluluk ${latestMonthly.fill_avg_pct.toFixed(1)}% olarak ölçülmüştür.`
+      );
+    }
+    const refFill = Number.isFinite(lastFillPct) ? lastFillPct : latestMonthly.fill_avg_pct;
+    if (badge) {
+      if (refFill < 30) badge.textContent = 'Kritik';
+      else if (refFill > 80) badge.textContent = 'Yüksek';
+      else badge.textContent = 'Orta';
+    }
+  }
+
+  const firstYear = YEARLY[0].y;
+  const lastYear = YEARLY[YEARLY.length - 1].y;
+  const projectedDelta = slope * (lastYear - firstYear);
+  setText(
+    'trend-summary',
+    `OLS eğimi ${slope >= 0 ? '+' : ''}${slope.toFixed(2)} puan/yıl. ${firstYear}–${lastYear} arasında yaklaşık ${projectedDelta.toFixed(1)} puanlık net trend etkisi hesaplanmıştır.`
+  );
+
+  const rainMax = YEARLY.reduce((a, b) => (b.rain > a.rain ? b : a), YEARLY[0]);
+  const rainMin = YEARLY.reduce((a, b) => (b.rain < a.rain ? b : a), YEARLY[0]);
+  const rainMean = YEARLY.reduce((s, d) => s + d.rain, 0) / YEARLY.length;
+  const last5 = YEARLY.slice(-5);
+  const rain5 = last5.length ? (last5.reduce((s, d) => s + d.rain, 0) / last5.length) : rainMean;
+  setText(
+    'rain-insights',
+    `En düşük yıllık doluluk ${worst.y} yılında ${worst.avg.toFixed(1)}% olarak görülmüştür. Aynı yıl yağış ${worst.rain.toFixed(1)} mm düzeyindedir. En yüksek doluluk ${best.y} yılında ${best.avg.toFixed(1)}% olarak ölçülmüştür.`
+  );
+  setText(
+    'rain-stats',
+    `En yağışlı yıl: ${rainMax.y} (${rainMax.rain.toFixed(1)} mm)\nEn düşük yağış: ${rainMin.y} (${rainMin.rain.toFixed(1)} mm)\nUzun dönem ortalaması: ${rainMean.toFixed(1)} mm/yıl\nSon 5 yıl ortalaması: ${rain5.toFixed(1)} mm/yıl`
+  );
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderObservedInsights();
+  modelData = buildModelDataFromDaily();
+  const select = document.getElementById('sim-model');
+  if (select) select.value = 'ridge';
+  const useInput = document.getElementById('sim-use-m3');
+  if (useInput) useInput.value = String(ELMALI_BASE_USAGE_MCM_YEAR_UI.toFixed(1));
+  syncSimModelSelect('ridge');
+
+  const catchEl = document.getElementById('param-catchment');
+  const capEl = document.getElementById('param-capacity');
+  const lakeEl = document.getElementById('param-lake-area');
+  const kcEl = document.getElementById('param-kc');
+  const runoffEl = document.getElementById('param-runoff');
+  const adjScaleEl = document.getElementById('param-adj-scale');
+  const scenarioGainEl = document.getElementById('param-scenario-gain');
+  const capDeltaEl = document.getElementById('param-delta-cap');
+  const fillReserveSlopeEl = document.getElementById('param-fr-slope');
+  const meanRainEl = document.getElementById('param-mean-rain');
+  const meanEt0El = document.getElementById('param-mean-et0');
+  const meanLevelEl = document.getElementById('param-mean-level');
+  const meanReserveEl = document.getElementById('param-mean-reserve');
+  const srcEl = document.getElementById('sim-sources');
+
+  if (catchEl) catchEl.textContent = ELMALI_CATCHMENT_KM2.toFixed(1);
+  if (capEl) capEl.textContent = ELMALI_CAPACITY_MCM.toFixed(1);
+  if (lakeEl) lakeEl.textContent = ELMALI_LAKE_AREA_KM2.toFixed(2);
+  if (kcEl) kcEl.textContent = ELMALI_KC.toFixed(2);
+  if (runoffEl) runoffEl.textContent = ELMALI_RUNOFF.toFixed(2);
+  if (adjScaleEl) adjScaleEl.textContent = ELMALI_ADJ_SCALE.toFixed(3);
+  if (scenarioGainEl) scenarioGainEl.textContent = ELMALI_SCENARIO_GAIN.toFixed(2);
+  if (capDeltaEl) capDeltaEl.textContent = ELMALI_DELTA_CAP_PP.toFixed(1);
+  if (fillReserveSlopeEl) fillReserveSlopeEl.textContent = ELMALI_RESERVE_PER_PP_MCM.toFixed(3);
+  if (meanRainEl) meanRainEl.textContent = (MONTHLY_RAIN.reduce((a, b) => a + b, 0) / 12).toFixed(1);
+  if (meanEt0El) meanEt0El.textContent = (BASE_ET0_MONTHLY.reduce((a, b) => a + b, 0) / 12).toFixed(1);
+  if (meanLevelEl) meanLevelEl.textContent = Number(ELMALI_STATS.mean_level_m_month || 0).toFixed(2);
+  if (meanReserveEl) meanReserveEl.textContent = Number(ELMALI_STATS.mean_reserve_m3_month || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+  if (srcEl) srcEl.textContent = 'Kaynaklar: İSKİ Elmalı günlük doluluk-seviye-rezerv serileri (2002–2026), yağış-verilen su serisi, Elmalı meta verisi (havza/göl/depolama), aylık özet veri paketi, model projeksiyon seti (2026–2040) ve FAO-56 ET0 yaklaşımı. Seviye-rezerv eşleşmesi, doluluk↔hacim dönüşümünde doğrudan kullanılmıştır.';
+
+  const growthSlider = document.getElementById('sim-use-growth');
+  const rangeEl = document.getElementById('sim-use-range');
+  const seasonEl = document.getElementById('sim-use-season');
+  const yearlyUse = YEARLY.map((d) => Number(d.use_m3)).filter((v) => Number.isFinite(v) && v > 0);
+  const yoy = [];
+  for (let i = 1; i < yearlyUse.length; i += 1) {
+    yoy.push((yearlyUse[i] - yearlyUse[i - 1]) / yearlyUse[i - 1]);
+  }
+  const p10 = quantile(yoy, 0.10);
+  const p90 = quantile(yoy, 0.90);
+  const cagr = (yearlyUse.length > 1)
+    ? (Math.pow(yearlyUse[yearlyUse.length - 1] / yearlyUse[0], 1 / (yearlyUse.length - 1)) - 1)
+    : null;
+  if (growthSlider && Number.isFinite(p10) && Number.isFinite(p90)) {
+    const minPct = Math.round((p10 * 100) * 10) / 10;
+    const maxPct = Math.round((p90 * 100) * 10) / 10;
+    growthSlider.min = String(Math.min(-1.5, minPct));
+    growthSlider.max = String(Math.max(3.5, maxPct));
+    growthSlider.step = '0.1';
+    growthSlider.value = '0';
+    if (rangeEl) {
+      rangeEl.textContent = `Kullanım artışı için tarihsel bant (p10–p90): ${minPct.toFixed(1)}%–${maxPct.toFixed(1)}%/yıl${Number.isFinite(cagr) ? ` · referans CAGR: ${(cagr * 100).toFixed(2)}%/yıl` : ''} · varsayılan: 0.0%`;
+    }
+  } else if (rangeEl) {
+    rangeEl.textContent = 'Kullanım artış bandı: tarihsel seri yetersiz';
+  }
+
+  if (seasonEl) {
+    const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    let maxIdx = 0;
+    let minIdx = 0;
+    MONTHLY_USE_WEIGHTS.forEach((v, i) => {
+      if ((MONTHLY_USE_WEIGHTS[maxIdx] ?? 0) < v) maxIdx = i;
+      if ((MONTHLY_USE_WEIGHTS[minIdx] ?? 1e9) > v) minIdx = i;
+    });
+    seasonEl.textContent = `Mevsimsel kullanım dağılımı: en yüksek ${monthNames[maxIdx]} (%${(MONTHLY_USE_WEIGHTS[maxIdx] * 100).toFixed(1)}), en düşük ${monthNames[minIdx]} (%${(MONTHLY_USE_WEIGHTS[minIdx] * 100).toFixed(1)}).`;
+  }
+
+  renderModelUsageTable();
+  initElmaliModelTabs();
+  computeModelScenarioCalibration();
+  buildModelSummary();
+  renderAcademicElmali();
+
+  ['sim-model', 'sim-rain', 'sim-et0', 'sim-use-m3', 'sim-use-growth'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', renderSim);
+  });
+
+  const resetBtn = document.getElementById('sim-reset');
+  const zeroBtn = document.getElementById('sim-zero');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      resetScenario();
+      renderSim();
+    });
+  }
+  if (zeroBtn) {
+    zeroBtn.addEventListener('click', () => {
+      document.getElementById('sim-rain').value = '0';
+      document.getElementById('sim-et0').value = '0';
+      renderSim();
+    });
+  }
+
+  document.querySelectorAll('[data-scenario]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setScenarioValues(btn.dataset.scenario);
+      renderSim();
+    });
+  });
+
+  const galleryVersion = '20260326-5';
+  const modal = document.getElementById('img-modal');
+  const modalImg = document.getElementById('img-modal-image');
+  const modalCap = document.getElementById('img-modal-caption');
+  const closeModalBtn = document.getElementById('img-modal-close');
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  };
+
+  document.querySelectorAll('#modeller img.zoomable').forEach((img) => {
+    const rawSrc = img.getAttribute('src') || '';
+    if (rawSrc && !rawSrc.includes('?')) {
+      img.setAttribute('src', `${rawSrc}?v=${galleryVersion}`);
+    }
+
+    const card = img.closest('.card');
+    if (card && !card.querySelector('.img-open-link')) {
+      const a = document.createElement('a');
+      a.className = 'img-open-link';
+      a.href = img.getAttribute('src') || '';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = 'Tam boyutu yeni sekmede aç';
+      card.appendChild(a);
+    }
+
+    img.addEventListener('click', () => {
+      if (!modal || !modalImg || !modalCap) return;
+      modalImg.src = img.src;
+      modalCap.textContent = img.alt || 'Model görseli';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+  });
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  renderSim();
+});
+</script>
+</body>
+</html>

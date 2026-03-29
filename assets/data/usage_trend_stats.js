@@ -1,0 +1,1 @@
+window.USAGE_TREND = {"year_min": 2014, "year_max": 2025, "n_years": 12, "cagr_all": 0.02190394601855905, "cagr_2019_2023": 0.012771595779784928, "yoy_mean": 0.021984487594408308, "yoy_median": 0.019981363535932717, "yoy_p10": 0.010542454049025762, "yoy_p90": 0.03935330241884949, "trend_source": "iski_baraj_api_son_10_yil_toplam_verilen_su"};
