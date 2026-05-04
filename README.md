@@ -37,11 +37,6 @@ istanbul-baraj-doluluk-orani-projeksiyonu/
 |-- Özetler/
 ```
 
-## Veri Yönetişimi
-- Bu depoda ham veri setleri paylaşılmaz.
-- Yayınlanan içerik, arayüzde kullanılan türetilmiş veri dosyaları ve raporlanmış çıktı paketleriyle sınırlandırılmıştır.
-- Kurumsal karar süreçlerinde, ilgili kurumların güncel resmi yayınları ile birlikte değerlendirme yapılmalıdır.
-
 ## English Summary
 This repository hosts an academic decision-support web project for Istanbul reservoir occupancy projections. The framework integrates climate drivers (including ET0), water-use pressure, and comparative model families to assess medium-term behavior up to 2040.
 
